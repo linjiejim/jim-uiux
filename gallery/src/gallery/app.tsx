@@ -1,6 +1,9 @@
 import * as React from "react"
 import {
   BookOpen,
+  Images,
+  Moon,
+  PanelsTopLeft,
   Component,
   Layers,
   ListFilter,
@@ -15,7 +18,9 @@ import {
   Square,
 } from "lucide-react"
 import { LucideProvider } from "lucide-react"
+import { setAppearance, resolveAppearance, getAppearance } from "@/registry/jim/lib/appearance"
 import { AppShell, NavGroup, NavItem } from "@/registry/jim/ui/app-shell"
+import { CommandGroup, CommandItem, CommandPalette, useCommandPalette } from "@/registry/jim/ui/command-palette"
 import { Toaster } from "@/registry/jim/ui/toast"
 import { TooltipProvider } from "@/registry/jim/ui/tooltip"
 import { ThemeKnobs } from "./knobs"
@@ -28,6 +33,8 @@ import { FeedbackPage } from "./pages/feedback"
 import { DataDisplayPage } from "./pages/data-display"
 import { CrudPattern } from "./pages/crud"
 import { SettingsPattern } from "./pages/settings-pattern"
+import { WorkbenchPattern } from "./pages/workbench"
+import { MediaGridPattern } from "./pages/media-grid"
 
 type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean }
 
@@ -45,6 +52,8 @@ const routes: Record<string, RouteDef> = {
   crud: { label: "列表与 CRUD", icon: <Table2 />, page: CrudPattern, group: "模式", fill: true },
   filters: { label: "列表筛选", icon: <ListFilter />, page: CrudPattern, group: "模式", fill: true },
   settings: { label: "设置页", icon: <Settings />, page: SettingsPattern, group: "模式" },
+  workbench: { label: "工作台外壳", icon: <PanelsTopLeft />, page: WorkbenchPattern, group: "模式", fill: true },
+  media: { label: "分面筛选与媒体网格", icon: <Images />, page: MediaGridPattern, group: "模式" },
 }
 
 function useRoute() {
@@ -64,6 +73,7 @@ export function App() {
   const route = routes[key] ?? routes.principles
   const Page = route.page
   const groups = [...new Set(Object.values(routes).map((r) => r.group))]
+  const [paletteOpen, setPaletteOpen] = useCommandPalette()
 
   React.useEffect(() => {
     document.title = `${route.label} · jim-uiux`
@@ -93,6 +103,28 @@ export function App() {
             <Page />
           </div>
         </AppShell>
+        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} placeholder="搜索页面或命令">
+          {groups.map((g) => (
+            <CommandGroup key={g || "root"} heading={g || "开始"}>
+              {Object.entries(routes)
+                .filter(([k, r]) => r.group === g && k !== "filters")
+                .map(([k, r]) => (
+                  <CommandItem key={k} icon={r.icon} value={`${r.label} ${k}`} onSelect={() => (window.location.hash = `#/${k}`)}>
+                    {r.label}
+                  </CommandItem>
+                ))}
+            </CommandGroup>
+          ))}
+          <CommandGroup heading="操作">
+            <CommandItem
+              icon={<Moon />}
+              keywords={["dark", "light", "深色", "浅色"]}
+              onSelect={() => setAppearance(resolveAppearance(getAppearance()) === "dark" ? "light" : "dark")}
+            >
+              切换深浅色
+            </CommandItem>
+          </CommandGroup>
+        </CommandPalette>
         <Toaster />
       </TooltipProvider>
     </LucideProvider>

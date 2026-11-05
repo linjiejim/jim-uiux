@@ -17,6 +17,8 @@
 | 多选；或者点「保存」才生效的开关 | `Checkbox` |
 | 不属于列表对象的短任务 | `Dialog` |
 | 看、改、新建列表里的一个对象 | `Drawer` + `DetailList`（原位编辑） |
+| 工作台里的详情栏（主区保持可点） | `Drawer mode="dock"` + `useInspectorStack` |
+| 全局搜索、跳转、命令 | `CommandPalette` + `useCommandPalette`（⌘K） |
 | 不可逆操作前的确认 | `ConfirmDialog` / `useConfirm` |
 | 触屏上的选项和操作 | `BottomSheet` |
 | 挂在触发点上的小面板 | `Popover` |
@@ -29,6 +31,9 @@
 | 数据表格 | `DataTable` |
 | 页面骨架 | `Page`、`PageHeader`、`Section` |
 | 列表筛选 | `FilterBar`、`SearchInput`、`FilterSelect`、`FilterBoolean` |
+| 多个维度一起筛、多选 | `FacetFilter` + `useFacetParams` |
+| 多个文件上传 | `useUploadQueue` + `UploadQueuePanel` |
+| 用户选的颜色、图表系列 | `lib/categorical.ts`：`catClass`、`categoricalFor`、`CHART_SERIES` |
 | 设置页 | `SettingsSection`、`SettingRow`、`SaveBar` |
 | 应用外壳 | `AppShell`、`NavGroup`、`NavItem` |
 
@@ -81,6 +86,7 @@
 - 宽度 < 640 时，弹框从底部升起，顶部圆角 24，按钮平分一行。
 - `dirty`：内容改动过的情况下，按 Esc、点遮罩、点 ✕ 或点「取消」都会先问「放弃未保存的修改？」。保存成功后由代码直接关闭，不经过这个确认。
 - 打开时聚焦第一个输入框。关闭后焦点回到触发按钮。
+- `fixed`：md、lg 的高度固定（560、640，≤ 85dvh；手机 92dvh），只有 `DialogBody` 滚动。弹框里会切换标签、筛选列表、分步填写时用，框不会随内容跳。
 
 ## Drawer
 
@@ -89,6 +95,36 @@
 - 内容用 `DetailList`：标签用次要文字色，值保持全对比、可以选中。给每项传 `edit`（控件），`editing` 为真时原位变成可编辑：行高和文字起点不变；`error`、`required` 跟 Field 一样。查看、编辑、新建共用这一套布局。
 - 一次只开一个抽屉（同时开两个会在控制台警告）。抽屉上面可以再开 ConfirmDialog。
 - 打开时聚焦面板本身，不聚焦第一个按钮，避免一打开就弹出按钮的悬停提示；标了 `autoFocus` 的输入框（编辑、新建）保留焦点。
+- `mode="dock"`：工作台的 inspector。不模态、没有遮罩；把 `<Drawer mode="dock">` 放在主区所在的 flex 行最后。
+  - 视口 ≥ 1440（`DOCK_MIN`）停靠成一栏：主区让出宽度，点主区不关闭，打开时不抢焦点。更窄时浮起，点外面关闭。手机上全宽。
+  - 宽 360–520，默认 400（`INSPECTOR_WIDTH`）；拖左边缘或聚焦后按 ← → 调整，按 `DrawerContent storageKey` 记住（一个地点一个 key）。
+  - `useInspectorStack()`：`show` 从主区打开（新的一叠），`push` 从 inspector 里打开关联对象（最多 3 层，再多替换最上层），`back`、`close`。`DrawerHeader onBack` 显示「返回」。提升到主区 = 调用方导航后 `close()`。
+  - Esc 只关最上层；inspector 上面可以开 Dialog、ConfirmDialog。
+
+## CommandPalette
+
+- ⌘K（Ctrl+K）打开：`const [open, setOpen] = useCommandPalette()`，整个应用只绑一次。
+- 640×480，距顶部 120，框固定、列表滚动；手机全宽、贴顶、≤ 60dvh。底部一行键盘提示（手机上隐藏）。
+- 内容用 `CommandGroup heading` 分组，`CommandItem` 带 `icon`、`hint`、`shortcut`、`keywords`（拼音、同义词）。选中后先关闭再执行 `onSelect`。
+- 没有结果时显示「没有匹配的结果」。只做搜索和跳转，不在里面放表单。
+
+## FacetFilter
+
+见 `patterns/filters.md`「分面筛选」。
+
+- `facets`：`{ key, label, kind: "single" | "multi", options }` 或 `{ key, label, kind: "boolean", yes?, no? }`。
+- 值是 `Record<key, string[]>`，布尔分面存 `["1"]` / `["0"]`；`facetCount(value)` 数已生效的分面。
+- `max`（默认 4）：超过时前 `max − 1` 个留在栏上，其余进「筛选」Popover。
+- `useFacetParams(facets, { mode: "search" | "hash" })` 把值同步到 URL；服务端渲染时视为未设置，客户端再读 URL（Next 可用）。`facetsFromParams` 是纯函数版本。
+
+## UploadQueue
+
+见 `patterns/feedback.md`「上传队列」。
+
+- `useUploadQueue({ run, concurrency = 3 })` 返回 `{ items, active, add, retry, clearFinished }`。
+- `run(file, report)`：调用 `report(0–1)` 报告真实进度；返回 `"added"` 或 `"exists"`；失败时抛出带人话的 `Error`，不可能成功的文件抛 `UploadRejected`（不显示「重试」）。
+- `<UploadQueuePanel queue={queue} />` 渲染右下角的面板，自己处理折叠、自动收起和离开页面前的确认。
+- `run` 同步抛错也一样记为失败并让出名额。不用 React 时（或写测试）用 `createUploadQueue(config, onChange)`。
 
 ## ConfirmDialog / useConfirm
 

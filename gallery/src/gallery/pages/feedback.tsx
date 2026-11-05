@@ -5,6 +5,7 @@ import { Spinner } from "@/registry/jim/ui/spinner"
 import { StateView } from "@/registry/jim/ui/state"
 import { notify } from "@/registry/jim/ui/toast"
 import { Segmented } from "@/registry/jim/ui/segmented"
+import { UploadQueuePanel, UploadRejected, useUploadQueue } from "@/registry/jim/ui/upload-queue"
 import { DocPage, Example, Row, Rules, Spec } from "../doc"
 
 export function FeedbackPage() {
@@ -80,6 +81,13 @@ export function FeedbackPage() {
         </div>
       </Example>
 
+      <Example
+        title="上传队列"
+        note="右下角排队，3 个同时传。状态词固定：等待 / 上传中 x% / 已添加 / 已存在 / 失败（重试）。全部成功 4 秒后自动收起；有失败时不收起。传完前离开页面会先问。"
+      >
+        <UploadDemo />
+      </Example>
+
       <Example title="用法" canvas="none">
         <Rules
           dos={["错误说人话，说下一步", "进度未知用转圈，已知用百分比", "乐观更新：先改界面，失败再回滚并说明"]}
@@ -87,5 +95,34 @@ export function FeedbackPage() {
         />
       </Example>
     </DocPage>
+  )
+}
+
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms))
+let attempts = 0
+
+function UploadDemo() {
+  const queue = useUploadQueue({
+    concurrency: 3,
+    run: async (file, report) => {
+      if (file.name.endsWith(".psd")) throw new UploadRejected("不支持这种格式")
+      const n = ++attempts
+      for (let p = 0; p < 1; p += 0.12) {
+        report(p)
+        await pause(160)
+        if (n === 3 && p > 0.4) throw new Error("网络中断")
+      }
+      return file.name.startsWith("封面") ? "exists" : "added"
+    },
+  })
+  const files = (names: string[]) => names.map((n) => new File(["x"], n))
+  return (
+    <Row>
+      <Button onClick={() => queue.add(files(["罗勒-01.jpg", "罗勒-02.jpg", "薄荷.jpg", "封面.png", "草莓-包装.jpg", "活动海报.psd"]))}>
+        添加 6 个文件
+      </Button>
+      <Button onClick={() => queue.add(files(["生菜.jpg", "番茄.jpg"]))}>再添加 2 个</Button>
+      <UploadQueuePanel queue={queue} />
+    </Row>
   )
 }

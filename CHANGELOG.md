@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.1.0 · 2026-11-06
+
+吸收 Greenhouse 4.2 里验证过的模式（理由见 `references/decisions.md`「2026-11-06」）。只加东西，已有默认值不变。
+
+- Drawer 新增 `mode="dock"`：工作台的 inspector，不模态、没有遮罩；视口 ≥ 1440 停靠成一栏，更窄时浮起；宽 360–520 可拖、按地点记住；`useInspectorStack` 管最多 3 层的对象栈，`DrawerHeader` 新增 `onBack`。
+- Dialog 新增 `fixed`：md / lg 高度固定（560 / 640），只有内容区滚动。
+- 新组件：`CommandPalette`（⌘K，640×480，距顶部 120）、`FacetFilter` + `useFacetParams`（分面筛选，写进 URL）、`useUploadQueue` + `UploadQueuePanel`（上传队列）。
+- 主题新增 9 对分类色 `--cat-*` / `--cat-*-subtle`（浅色、深色各一套），新增 `lib/categorical.ts`（`catClass`、`categoricalFor`、`CHART_SERIES`）；对比度守卫自动覆盖主题里声明的每个分类色。
+- 规范：`layout.md` 加「工作台外壳」；`overlays.md` 加 inspector、固定尺寸弹框、命令面板和「嵌入页（iframe）」；`feedback.md` 加无限滚动（信息流和媒体网格）、上传队列和原生端的 Alert 例外；`filters.md` 加分面筛选；`tokens.md` 加分类色和应用内文字大小；`adoption.md` 写明原生端规则。
+- 新模式：入口页、一次性密钥、批注侧栏。
+- `decisions.md` 解决两个待定项（原生字号和按钮、命令面板、文件上传、图表配色），并更正已经不存在的 Greenhouse 出处（v1 / v2 web、CrudDetail）。
+- gallery：新增「工作台外壳」「分面筛选与媒体网格」两页，弹层页加固定尺寸弹框、inspector 和命令面板，反馈页加上传队列，颜色页加分类色；整站可以用 ⌘K 跳转。
+
 ## 1.0.0 · 2026-11-05
 
 - 开源：独立仓库 `linjiejim/jim-uiux`（MIT），站点和 registry 改由 GitHub Pages 托管，地址不变，仍是 `https://design.linjiejim.com/r/{name}.json`。

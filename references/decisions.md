@@ -8,6 +8,8 @@
 
 调研了 Jim 过往的四个产品项目（后台、移动端、商城、工具）。点名的只有开源的 greenhouse（web + 历史上的 Native Haven v2 规范），其余写作「其他项目」。
 
+注（2026-11-06 补）：本节的「greenhouse v1 / v2」是 Greenhouse 4.0 之前的两版 web 客户端，「Haven v2」是当时的原生规范，CrudDetail 是 v2 的列表详情抽屉。4.0 起 Greenhouse 只有一个 Expo 通用客户端（web、桌面、iOS、Android 共用 `apps/client`），这些实现都已删除。下表的理由仍然成立，但不要再去 Greenhouse 里找这些出处；现行出处见「2026-11-06 · 1.1.0」。
+
 | 决策 | 理由 | 被放弃的方案 |
 | --- | --- | --- |
 | 默认纯中性灰加黑色强调色 | Jim 要的是 Notion 式的黑白；四个项目都是「中性色 + 一个强调色」的结构，只是颜色不同 | 绿色系中性色 |
@@ -21,7 +23,7 @@
 | 错误不用会自动消失的 Toast | greenhouse v2 规定「错误不是 Toast」，移动端项目规定失败要弹 alert；折中的结果是：就地显示，后台错误用不消失的 Toast | 普通 Toast |
 | 遮罩不模糊 | greenhouse v2 规定；更克制 | greenhouse v1 给弹框加了模糊 |
 | Dialog 480 默认，手机上从底部升起 | 四个项目的取值在 340–512 之间；greenhouse 的 OverlayFrame 在手机上从底部升起 | 340 的居中弹框 |
-| Drawer 560 默认，一次一层 | greenhouse 的 CrudDetail 用 520，v2 规定 480–880；后台项目规定只能一层 | 后台项目的 min(78vw, 1120)（太宽，改为 lg 档） |
+| Drawer 560 默认，一次一层 | greenhouse v2 的 CrudDetail（已删除）用 520，v2 规定 480–880；后台项目规定只能一层 | 后台项目的 min(78vw, 1120)（太宽，改为 lg 档） |
 | 底部弹层：Web 用 vaul；原生 App 用系统 sheet | greenhouse 移动端用系统 sheet；移动端项目因为键盘问题弃用了 gorhom | 自己用 JS 画 sheet |
 | 表格不画竖线 | Notion 式；greenhouse v2 规定 | 后台项目的带边框表格 |
 | 分页 20 / 50 / 100，并记住选择 | greenhouse 规定 | 后台项目的 10–500 |
@@ -39,8 +41,29 @@
 - 源码从私有的 jim-skills 搬到独立的公开仓库 `linjiejim/jim-uiux`，站点改由 GitHub Pages 托管，域名不变。
 - 去掉品牌专用预设，只留默认和暖灰两套。品牌色属于具体项目，放在项目自己的主题里，用同样的语义名覆盖取值即可。
 
-## 待定（等第三期，或等 Jim 拍板）
+## 2026-11-06 · 1.1.0 吸收 Greenhouse 4.2 的模式
 
-- 原生移动端的正文字号（14 还是 16）和按钮高度（44 还是 52）。
-- 日期选择器、文件上传、富文本编辑器、命令面板（⌘K）的规格。
-- 图表配色与 `dataviz` 技能的对接。
+来源：开源的 Greenhouse 4.2.0（https://github.com/linjiejim/greenhouse ，通用客户端 `apps/client` 的 `DESIGN.md`、`src/ui/overlay.web.tsx`、`src/shell/wide-model.ts`；素材库插件 `plugins/assets`），以及同一天对 Greenhouse 4.2 做的界面一致性审计。审计提的五个问题（下文 Q1–Q5）Jim 全部按建议拍板。只加东西，不改已有默认值，所以是次版本号。
+
+| 决策 | 理由 | 被放弃的方案 |
+| --- | --- | --- |
+| 新增「工作台外壳」：rail 72 + 二级栏 264 + 主区 + inspector 360–520；≥ 1440 停靠，否则浮起；最多叠 3 层，可提升到主区；< 760 侧栏变抽屉、对象用 sheet | Greenhouse 的工作台一天要在多个地点间切换，一栏 240 的侧栏表达不了这么多层；数值是它实际在用的常量（`wide-model.ts`） | 把 AppShell 加宽、在 AppShell 里塞二级导航 |
+| Drawer 新增 `mode="dock"`（不模态的 inspector） | inspector 本质是 Drawer 的非模态变体：主区仍可点；与「列表对象在抽屉里查看、原位编辑」一致（Q1：保持指南规则，Greenhouse 向它看齐） | 只读 inspector + 编辑另开 Dialog（Greenhouse 当时的做法，Q1 否掉） |
+| Dialog 新增 `fixed`：md / lg 高度固定，只有内容区滚动 | 弹框里切换标签或列表时框不跳（Greenhouse 的 `DIALOG_SIZES`）。Q4：指南只吸收规则，宽度仍是 480 / 640；高度取 560 / 640；项目自己的尺寸记在 DESIGN.md 例外里 | 改用 Greenhouse 的 420 / 560 / 760 / 960（差 ±20px 看不出，改了要动所有截图） |
+| 命令面板：⌘K，640×480，距顶部 120，唯一顶部对齐的弹框 | Greenhouse 已长期使用；原先列为待定 | 页面搜索框兼做跳转 |
+| 嵌入页（iframe）的确认框和 Toast 由宿主通过桥接代画；大块对象视图由嵌入页用同一套 kit 画；一次 Esc 只关一层 | 审计发现 iframe 里的弹层盖不住宿主、Esc 一次关两层（Q5） | 嵌入页各自画一套弹层 |
+| 错误：web 和嵌入页就地显示或用不消失的 Toast + 重试；原生 App 的用户操作失败可以用系统 Alert | 审计发现三套错误反馈（Q2）；原生用户期待系统 Alert | 模态 alertError（Greenhouse web 当时的做法）、3 秒自动消失的错误 Toast |
+| 字重上限 600 只约束 web 和嵌入页；原生标题跟平台（HIG 700） | Q3；原生标题 700 是 HIG 默认，压到 600 反而不像系统 | 全平台 600 |
+| 原生端：正文字号用平台默认（iOS 17、Android 16）；按钮、sheet、Alert、菜单用系统组件；token 只管颜色和语义 | Greenhouse 的 iOS / Android 实践；用 JS 画 sheet 已证明不好 | 原生正文 14 或 16、按钮固定 52（原「待定」项） |
+| 无限滚动扩到媒体网格 | 媒体墙按页翻很别扭（Greenhouse 素材库） | 只有信息流例外 |
+| 上传队列：等待 / 上传中 x% / 已添加 / 已存在 / 失败（重试）；右下角可折叠；全部成功 4 秒后收起，有失败不收 | Greenhouse 素材库的队列（并发 3、去重、重试、离开前拦截）；审计顺带修了内部说法和「0 项也列出」 | 每个文件一个 Toast、阻断式的上传弹框 |
+| 分面筛选：单选 / 多选 / 布尔，写进 URL，「标签：值 ✕」，多选「等 N 项」，> 4 个收进「筛选」 | 素材、CRM、表格都要多维筛选，FilterBar 只覆盖单选；审计发现 Greenhouse 的筛选不进 URL、有「全部」、收起后看不出生效条件 | 筛选面板展开 / 收起两种形态 |
+| 分类色：9 对（fg + subtle），浅深各一套，存名字不存色值；守卫覆盖对比度 | 每个项目都会遇到用户自选颜色；Greenhouse 的 `categorical` 已验证。amber 从 #9c6100 压到 #915a00，原值在自己的浅底上只有 4.45:1，被守卫抓到；浅底按 10% / 16% 混入画布，预设换中性色时跟着走 | 让用户选任意色值、借用状态色 |
+| 应用内文字大小 0.8–1.35，叠加系统 Dynamic Type | Greenhouse 的可访问性能力（`type-scale.ts`）；写进 tokens.md，kit 的 web 组件暂不内置 | — |
+| 新增模式：入口页、一次性密钥、批注侧栏 | 都是通用场景：入口页和密钥来自 Greenhouse `DESIGN.md`；批注来自其他项目里一个 Greenhouse 插件的锚点规则（引用 + 前后 40 字） | — |
+
+## 待定（等 Jim 拍板）
+
+- 日期选择器、富文本编辑器的规格。
+- 桌面高密度档（行高 32，Greenhouse 在用）是否作为 `dense` 加进指南；现在 Greenhouse 作为项目例外保留。
+- 嵌入页 kit（宿主 + iframe 的主题预设、启动层、桥接）是否做成 registry 条目；现在只有规则。

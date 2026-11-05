@@ -1,6 +1,7 @@
 import * as React from "react"
 import { wcagContrast, parse } from "culori"
 import { cn } from "@/lib/utils"
+import { CATEGORICAL, catClass } from "@/registry/jim/lib/categorical"
 import { Button } from "@/registry/jim/ui/button"
 import { DocPage, Example, Rules, Spec } from "../doc"
 
@@ -120,6 +121,28 @@ export function ColorPage() {
             </span>
             <span className="w-8 text-right text-small font-medium text-success">AA</span>
           </div>
+        </div>
+      </Example>
+
+      <Example
+        title="分类色"
+        note="用户自己选的颜色（标签、项目色、选项）和图表系列。9 种，每种一对：fg 用于文字、圆点和柱子，-subtle 是标签底色；浅色、深色各一套，对比度由守卫检查。存名字（blue），不存色值；它们是数据，不是第二个强调色，不用在按钮、链接和导航上。"
+        canvas="none"
+      >
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-3">
+          {CATEGORICAL.map((name) => {
+            const c = catClass(name)
+            return (
+              <div key={name} className="flex flex-col items-start gap-2 rounded-lg border p-3">
+                <span className={cn("rounded-xs px-1.5 text-small font-medium", c.fill, c.fg)}>标签</span>
+                <span className="flex items-center gap-1.5 text-small">
+                  <span className={cn("size-2 rounded-full", c.dot)} />
+                  {name}
+                </span>
+                <code className="font-mono text-caption text-faint-foreground">--cat-{name}</code>
+              </div>
+            )
+          })}
         </div>
       </Example>
 

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Copy, Pencil, Trash2 } from "lucide-react"
+import { Archive, Copy, FileText, Moon, Pencil, Plus, Settings, Trash2 } from "lucide-react"
 import { BottomSheet, BottomSheetBody, BottomSheetContent, BottomSheetFooter, BottomSheetHeader, BottomSheetTrigger, BottomSheetClose } from "@/registry/jim/ui/bottom-sheet"
 import { Button, IconButton } from "@/registry/jim/ui/button"
 import { ConfirmDialog } from "@/registry/jim/ui/confirm-dialog"
@@ -8,7 +8,10 @@ import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerTrig
 import { Field, FieldGroup } from "@/registry/jim/ui/field"
 import { Input, Textarea } from "@/registry/jim/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popover"
+import { getAppearance, resolveAppearance, setAppearance } from "@/registry/jim/lib/appearance"
 import { Badge } from "@/registry/jim/ui/badge"
+import { CommandGroup, CommandItem, CommandPalette } from "@/registry/jim/ui/command-palette"
+import { Segmented } from "@/registry/jim/ui/segmented"
 import { notify } from "@/registry/jim/ui/toast"
 import { DocPage, Example, Row, Rules, Spec } from "../doc"
 
@@ -40,9 +43,33 @@ export function OverlaysPage() {
         </Row>
       </Example>
 
+      <Example title="Dialog · fixed" note="弹框里要切换标签、筛选列表或分步填写时加 fixed：md、lg 高度固定（560、640，最多 85dvh），只有内容区滚动，框的大小不随内容跳。sm 仍随内容，xl 一直固定。">
+        <Row>
+          <FixedDialog />
+        </Row>
+      </Example>
+
       <Example title="Drawer" note="宽度：sm 400 · md 560（默认）· lg min(60vw, 960)。手机上全宽。标题行放 ≤ 2 个图标操作。列表对象的查看、编辑、新建都在抽屉里原位进行，完整示例见「模式 · 列表与 CRUD」。">
         <Row>
           <DetailDrawer />
+        </Row>
+      </Example>
+
+      <Example
+        title="Drawer · dock（Inspector）"
+        note="工作台的详情栏：不模态、没有遮罩，主区还能点。视口 ≥ 1440 时作为一栏停靠在主区旁边，更窄时浮起，点外面关闭。宽 360–520，拖左边缘调整，按地点记住。里面打开关联对象最多叠 3 层，可以提升到主区。示例见「模式 · 工作台外壳」。"
+        canvas="none"
+      >
+        <Row>
+          <Button asChild>
+            <a href="#/workbench">打开工作台示例</a>
+          </Button>
+        </Row>
+      </Example>
+
+      <Example title="命令面板" note="⌘K（Windows 上 Ctrl+K）在任何页面打开，本站也可以。唯一一个顶部对齐的弹框：640×480，距顶部 120；结果变化时框不变，只有列表滚动。分组有标题，选中后执行并关闭。">
+        <Row>
+          <PaletteDemo />
         </Row>
       </Example>
 
@@ -186,6 +213,89 @@ function SizeDialog({ size }: { size: "sm" | "lg" }) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+function FixedDialog() {
+  const [tab, setTab] = React.useState("members")
+  const members = ["林杰", "陈曦", "王蕾", "张弛", "李想", "周婷", "赵安", "孙越", "钱多", "吴桐", "郑好", "冯远"]
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>项目成员（md fixed）</Button>
+      </DialogTrigger>
+      <DialogContent fixed>
+        <DialogHeader title="项目成员" />
+        <div className="shrink-0 px-5 pb-2">
+          <Segmented
+            size="sm"
+            value={tab}
+            onValueChange={setTab}
+            options={[
+              { value: "members", label: "成员 12" },
+              { value: "invites", label: "邀请 1" },
+            ]}
+          />
+        </div>
+        <DialogBody>
+          {tab === "members" ? (
+            <ul className="divide-y">
+              {members.map((m) => (
+                <li key={m} className="flex h-11 items-center justify-between text-body">
+                  {m}
+                  <span className="text-small text-muted-foreground">成员</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul>
+              <li className="flex h-11 items-center justify-between text-body">
+                chen@example.com
+                <span className="text-small text-muted-foreground">待接受</span>
+              </li>
+            </ul>
+          )}
+        </DialogBody>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button>关闭</Button>
+          </DialogClose>
+          <Button variant="primary">邀请成员</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function PaletteDemo() {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>打开命令面板</Button>
+      <CommandPalette open={open} onOpenChange={setOpen}>
+        <CommandGroup heading="操作">
+          <CommandItem icon={<Plus />} shortcut="N" onSelect={() => notify("新建项目")}>
+            新建项目
+          </CommandItem>
+          <CommandItem icon={<Archive />} onSelect={() => notify.undo("已归档 1 个项目", () => notify("已恢复"))}>
+            归档当前项目
+          </CommandItem>
+          <CommandItem icon={<Moon />} keywords={["dark", "深色"]} onSelect={() => setAppearance(resolveAppearance(getAppearance()) === "dark" ? "light" : "dark")}>
+            切换深色模式
+          </CommandItem>
+        </CommandGroup>
+        <CommandGroup heading="最近">
+          {["官网改版", "会员体系", "种植日历", "设备固件 2.4"].map((p) => (
+            <CommandItem key={p} icon={<FileText />} hint="项目" onSelect={() => notify(`打开「${p}」`)}>
+              {p}
+            </CommandItem>
+          ))}
+          <CommandItem icon={<Settings />} shortcut="⌘," onSelect={() => notify("打开设置")}>
+            设置
+          </CommandItem>
+        </CommandGroup>
+      </CommandPalette>
+    </>
   )
 }
 
