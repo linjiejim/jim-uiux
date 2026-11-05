@@ -164,6 +164,26 @@
       ]
     },
     {
+      "name": "command-palette",
+      "type": "registry:ui",
+      "description": "Command palette: ⌘K / Ctrl+K anywhere, the one top-anchored dialog.",
+      "dependencies": [
+        "cmdk@^1.1.1",
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/command-palette.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "confirm-dialog",
       "type": "registry:ui",
       "description": "Only for irreversible or costly actions. Reversible ones (archive, remove",
@@ -266,6 +286,25 @@
       "files": [
         {
           "path": "src/registry/jim/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "facet-filter",
+      "type": "registry:ui",
+      "description": "Faceted filter: several dimensions at once (type, tag, owner, has-AI…).",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/popover",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/facet-filter.tsx",
           "type": "registry:ui"
         }
       ]
@@ -552,6 +591,26 @@
       ]
     },
     {
+      "name": "upload-queue",
+      "type": "registry:ui",
+      "description": "Upload queue: files go up a few at a time while the user keeps working.",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/spinner",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/upload-queue.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "use-debounced-value",
       "type": "registry:hook",
       "description": "Search inputs: query after the user pauses, not on every keystroke. */",
@@ -591,6 +650,17 @@
       "files": [
         {
           "path": "src/registry/jim/lib/appearance.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "categorical",
+      "type": "registry:lib",
+      "description": "Categorical colours: a colour the user chose (tag, project, select option) or a chart series.",
+      "files": [
+        {
+          "path": "src/registry/jim/lib/categorical.ts",
           "type": "registry:lib"
         }
       ]
@@ -636,7 +706,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.0.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.1.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -646,11 +716,13 @@
         "@jim/button",
         "@jim/checkbox",
         "@jim/combobox",
+        "@jim/command-palette",
         "@jim/confirm-dialog",
         "@jim/data-table",
         "@jim/dialog",
         "@jim/drawer",
         "@jim/dropdown-menu",
+        "@jim/facet-filter",
         "@jim/field",
         "@jim/filter-bar",
         "@jim/input",
@@ -667,10 +739,12 @@
         "@jim/tabs",
         "@jim/toast",
         "@jim/tooltip",
+        "@jim/upload-queue",
         "@jim/use-debounced-value",
         "@jim/use-delayed-flag",
         "@jim/use-guarded-open",
         "@jim/appearance",
+        "@jim/categorical",
         "@jim/strings"
       ]
     }
