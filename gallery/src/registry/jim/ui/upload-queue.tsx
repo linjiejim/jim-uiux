@@ -42,65 +42,80 @@ export type UploadRun = (file: File, report: (fraction: number) => void) => Prom
 const ACTIVE: ReadonlySet<UploadStatus> = new Set(["waiting", "uploading"])
 let nextId = 0
 
-export function useUploadQueue({ run, concurrency = 3 }: { run: UploadRun; concurrency?: number }) {
-  const [items, setItems] = React.useState<UploadItem[]>([])
-  // The ref is the source of truth so the pump sees every change at once; state mirrors it.
-  const itemsRef = React.useRef(items)
-  const running = React.useRef(new Set<string>())
-  const runRef = React.useRef(run)
-  runRef.current = run
+export type UploadQueueConfig = { run: UploadRun; concurrency?: number }
 
-  const commit = React.useCallback((next: UploadItem[]) => {
-    itemsRef.current = next
-    setItems(next)
-  }, [])
-  const patch = React.useCallback(
-    (id: string, fields: Partial<UploadItem>) => commit(itemsRef.current.map((i) => (i.id === id ? { ...i, ...fields } : i))),
-    [commit],
-  )
+/**
+ * The queue without React: holds the items, runs up to `concurrency` at a time and reports every
+ * change through `onChange`. `config` is read on every pump, so a caller may swap `run` or
+ * `concurrency` in place. useUploadQueue wraps it; it is exported for tests and non-React use.
+ */
+export function createUploadQueue(config: UploadQueueConfig, onChange: (items: UploadItem[]) => void) {
+  let items: UploadItem[] = []
+  const running = new Set<string>()
 
-  const pump = React.useCallback(() => {
-    while (running.current.size < concurrency) {
-      const item = itemsRef.current.find((i) => i.status === "waiting" && !running.current.has(i.id))
+  const commit = (next: UploadItem[]) => {
+    items = next
+    onChange(items)
+  }
+  const patch = (id: string, fields: Partial<UploadItem>) => commit(items.map((i) => (i.id === id ? { ...i, ...fields } : i)))
+
+  function pump() {
+    while (running.size < (config.concurrency ?? 3)) {
+      const item = items.find((i) => i.status === "waiting" && !running.has(i.id))
       if (!item) return
-      running.current.add(item.id)
+      running.add(item.id)
       patch(item.id, { status: "uploading", progress: undefined })
-      runRef
-        .current(item.file, (fraction) => patch(item.id, { progress: Math.max(0, Math.min(1, fraction)) }))
-        .then((result) => patch(item.id, { status: result === "exists" ? "exists" : "added", progress: 1 }))
-        .catch((e: unknown) =>
-          patch(item.id, {
-            status: "failed",
-            error: e instanceof Error ? e.message : undefined,
-            retryable: !(e instanceof UploadRejected),
-          }),
+      const report = (fraction: number) => patch(item.id, { progress: Math.max(0, Math.min(1, fraction)) })
+      // Start the runner inside a continuation: a runner that throws before returning a promise
+      // (UploadRejected on a size check) still ends in the same failure path and frees its slot.
+      Promise.resolve()
+        .then(() => config.run(item.file, report))
+        .then(
+          (result) => patch(item.id, { status: result === "exists" ? "exists" : "added", progress: 1 }),
+          (e: unknown) =>
+            patch(item.id, {
+              status: "failed",
+              error: e instanceof Error ? e.message : undefined,
+              retryable: !(e instanceof UploadRejected),
+            }),
         )
         .finally(() => {
-          running.current.delete(item.id)
+          running.delete(item.id)
           pump()
         })
     }
-  }, [concurrency, patch])
+  }
 
-  const add = React.useCallback(
-    (files: Iterable<File>) => {
+  return {
+    get items() {
+      return items
+    },
+    add(files: Iterable<File>) {
       const added = [...files].map((file) => ({ id: `u${++nextId}`, file, status: "waiting" as const }))
       if (!added.length) return
-      commit([...itemsRef.current, ...added])
+      commit([...items, ...added])
       pump()
     },
-    [commit, pump],
-  )
-
-  const retry = React.useCallback(
-    (id: string) => {
+    retry(id: string) {
       patch(id, { status: "waiting", progress: undefined, error: undefined })
       pump()
     },
-    [patch, pump],
-  )
+    clearFinished() {
+      commit(items.filter((i) => ACTIVE.has(i.status)))
+    },
+  }
+}
 
-  const clearFinished = React.useCallback(() => commit(itemsRef.current.filter((i) => ACTIVE.has(i.status))), [commit])
+export function useUploadQueue({ run, concurrency = 3 }: UploadQueueConfig) {
+  const [items, setItems] = React.useState<UploadItem[]>([])
+  const config = React.useRef<UploadQueueConfig>({ run, concurrency })
+  config.current.run = run
+  config.current.concurrency = concurrency
+  const [queue] = React.useState(() => createUploadQueue(config.current, setItems))
+
+  const add = React.useCallback((files: Iterable<File>) => queue.add(files), [queue])
+  const retry = React.useCallback((id: string) => queue.retry(id), [queue])
+  const clearFinished = React.useCallback(() => queue.clearFinished(), [queue])
 
   const active = items.filter((i) => ACTIVE.has(i.status)).length
 

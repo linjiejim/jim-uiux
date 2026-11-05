@@ -13,7 +13,7 @@ import { s } from "@/registry/jim/lib/strings"
  * only the list scrolls. Phones: full width under the safe area, shorter so
  * the keyboard fits. Groups are headed (页面、操作、最近); an item is a verb or
  * a place, with an optional icon, hint and shortcut. Choosing runs the item and
- * closes the palette; Esc closes it; focus returns where it was.
+ * closes the palette; Esc closes it; focus returns to whatever had it before ⌘K.
  * Search and jump only — no forms inside; an item that needs input opens its
  * own dialog.
  */
@@ -35,6 +35,7 @@ export function CommandPalette({
   label?: string
   children: React.ReactNode
 }) {
+  const returnTo = React.useRef<HTMLElement | null>(null)
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
@@ -44,6 +45,20 @@ export function CommandPalette({
         />
         <DialogPrimitive.Content
           aria-describedby={undefined}
+          // ⌘K has no trigger element, so remember what had focus and give it back on close —
+          // unless the chosen command already moved focus somewhere else (a dialog it opened).
+          onOpenAutoFocus={() => {
+            const el = document.activeElement
+            returnTo.current = el instanceof HTMLElement && el !== document.body ? el : null
+          }}
+          onCloseAutoFocus={(e) => {
+            const target = returnTo.current
+            returnTo.current = null
+            e.preventDefault()
+            const now = document.activeElement
+            const unclaimed = !now || now === document.body || (e.currentTarget as HTMLElement).contains(now)
+            if (unclaimed && target?.isConnected) target.focus()
+          }}
           className={cn(
             "fixed z-50 flex flex-col overflow-hidden rounded-xl bg-popover shadow-overlay outline-none",
             "data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out",
@@ -57,7 +72,6 @@ export function CommandPalette({
               <div className="flex shrink-0 items-center gap-2 border-b px-4">
                 <Search className="size-4 text-faint-foreground" />
                 <Command.Input
-                  autoFocus
                   placeholder={placeholder}
                   className="h-12 w-full bg-transparent text-reading outline-none placeholder:text-faint-foreground"
                 />

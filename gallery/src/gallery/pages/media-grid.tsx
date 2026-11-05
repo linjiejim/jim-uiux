@@ -102,16 +102,20 @@ export function MediaGridPattern() {
   const filtered = !!query || facetCount(filters) > 0
   const showSkeleton = useDelayedFlag(state === "loading")
 
+  // Every new question starts a new generation; a response from an older one (first page or
+  // load-more) is dropped, success or failure, so stale rows never land in a newer list.
+  const generation = React.useRef(0)
+
   // first page whenever the question changes
   React.useEffect(() => {
-    let live = true
+    const gen = ++generation.current
     setState("loading")
     setItems([])
     fetchAssets(query, filters, 0)
-      .then((r) => live && (setItems(r.rows), setTotal(r.total), setState("idle")))
-      .catch(() => live && setState("error"))
+      .then((r) => gen === generation.current && (setItems(r.rows), setTotal(r.total), setState("idle")))
+      .catch(() => gen === generation.current && setState("error"))
     return () => {
-      live = false
+      generation.current++
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key])
@@ -125,10 +129,11 @@ export function MediaGridPattern() {
     const io = new IntersectionObserver(
       ([e]) => {
         if (!e.isIntersecting) return
+        const gen = generation.current
         setState("more")
         fetchAssets(query, filters, items.length)
-          .then((r) => (setItems((x) => [...x, ...r.rows]), setState("idle")))
-          .catch(() => setState("error"))
+          .then((r) => gen === generation.current && (setItems((x) => [...x, ...r.rows]), setState("idle")))
+          .catch(() => gen === generation.current && setState("error"))
       },
       { rootMargin: "400px" },
     )

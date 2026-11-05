@@ -115,7 +115,7 @@
 - `facets`：`{ key, label, kind: "single" | "multi", options }` 或 `{ key, label, kind: "boolean", yes?, no? }`。
 - 值是 `Record<key, string[]>`，布尔分面存 `["1"]` / `["0"]`；`facetCount(value)` 数已生效的分面。
 - `max`（默认 4）：超过时前 `max − 1` 个留在栏上，其余进「筛选」Popover。
-- `useFacetParams(facets, { mode: "search" | "hash" })` 把值同步到 URL。
+- `useFacetParams(facets, { mode: "search" | "hash" })` 把值同步到 URL；服务端渲染时视为未设置，客户端再读 URL（Next 可用）。`facetsFromParams` 是纯函数版本。
 
 ## UploadQueue
 
@@ -124,6 +124,7 @@
 - `useUploadQueue({ run, concurrency = 3 })` 返回 `{ items, active, add, retry, clearFinished }`。
 - `run(file, report)`：调用 `report(0–1)` 报告真实进度；返回 `"added"` 或 `"exists"`；失败时抛出带人话的 `Error`，不可能成功的文件抛 `UploadRejected`（不显示「重试」）。
 - `<UploadQueuePanel queue={queue} />` 渲染右下角的面板，自己处理折叠、自动收起和离开页面前的确认。
+- `run` 同步抛错也一样记为失败并让出名额。不用 React 时（或写测试）用 `createUploadQueue(config, onChange)`。
 
 ## ConfirmDialog / useConfirm
 

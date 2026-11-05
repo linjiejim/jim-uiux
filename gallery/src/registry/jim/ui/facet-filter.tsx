@@ -200,38 +200,63 @@ function OptionList({
   )
 }
 
+/** Facet values from URL parameters (pure; no window). Unknown keys are ignored; single facets keep the first value. */
+export function facetsFromParams(facets: Facet[], params: URLSearchParams): FacetValue {
+  const out: FacetValue = {}
+  for (const f of facets) {
+    const all = params.getAll(f.key).filter(Boolean)
+    if (all.length) out[f.key] = f.kind === "multi" ? all : all.slice(0, 1)
+  }
+  return out
+}
+
+const EMPTY: FacetValue = Object.freeze({}) as FacetValue
+// replaceState fires no event, so writes notify subscribers here.
+const urlListeners = new Set<() => void>()
+
+function subscribeUrl(cb: () => void) {
+  urlListeners.add(cb)
+  window.addEventListener("popstate", cb)
+  window.addEventListener("hashchange", cb)
+  return () => {
+    urlListeners.delete(cb)
+    window.removeEventListener("popstate", cb)
+    window.removeEventListener("hashchange", cb)
+  }
+}
+
+function queryOf(mode: "search" | "hash") {
+  return mode === "hash" ? (window.location.hash.split("?")[1] ?? "") : window.location.search.replace(/^\?/, "")
+}
+
 /**
  * Facet state in the URL, one parameter per facet key (multi repeats it: ?tag=a&tag=b).
  * `mode: "hash"` for hash routers (#/page?tag=a). Writes with replaceState and keeps other
- * parameters; back / forward and shared links restore the view.
+ * parameters; back / forward and shared links restore the view. SSR-safe: the server render
+ * (and hydration) sees no facets set; the client reads the URL right after.
  */
 export function useFacetParams(facets: Facet[], { mode = "search" }: { mode?: "search" | "hash" } = {}) {
-  const keys = facets.map((f) => f.key).join()
-  const read = React.useCallback((): FacetValue => {
-    const params = currentParams(mode)
-    const out: FacetValue = {}
-    for (const f of facets) {
-      const all = params.getAll(f.key).filter(Boolean)
-      if (all.length) out[f.key] = f.kind === "multi" ? all : all.slice(0, 1)
+  const keys = facets.map((f) => `${f.key}:${f.kind}`).join()
+  const facetsRef = React.useRef(facets)
+  facetsRef.current = facets
+  const cache = React.useRef<{ raw: string; value: FacetValue } | null>(null)
+
+  const getSnapshot = React.useCallback(() => {
+    const query = queryOf(mode)
+    const raw = `${keys}|${query}`
+    if (cache.current?.raw !== raw) {
+      const value = facetsFromParams(facetsRef.current, new URLSearchParams(query))
+      cache.current = { raw, value: Object.keys(value).length ? value : EMPTY }
     }
-    return out
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return cache.current.value
   }, [keys, mode])
 
-  const [value, setValue] = React.useState<FacetValue>(read)
-
-  React.useEffect(() => {
-    const on = () => setValue(read())
-    const event = mode === "hash" ? "hashchange" : "popstate"
-    window.addEventListener(event, on)
-    return () => window.removeEventListener(event, on)
-  }, [read, mode])
+  const value = React.useSyncExternalStore(subscribeUrl, getSnapshot, () => EMPTY)
 
   const update = React.useCallback(
     (next: FacetValue) => {
-      setValue(next)
-      const params = currentParams(mode)
-      for (const f of facets) {
+      const params = new URLSearchParams(queryOf(mode))
+      for (const f of facetsRef.current) {
         params.delete(f.key)
         for (const v of next[f.key] ?? []) params.append(f.key, v)
       }
@@ -242,14 +267,10 @@ export function useFacetParams(facets: Facet[], { mode = "search" }: { mode?: "s
       } else {
         history.replaceState(history.state, "", `${window.location.pathname}${qs ? `?${qs}` : ""}${window.location.hash}`)
       }
+      urlListeners.forEach((l) => l())
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [keys, mode],
+    [mode],
   )
 
   return [value, update] as const
-}
-
-function currentParams(mode: "search" | "hash") {
-  return new URLSearchParams(mode === "hash" ? (window.location.hash.split("?")[1] ?? "") : window.location.search)
 }
