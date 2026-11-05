@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "segmented",
+  "description": "2–4 mutually exclusive options that change how the same content is shown",
+  "dependencies": [
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/segmented.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { ToggleGroup } from \"radix-ui\"\nimport { cn } from \"@/lib/utils\"\n\n/**\n * 2–4 mutually exclusive options that change how the same content is shown\n * (列表 / 看板, 日 / 周 / 月). Always has a value; can't be cleared.\n */\nexport function Segmented<T extends string>({\n  value,\n  onValueChange,\n  options,\n  size = \"md\",\n  className,\n  \"aria-label\": ariaLabel,\n}: {\n  value: T\n  onValueChange: (v: T) => void\n  options: { value: T; label: React.ReactNode; icon?: React.ReactNode }[]\n  size?: \"sm\" | \"md\"\n  className?: string\n  \"aria-label\"?: string\n}) {\n  return (\n    <ToggleGroup.Root\n      type=\"single\"\n      value={value}\n      onValueChange={(v) => v && onValueChange(v as T)}\n      aria-label={ariaLabel}\n      className={cn(\"inline-flex items-center gap-0.5 rounded-md bg-muted p-0.5\", className)}\n    >\n      {options.map((o) => (\n        <ToggleGroup.Item\n          key={o.value}\n          value={o.value}\n          className={cn(\n            \"inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-2.5 font-medium text-muted-foreground\",\n            \"transition-colors duration-(--duration-fast) hover:text-foreground\",\n            \"data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:ring-1 data-[state=on]:ring-border\",\n            \"[&_svg]:size-4\",\n            size === \"sm\" ? \"h-[calc(var(--control-sm)-4px)] text-small\" : \"h-[calc(var(--control-md)-4px)] text-body\",\n          )}\n        >\n          {o.icon}\n          {o.label}\n        </ToggleGroup.Item>\n      ))}\n    </ToggleGroup.Root>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

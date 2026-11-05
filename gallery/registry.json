@@ -1,0 +1,678 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "jim",
+  "homepage": "https://github.com/linjiejim/jim-uiux",
+  "items": [
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "description": "cn() with tailwind-merge taught the semantic type scale",
+      "dependencies": [
+        "clsx@^2.1.1",
+        "tailwind-merge@^3.7.0"
+      ],
+      "files": [
+        {
+          "path": "src/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "theme",
+      "type": "registry:file",
+      "description": "Tokens: values, semantic names, Tailwind mapping, motion, base styles",
+      "dependencies": [
+        "@fontsource-variable/inter@^5.3.0"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/theme/jim-theme.css",
+          "type": "registry:file",
+          "target": "src/styles/jim-theme.css"
+        }
+      ]
+    },
+    {
+      "name": "preset-warm",
+      "type": "registry:file",
+      "description": "Preset: Notion-like warm greys",
+      "files": [
+        {
+          "path": "src/registry/jim/theme/presets/warm.css",
+          "type": "registry:file",
+          "target": "src/styles/presets/warm.css"
+        }
+      ]
+    },
+    {
+      "name": "app-shell",
+      "type": "registry:ui",
+      "description": "App shell: sidebar 240 (collapsible to 56, remembered, never changed by",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/strings",
+        "@jim/tooltip",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/app-shell.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "description": "Status and short labels. Colour carries meaning, text always says it too.",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "bottom-sheet",
+      "type": "registry:ui",
+      "description": "Bottom sheet for touch layouts (mobile web, PWA). Native apps use the",
+      "dependencies": [
+        "radix-ui@^1.8.1",
+        "vaul@^1.1.2"
+      ],
+      "registryDependencies": [
+        "@jim/confirm-dialog",
+        "@jim/use-guarded-open",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/bottom-sheet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "description": "One primary per region. Labels are verb + object (\"新建项目\"), never",
+      "dependencies": [
+        "class-variance-authority@^0.7.1",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/spinner",
+        "@jim/tooltip",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "description": "16px box, 44px hit area on touch. Multi-choice and row selection. */",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "description": "Searchable single select. Use when there are more than ~8 options. */",
+      "dependencies": [
+        "cmdk@^1.1.1",
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/field",
+        "@jim/input",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/combobox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "confirm-dialog",
+      "type": "registry:ui",
+      "description": "Only for irreversible or costly actions. Reversible ones (archive, remove",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/confirm-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "description": "Numbers and amounts: \"right\" (tabular figures are applied). */",
+      "dependencies": [
+        "@tanstack/react-table@^8.21.3",
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/checkbox",
+        "@jim/select",
+        "@jim/skeleton",
+        "@jim/state",
+        "@jim/strings",
+        "@jim/use-delayed-flag",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/data-table.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "description": "Dialog = a short task that needs focus and isn't a list object: rename a",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/confirm-dialog",
+        "@jim/strings",
+        "@jim/use-guarded-open",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "description": "Side drawer from the right: view, edit (in place, see DetailList) and",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/confirm-dialog",
+        "@jim/field",
+        "@jim/strings",
+        "@jim/use-guarded-open",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/drawer.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "description": "Row actions, \"more\" menus, account menus. Order: frequent first,",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "description": "Inputs inside a Field pick up id, aria-describedby, aria-invalid, required. */",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/strings",
+        "@jim/tooltip",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/field.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "filter-bar",
+      "type": "registry:ui",
+      "description": "List filtering:",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/input",
+        "@jim/popover",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/filter-bar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "registryDependencies": [
+        "@jim/field",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "page",
+      "type": "registry:ui",
+      "description": "Page widths are fixed, never invented per page:",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/strings",
+        "@jim/tooltip",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/page.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "description": "Small, non-blocking panel anchored to its trigger: filters, pickers, quick edits. */",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/popover.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "description": "2–5 options in a form when seeing all of them at once helps the choice",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/field",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/radio-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "segmented",
+      "type": "registry:ui",
+      "description": "2–4 mutually exclusive options that change how the same content is shown",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/segmented.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "description": "Up to ~8 options. More than that, or options the user would rather type,",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/field",
+        "@jim/input",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "settings",
+      "type": "registry:ui",
+      "description": "Settings pages:",
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/settings.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "description": "Static placeholder shaped like the content that is coming.",
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/skeleton.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "description": "Short waits only (a button, a field). Content loading uses Skeleton. */",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/spinner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "state",
+      "type": "registry:ui",
+      "description": "The four non-content states. Each looks different so a failure never",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "description": "An on/off setting that takes effect immediately. If the change only applies",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "description": "Tabs switch between sections of one page (概览 / 成员 / 设置).",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "description": "Toasts confirm something that happened away from where the user is",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "sonner@^2.0.8"
+      ],
+      "registryDependencies": [
+        "@jim/strings"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/toast.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "description": "Put one at the app root; Tooltip below also works without it. */",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "use-debounced-value",
+      "type": "registry:hook",
+      "description": "Search inputs: query after the user pauses, not on every keystroke. */",
+      "files": [
+        {
+          "path": "src/registry/jim/hooks/use-debounced-value.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-delayed-flag",
+      "type": "registry:hook",
+      "description": "Loading indicators that don't flicker: show only if `on` lasts longer than",
+      "files": [
+        {
+          "path": "src/registry/jim/hooks/use-delayed-flag.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-guarded-open",
+      "type": "registry:hook",
+      "description": "Open state for overlays that may hold unsaved input.",
+      "files": [
+        {
+          "path": "src/registry/jim/hooks/use-guarded-open.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "appearance",
+      "type": "registry:lib",
+      "description": "Appearance preference: system | light | dark.",
+      "files": [
+        {
+          "path": "src/registry/jim/lib/appearance.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "strings",
+      "type": "registry:lib",
+      "description": "Default UI copy for the kit. Projects with i18n call configureStrings()",
+      "files": [
+        {
+          "path": "src/registry/jim/lib/strings.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "guards",
+      "type": "registry:file",
+      "description": "Vitest guards: no raw colours, type floor, no native dialogs, contrast matrix",
+      "devDependencies": [
+        "vitest@^5.0.5",
+        "culori@^4.0.2",
+        "@types/culori@^4.0.1"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/guards/contrast.test.ts",
+          "type": "registry:file",
+          "target": "tests/design/contrast.test.ts"
+        },
+        {
+          "path": "src/registry/jim/guards/design-guards.test.ts",
+          "type": "registry:file",
+          "target": "tests/design/design-guards.test.ts"
+        },
+        {
+          "path": "src/registry/jim/guards/guard-lib.ts",
+          "type": "registry:file",
+          "target": "tests/design/guard-lib.ts"
+        }
+      ]
+    },
+    {
+      "name": "all",
+      "type": "registry:item",
+      "description": "jim-uiux 1.0.0: theme, every component, hooks and libs",
+      "registryDependencies": [
+        "@jim/utils",
+        "@jim/theme",
+        "@jim/app-shell",
+        "@jim/badge",
+        "@jim/bottom-sheet",
+        "@jim/button",
+        "@jim/checkbox",
+        "@jim/combobox",
+        "@jim/confirm-dialog",
+        "@jim/data-table",
+        "@jim/dialog",
+        "@jim/drawer",
+        "@jim/dropdown-menu",
+        "@jim/field",
+        "@jim/filter-bar",
+        "@jim/input",
+        "@jim/page",
+        "@jim/popover",
+        "@jim/radio-group",
+        "@jim/segmented",
+        "@jim/select",
+        "@jim/settings",
+        "@jim/skeleton",
+        "@jim/spinner",
+        "@jim/state",
+        "@jim/switch",
+        "@jim/tabs",
+        "@jim/toast",
+        "@jim/tooltip",
+        "@jim/use-debounced-value",
+        "@jim/use-delayed-flag",
+        "@jim/use-guarded-open",
+        "@jim/appearance",
+        "@jim/strings"
+      ]
+    }
+  ]
+}

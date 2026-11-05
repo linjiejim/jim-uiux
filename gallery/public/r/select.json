@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "select",
+  "description": "Up to ~8 options. More than that, or options the user would rather type,",
+  "dependencies": [
+    "lucide-react@^1.66.0",
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/field",
+    "@jim/input",
+    "@jim/strings",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/select.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Select as SelectPrimitive } from \"radix-ui\"\nimport { Check, ChevronDown } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\nimport { s } from \"@/registry/jim/lib/strings\"\nimport { useFieldControl } from \"@/registry/jim/ui/field\"\nimport { controlClass } from \"@/registry/jim/ui/input\"\n\nexport type Option = { value: string; label: React.ReactNode; disabled?: boolean }\n\n/**\n * Up to ~8 options. More than that, or options the user would rather type,\n * use Combobox. 2–4 options that change a view use Segmented instead.\n */\nexport function Select({\n  options,\n  value,\n  onValueChange,\n  placeholder = s().selectPlaceholder,\n  disabled,\n  className,\n  id,\n  \"aria-label\": ariaLabel,\n  \"aria-labelledby\": ariaLabelledBy,\n  ...props\n}: {\n  options: Option[]\n  value?: string\n  onValueChange?: (v: string) => void\n  placeholder?: string\n  disabled?: boolean\n  className?: string\n  id?: string\n  \"aria-label\"?: string\n  \"aria-labelledby\"?: string\n} & Omit<React.ComponentProps<typeof SelectPrimitive.Root>, \"children\">) {\n  const field = useFieldControl()\n  return (\n    <SelectPrimitive.Root value={value} onValueChange={onValueChange} disabled={disabled} {...props}>\n      <SelectPrimitive.Trigger\n        {...field}\n        id={id ?? field.id}\n        aria-label={ariaLabel}\n        aria-labelledby={ariaLabelledBy}\n        className={cn(\n          controlClass,\n          \"flex h-(--control-md) items-center justify-between gap-2 px-2.5 text-left\",\n          \"data-placeholder:text-faint-foreground [&>span]:truncate\",\n          className,\n        )}\n      >\n        <SelectPrimitive.Value placeholder={placeholder} />\n        <SelectPrimitive.Icon asChild>\n          <ChevronDown className=\"size-4 text-faint-foreground\" />\n        </SelectPrimitive.Icon>\n      </SelectPrimitive.Trigger>\n      <SelectContent>\n        {options.map((o) => (\n          <SelectItem key={o.value} value={o.value} disabled={o.disabled}>\n            {o.label}\n          </SelectItem>\n        ))}\n      </SelectContent>\n    </SelectPrimitive.Root>\n  )\n}\n\nexport function SelectContent({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Content>) {\n  return (\n    <SelectPrimitive.Portal>\n      <SelectPrimitive.Content\n        position=\"popper\"\n        sideOffset={4}\n        className={cn(\n          \"z-50 max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg bg-popover shadow-popover\",\n          \"data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out\",\n          className,\n        )}\n        {...props}\n      >\n        <SelectPrimitive.Viewport className=\"max-h-80 p-1\">{children}</SelectPrimitive.Viewport>\n      </SelectPrimitive.Content>\n    </SelectPrimitive.Portal>\n  )\n}\n\nexport function SelectItem({ className, children, ...props }: React.ComponentProps<typeof SelectPrimitive.Item>) {\n  return (\n    <SelectPrimitive.Item\n      className={cn(\n        \"relative flex min-h-(--control-md) cursor-default select-none items-center gap-2 rounded-sm py-1 pl-2 pr-8 text-body outline-none\",\n        \"data-highlighted:bg-accent data-disabled:text-faint-foreground\",\n        className,\n      )}\n      {...props}\n    >\n      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>\n      <SelectPrimitive.ItemIndicator className=\"absolute right-2 inline-flex\">\n        <Check className=\"size-4\" />\n      </SelectPrimitive.ItemIndicator>\n    </SelectPrimitive.Item>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

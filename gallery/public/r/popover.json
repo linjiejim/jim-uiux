@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "popover",
+  "description": "Small, non-blocking panel anchored to its trigger: filters, pickers, quick edits. */",
+  "dependencies": [
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/popover.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Popover as PopoverPrimitive } from \"radix-ui\"\nimport { cn } from \"@/lib/utils\"\n\nexport const Popover = PopoverPrimitive.Root\nexport const PopoverTrigger = PopoverPrimitive.Trigger\nexport const PopoverClose = PopoverPrimitive.Close\n\n/** Small, non-blocking panel anchored to its trigger: filters, pickers, quick edits. */\nexport function PopoverContent({ className, align = \"start\", sideOffset = 4, ...props }: React.ComponentProps<typeof PopoverPrimitive.Content>) {\n  return (\n    <PopoverPrimitive.Portal>\n      <PopoverPrimitive.Content\n        align={align}\n        sideOffset={sideOffset}\n        collisionPadding={8}\n        className={cn(\n          \"z-50 w-72 rounded-lg bg-popover p-3 text-body shadow-popover outline-none\",\n          \"data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out\",\n          className,\n        )}\n        {...props}\n      />\n    </PopoverPrimitive.Portal>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

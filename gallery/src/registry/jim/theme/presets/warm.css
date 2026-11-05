@@ -1,0 +1,29 @@
+/*
+ * Preset: Warm — Notion-like warm greys, ink accent. <html data-theme="warm">
+ */
+[data-theme="warm"] {
+  --sunken: #f7f7f5;
+  --muted: #efeeeb;
+  --foreground: #37352f;
+  --muted-foreground: #5f5e5b;
+  --faint-foreground: #6f6e69;
+  --border: #e9e9e7;
+  --input: #d3d1cb;
+  --inverse: #2f2e2b;
+  --primary: #37352f;
+}
+
+.dark[data-theme="warm"],
+[data-theme="warm"] .dark {
+  --background: #191919;
+  --sunken: #202020;
+  --muted: #2c2c2b;
+  --popover: #252525;
+  --foreground: #e3e2e0;
+  --muted-foreground: #a5a4a1;
+  --faint-foreground: #8e8d8a;
+  --border: #2f2f2f;
+  --input: #3f3f3e;
+  --inverse: #e3e2e0;
+  --primary: #e3e2e0;
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-guarded-open",
+  "description": "Open state for overlays that may hold unsaved input.",
+  "files": [
+    {
+      "path": "src/registry/jim/hooks/use-guarded-open.ts",
+      "content": "\"use client\"\n\nimport { useCallback, useState } from \"react\"\n\n/**\n * Open state for overlays that may hold unsaved input.\n * When `dirty` and the user tries to close (Esc, scrim, ✕, Cancel), ask\n * first instead of closing. Closing from code (after a save) is direct.\n */\nexport function useGuardedOpen({\n  open: openProp,\n  defaultOpen = false,\n  onOpenChange,\n  dirty = false,\n}: {\n  open?: boolean\n  defaultOpen?: boolean\n  onOpenChange?: (open: boolean) => void\n  dirty?: boolean\n}) {\n  const [inner, setInner] = useState(defaultOpen)\n  const controlled = openProp !== undefined\n  const open = controlled ? openProp : inner\n  const [asking, setAsking] = useState(false)\n\n  const commit = useCallback(\n    (next: boolean) => {\n      if (!controlled) setInner(next)\n      onOpenChange?.(next)\n    },\n    [controlled, onOpenChange],\n  )\n\n  const request = useCallback(\n    (next: boolean) => {\n      if (!next && dirty) {\n        setAsking(true)\n        return\n      }\n      commit(next)\n    },\n    [commit, dirty],\n  )\n\n  return {\n    open,\n    onOpenChange: request,\n    discard: {\n      open: asking,\n      keep: () => setAsking(false),\n      discard: () => {\n        setAsking(false)\n        commit(false)\n      },\n    },\n  }\n}\n",
+      "type": "registry:hook"
+    }
+  ],
+  "type": "registry:hook"
+}

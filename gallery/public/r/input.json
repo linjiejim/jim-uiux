@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "input",
+  "registryDependencies": [
+    "@jim/field",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/input.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\nimport { useFieldControl } from \"@/registry/jim/ui/field\"\n\nexport const controlClass = cn(\n  \"w-full min-w-0 rounded-md border border-input bg-background text-body text-foreground\",\n  \"placeholder:text-faint-foreground\",\n  \"transition-[border-color,box-shadow] duration-(--duration-fast)\",\n  \"outline-none focus-visible:outline-none focus:border-ring focus:ring-3 focus:ring-ring/15\",\n  \"aria-invalid:border-destructive aria-invalid:focus:ring-destructive/15\",\n  \"disabled:cursor-not-allowed disabled:bg-sunken disabled:text-faint-foreground\",\n)\n\n// :read-only also matches buttons, so only text controls get the read-only look.\nconst readOnlyClass = \"read-only:bg-sunken read-only:focus:ring-0\"\n\nexport function Input({ className, type = \"text\", ...props }: React.ComponentProps<\"input\">) {\n  const field = useFieldControl()\n  return (\n    <input\n      data-slot=\"input\"\n      type={type}\n      className={cn(controlClass, readOnlyClass, \"h-(--control-md) px-2.5\", className)}\n      {...field}\n      {...props}\n    />\n  )\n}\n\nexport function Textarea({ className, rows = 3, ...props }: React.ComponentProps<\"textarea\">) {\n  const field = useFieldControl()\n  return (\n    <textarea\n      data-slot=\"textarea\"\n      rows={rows}\n      className={cn(controlClass, readOnlyClass, \"field-sizing-content min-h-20 resize-y px-2.5 py-1.5\", className)}\n      {...field}\n      {...props}\n    />\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

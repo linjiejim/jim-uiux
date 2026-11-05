@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "field",
+  "description": "Inputs inside a Field pick up id, aria-describedby, aria-invalid, required. */",
+  "dependencies": [
+    "lucide-react@^1.66.0"
+  ],
+  "registryDependencies": [
+    "@jim/strings",
+    "@jim/tooltip",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/field.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { CircleAlert, Info } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\nimport { s } from \"@/registry/jim/lib/strings\"\nimport { Tooltip } from \"@/registry/jim/ui/tooltip\"\n\ntype FieldCtx = { id: string; describedBy?: string; invalid: boolean; required: boolean }\nconst FieldContext = React.createContext<FieldCtx | null>(null)\n\n/** Inputs inside a Field pick up id, aria-describedby, aria-invalid, required. */\nexport function useFieldControl() {\n  const ctx = React.useContext(FieldContext)\n  if (!ctx) return {}\n  return {\n    id: ctx.id,\n    \"aria-describedby\": ctx.describedBy,\n    \"aria-invalid\": ctx.invalid || undefined,\n    \"aria-required\": ctx.required || undefined,\n  }\n}\n\n/** Wire a control the same way Field does, for layouts that place their own label (DetailList). */\nexport function FieldControlProvider({\n  id,\n  describedBy,\n  invalid = false,\n  required = false,\n  children,\n}: {\n  id: string\n  describedBy?: string\n  invalid?: boolean\n  required?: boolean\n  children: React.ReactNode\n}) {\n  return <FieldContext.Provider value={{ id, describedBy, invalid, required }}>{children}</FieldContext.Provider>\n}\n\n/**\n * Label on top, control, then one line below: the error if there is one,\n * otherwise a short hint. Longer explanations go behind the ⓘ (`info`),\n * not as permanent text.\n */\nexport function Field({\n  label,\n  required,\n  hint,\n  info,\n  error,\n  id: idProp,\n  className,\n  children,\n}: {\n  label: React.ReactNode\n  required?: boolean\n  hint?: React.ReactNode\n  info?: React.ReactNode\n  error?: React.ReactNode\n  id?: string\n  className?: string\n  children: React.ReactNode\n}) {\n  const auto = React.useId()\n  const id = idProp ?? auto\n  const noteId = `${id}-note`\n  const note = error ?? hint\n  return (\n    <FieldContext.Provider value={{ id, describedBy: note ? noteId : undefined, invalid: !!error, required: !!required }}>\n      <div data-slot=\"field\" className={cn(\"flex flex-col gap-1.5\", className)}>\n        <div className=\"flex items-center gap-1\">\n          <label id={`${id}-label`} htmlFor={id} className=\"text-small font-medium text-foreground\">\n            {label}\n            {required && (\n              <span className=\"ml-0.5 text-destructive\" aria-hidden>\n                *\n              </span>\n            )}\n          </label>\n          {info && (\n            <Tooltip content={info}>\n              <button\n                type=\"button\"\n                aria-label={s().moreInfo}\n                className=\"inline-grid size-4 place-items-center rounded-full text-faint-foreground hover:text-foreground [&_svg]:size-3.5\"\n              >\n                <Info />\n              </button>\n            </Tooltip>\n          )}\n        </div>\n        {children}\n        {note && (\n          <p\n            id={noteId}\n            aria-live={error ? \"polite\" : undefined}\n            className={cn(\n              \"flex items-start gap-1 text-caption\",\n              error ? \"text-destructive\" : \"text-faint-foreground\",\n            )}\n          >\n            {error && <CircleAlert className=\"mt-0.5 size-3.5\" />}\n            <span>{note}</span>\n          </p>\n        )}\n      </div>\n    </FieldContext.Provider>\n  )\n}\n\n/** Vertical stack of fields; 16px between fields, 32px between groups. */\nexport function FieldGroup({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div className={cn(\"flex flex-col gap-4\", className)} {...props} />\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

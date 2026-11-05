@@ -1,0 +1,13 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "strings",
+  "description": "Default UI copy for the kit. Projects with i18n call configureStrings()",
+  "files": [
+    {
+      "path": "src/registry/jim/lib/strings.ts",
+      "content": "/**\n * Default UI copy for the kit. Projects with i18n call configureStrings()\n * once at boot with their translations; components read through s().\n * Keep copy short: verbs on buttons, no \"确定\" / \"提交\".\n */\nconst zh = {\n  close: \"关闭\",\n  cancel: \"取消\",\n  retry: \"重试\",\n  undo: \"撤销\",\n  required: \"必填\",\n  moreInfo: \"说明\",\n  discardTitle: \"放弃未保存的修改？\",\n  discardBody: \"关闭后，刚才的修改不会保留。\",\n  discardConfirm: \"放弃修改\",\n  discardKeep: \"继续编辑\",\n  selectPlaceholder: \"请选择\",\n  searchPlaceholder: \"搜索\",\n  noOptions: \"没有匹配的选项\",\n  emptyTitle: \"还没有内容\",\n  noMatchTitle: \"没有符合条件的结果\",\n  noMatchAction: \"清除筛选\",\n  noPermissionTitle: \"你没有查看权限\",\n  noPermissionBody: \"需要权限时，请联系管理员。\",\n  errorTitle: \"加载失败\",\n  errorBody: \"请检查网络后重试。\",\n  selectedCount: (n: number) => `已选 ${n} 项`,\n  clearSelection: \"取消选择\",\n  totalCount: (n: number) => `共 ${n} 条`,\n  pageOf: (p: number, total: number) => `${p} / ${total}`,\n  perPage: (n: number) => `${n} 条/页`,\n  prevPage: \"上一页\",\n  nextPage: \"下一页\",\n  rowActions: \"更多操作\",\n  all: \"全部\",\n  yes: \"是\",\n  no: \"否\",\n  clear: \"清除\",\n  unsaved: \"有未保存的修改\",\n  save: \"保存\",\n  discard: \"放弃\",\n  saved: \"已保存\",\n  openMenu: \"打开菜单\",\n  collapseSidebar: \"收起侧边栏\",\n  expandSidebar: \"展开侧边栏\",\n}\n\nexport type Strings = typeof zh\nlet current: Strings = zh\n\nexport function configureStrings(partial: Partial<Strings>) {\n  current = { ...current, ...partial }\n}\n\nexport function s(): Strings {\n  return current\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:lib"
+}

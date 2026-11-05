@@ -1,0 +1,13 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "appearance",
+  "description": "Appearance preference: system | light | dark.",
+  "files": [
+    {
+      "path": "src/registry/jim/lib/appearance.ts",
+      "content": "\"use client\"\n\n/**\n * Appearance preference: system | light | dark.\n * Store the preference itself, never the resolved value, so \"system\" keeps\n * following the OS. Pages never read the OS appearance on their own.\n *\n * Avoid a flash on load by inlining APPEARANCE_BOOT_SCRIPT in <head>.\n */\nimport { useCallback, useSyncExternalStore } from \"react\"\n\nexport type Appearance = \"system\" | \"light\" | \"dark\"\n\nconst KEY = \"appearance\"\nconst media = () => window.matchMedia(\"(prefers-color-scheme: dark)\")\n\nexport function getAppearance(): Appearance {\n  const v = typeof localStorage === \"undefined\" ? null : localStorage.getItem(KEY)\n  return v === \"light\" || v === \"dark\" ? v : \"system\"\n}\n\nexport function resolveAppearance(pref: Appearance): \"light\" | \"dark\" {\n  if (pref !== \"system\") return pref\n  return typeof window !== \"undefined\" && media().matches ? \"dark\" : \"light\"\n}\n\nfunction apply(pref: Appearance) {\n  document.documentElement.classList.toggle(\"dark\", resolveAppearance(pref) === \"dark\")\n}\n\nconst listeners = new Set<() => void>()\n\nexport function setAppearance(pref: Appearance) {\n  if (pref === \"system\") localStorage.removeItem(KEY)\n  else localStorage.setItem(KEY, pref)\n  apply(pref)\n  listeners.forEach((l) => l())\n}\n\nfunction subscribe(cb: () => void) {\n  listeners.add(cb)\n  const onOs = () => {\n    if (getAppearance() === \"system\") apply(\"system\")\n    cb()\n  }\n  const m = media()\n  m.addEventListener(\"change\", onOs)\n  return () => {\n    listeners.delete(cb)\n    m.removeEventListener(\"change\", onOs)\n  }\n}\n\nexport function useAppearance() {\n  const preference = useSyncExternalStore(subscribe, getAppearance, () => \"system\" as Appearance)\n  const resolved = useSyncExternalStore(\n    subscribe,\n    () => resolveAppearance(getAppearance()),\n    () => \"light\" as const,\n  )\n  const set = useCallback((p: Appearance) => setAppearance(p), [])\n  return { preference, resolved, setAppearance: set }\n}\n\nexport const APPEARANCE_BOOT_SCRIPT = `(function(){try{var p=localStorage.getItem(\"${KEY}\");var d=p===\"dark\"||(p!==\"light\"&&matchMedia(\"(prefers-color-scheme: dark)\").matches);document.documentElement.classList.toggle(\"dark\",d)}catch(e){}})()`\n",
+      "type": "registry:lib"
+    }
+  ],
+  "type": "registry:lib"
+}

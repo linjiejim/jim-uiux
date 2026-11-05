@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "page",
+  "description": "Page widths are fixed, never invented per page:",
+  "dependencies": [
+    "lucide-react@^1.66.0"
+  ],
+  "registryDependencies": [
+    "@jim/strings",
+    "@jim/tooltip",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/page.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Info } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\nimport { s } from \"@/registry/jim/lib/strings\"\nimport { Tooltip } from \"@/registry/jim/ui/tooltip\"\n\n/*\n * Page widths are fixed, never invented per page:\n *   narrow 720   forms, settings, reading\n *   wide   1200  lists, dashboards\n *   full         tables that need every pixel, canvases\n * Content is left-aligned in the main area. \"fill\" makes the page exactly\n * the viewport tall so a table scrolls inside and the page doesn't.\n */\nconst widths = { narrow: \"max-w-[720px]\", wide: \"max-w-[1200px]\", full: \"max-w-none\" }\n\nexport function Page({\n  width = \"wide\",\n  fill,\n  className,\n  ...props\n}: React.ComponentProps<\"main\"> & { width?: keyof typeof widths; fill?: boolean }) {\n  return (\n    <main\n      className={cn(\n        \"w-full px-6 pb-10 pt-6 max-sm:px-4 max-sm:pt-4\",\n        widths[width],\n        fill && \"flex h-full min-h-0 flex-col pb-0\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\n/**\n * Title + the page's primary action. No subtitle sentence: if the page needs\n * explaining, put it behind ⓘ (`info`).\n */\nexport function PageHeader({\n  title,\n  info,\n  actions,\n  back,\n  className,\n}: {\n  title: React.ReactNode\n  info?: React.ReactNode\n  actions?: React.ReactNode\n  back?: React.ReactNode\n  className?: string\n}) {\n  return (\n    <header className={cn(\"mb-5 flex min-h-(--control-lg) shrink-0 flex-wrap items-center gap-x-3 gap-y-2\", className)}>\n      {back}\n      <div className=\"flex min-w-0 flex-1 items-center gap-1.5\">\n        <h1 className=\"truncate text-title-lg font-semibold\">{title}</h1>\n        {info && (\n          <Tooltip content={info}>\n            <button type=\"button\" aria-label={s().moreInfo} className=\"text-faint-foreground hover:text-foreground [&_svg]:size-4\">\n              <Info />\n            </button>\n          </Tooltip>\n        )}\n      </div>\n      {actions && <div className=\"flex items-center gap-2\">{actions}</div>}\n    </header>\n  )\n}\n\n/** Section inside a page: heading + content. 32px between sections. */\nexport function Section({\n  title,\n  actions,\n  className,\n  children,\n}: {\n  title?: React.ReactNode\n  actions?: React.ReactNode\n  className?: string\n  children: React.ReactNode\n}) {\n  return (\n    <section className={cn(\"mt-8 first:mt-0\", className)}>\n      {(title || actions) && (\n        <div className=\"mb-3 flex items-center gap-2\">\n          {title && <h2 className=\"flex-1 text-heading font-semibold\">{title}</h2>}\n          {actions}\n        </div>\n      )}\n      {children}\n    </section>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

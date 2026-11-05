@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "skeleton",
+  "description": "Static placeholder shaped like the content that is coming.",
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/skeleton.tsx",
+      "content": "import { cn } from \"@/lib/utils\"\n\n/**\n * Static placeholder shaped like the content that is coming.\n * No shimmer, no pulse. Show it only after 300ms (useDelayedFlag).\n */\nexport function Skeleton({ className }: { className?: string }) {\n  return <div aria-hidden className={cn(\"rounded-sm bg-muted\", className)} />\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

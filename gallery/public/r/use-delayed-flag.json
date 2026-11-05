@@ -1,0 +1,13 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-delayed-flag",
+  "description": "Loading indicators that don't flicker: show only if `on` lasts longer than",
+  "files": [
+    {
+      "path": "src/registry/jim/hooks/use-delayed-flag.ts",
+      "content": "\"use client\"\n\nimport { useEffect, useRef, useState } from \"react\"\n\n/**\n * Loading indicators that don't flicker: show only if `on` lasts longer than\n * `delay`, and once shown keep them for at least `minDuration`.\n */\nexport function useDelayedFlag(on: boolean, { delay = 300, minDuration = 600 } = {}) {\n  const [shown, setShown] = useState(false)\n  const shownAt = useRef(0)\n\n  useEffect(() => {\n    if (on && !shown) {\n      const t = setTimeout(() => {\n        shownAt.current = Date.now()\n        setShown(true)\n      }, delay)\n      return () => clearTimeout(t)\n    }\n    if (!on && shown) {\n      const left = Math.max(0, minDuration - (Date.now() - shownAt.current))\n      const t = setTimeout(() => setShown(false), left)\n      return () => clearTimeout(t)\n    }\n  }, [on, shown, delay, minDuration])\n\n  return shown\n}\n",
+      "type": "registry:hook"
+    }
+  ],
+  "type": "registry:hook"
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox",
+  "description": "16px box, 44px hit area on touch. Multi-choice and row selection. */",
+  "dependencies": [
+    "lucide-react@^1.66.0",
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/checkbox.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Checkbox as CheckboxPrimitive } from \"radix-ui\"\nimport { Check, Minus } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\n/** 16px box, 44px hit area on touch. Multi-choice and row selection. */\nexport function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {\n  return (\n    <CheckboxPrimitive.Root\n      data-slot=\"checkbox\"\n      className={cn(\n        \"peer relative grid size-4 shrink-0 place-items-center rounded-xs border border-input bg-background\",\n        \"transition-colors duration-(--duration-fast) hover:border-faint-foreground\",\n        \"data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground\",\n        \"data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground\",\n        \"disabled:cursor-not-allowed disabled:opacity-50\",\n        \"after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5\",\n        className,\n      )}\n      {...props}\n    >\n      <CheckboxPrimitive.Indicator className=\"[&_svg]:size-3 [&_svg]:stroke-3\">\n        {props.checked === \"indeterminate\" ? <Minus /> : <Check />}\n      </CheckboxPrimitive.Indicator>\n    </CheckboxPrimitive.Root>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

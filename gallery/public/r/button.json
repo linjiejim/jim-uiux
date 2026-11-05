@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "description": "One primary per region. Labels are verb + object (\"新建项目\"), never",
+  "dependencies": [
+    "class-variance-authority@^0.7.1",
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/spinner",
+    "@jim/tooltip",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/button.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Slot } from \"radix-ui\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\nimport { Spinner } from \"@/registry/jim/ui/spinner\"\nimport { Tooltip } from \"@/registry/jim/ui/tooltip\"\n\n/*\n * One primary per region. Labels are verb + object (\"新建项目\"), never\n * \"确定\" / \"提交\". Destructive is for the final, irreversible step only.\n */\nexport const buttonVariants = cva(\n  [\n    \"relative inline-flex shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-md font-medium\",\n    \"transition-[background-color,color,border-color,transform] duration-(--duration-fast) ease-out\",\n    \"pointer-coarse:active:scale-[0.97] motion-reduce:active:scale-100\",\n    \"disabled:cursor-not-allowed [&_svg]:size-4\",\n  ],\n  {\n    variants: {\n      variant: {\n        primary: \"bg-primary text-primary-foreground hover:bg-primary-hover disabled:bg-muted disabled:text-faint-foreground\",\n        secondary:\n          \"border border-input bg-background text-foreground hover:bg-accent active:bg-pressed disabled:border-border disabled:bg-transparent disabled:text-faint-foreground\",\n        ghost: \"text-foreground hover:bg-accent active:bg-pressed disabled:bg-transparent disabled:text-faint-foreground\",\n        destructive:\n          \"bg-destructive text-background hover:bg-destructive/90 disabled:bg-muted disabled:text-faint-foreground\",\n        link: \"text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground disabled:text-faint-foreground\",\n      },\n      size: {\n        sm: \"h-(--control-sm) px-2.5 text-small\",\n        md: \"h-(--control-md) px-3 text-body\",\n        lg: \"h-(--control-lg) px-4 text-body\",\n        icon: \"size-(--control-md)\",\n        \"icon-sm\": \"size-(--control-sm)\",\n      },\n    },\n    compoundVariants: [{ variant: \"link\", className: \"h-auto px-0\" }],\n    defaultVariants: { variant: \"secondary\", size: \"md\" },\n  },\n)\n\nexport type ButtonProps = React.ComponentProps<\"button\"> &\n  VariantProps<typeof buttonVariants> & {\n    asChild?: boolean\n    /** Keeps the width, shows a spinner, blocks repeat clicks. */\n    loading?: boolean\n  }\n\nexport function Button({ className, variant, size, asChild, loading, disabled, children, ...props }: ButtonProps) {\n  const Comp = asChild ? Slot.Root : \"button\"\n  return (\n    <Comp\n      data-slot=\"button\"\n      className={cn(buttonVariants({ variant, size }), className)}\n      disabled={asChild ? undefined : disabled || loading}\n      aria-busy={loading || undefined}\n      {...props}\n    >\n      {loading && !asChild ? (\n        <>\n          <span className=\"invisible inline-flex items-center gap-1.5\">{children}</span>\n          <span className=\"absolute inset-0 grid place-items-center\">\n            <Spinner />\n          </span>\n        </>\n      ) : (\n        children\n      )}\n    </Comp>\n  )\n}\n\n/** Icon-only button. `label` is required: it is the accessible name and the tooltip. */\nexport function IconButton({\n  label,\n  variant = \"ghost\",\n  size = \"icon\",\n  tooltip = true,\n  ...props\n}: Omit<ButtonProps, \"children\" | \"size\"> & {\n  label: string\n  size?: \"icon\" | \"icon-sm\"\n  tooltip?: boolean\n  children: React.ReactNode\n}) {\n  const button = <Button aria-label={label} variant={variant} size={size} {...props} />\n  return tooltip ? <Tooltip content={label}>{button}</Tooltip> : button\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

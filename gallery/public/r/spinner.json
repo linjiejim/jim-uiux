@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spinner",
+  "description": "Short waits only (a button, a field). Content loading uses Skeleton. */",
+  "dependencies": [
+    "lucide-react@^1.66.0"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/spinner.tsx",
+      "content": "import { LoaderCircle } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\n/** Short waits only (a button, a field). Content loading uses Skeleton. */\nexport function Spinner({ className, label }: { className?: string; label?: string }) {\n  return (\n    <LoaderCircle\n      role={label ? \"status\" : undefined}\n      aria-label={label}\n      aria-hidden={label ? undefined : true}\n      className={cn(\"size-4 animate-spin\", className)}\n    />\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

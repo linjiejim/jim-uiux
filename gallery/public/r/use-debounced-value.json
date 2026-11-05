@@ -1,0 +1,13 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-debounced-value",
+  "description": "Search inputs: query after the user pauses, not on every keystroke. */",
+  "files": [
+    {
+      "path": "src/registry/jim/hooks/use-debounced-value.ts",
+      "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\n\n/** Search inputs: query after the user pauses, not on every keystroke. */\nexport function useDebouncedValue<T>(value: T, delay = 250) {\n  const [v, setV] = useState(value)\n  useEffect(() => {\n    const t = setTimeout(() => setV(value), delay)\n    return () => clearTimeout(t)\n  }, [value, delay])\n  return v\n}\n",
+      "type": "registry:hook"
+    }
+  ],
+  "type": "registry:hook"
+}

@@ -1,0 +1,65 @@
+# jim-uiux gallery + shadcn registry → GitHub Pages, custom domain design.linjiejim.com
+# (set in the repo's Pages settings; DNS: CNAME design → linjiejim.github.io).
+# Pull requests run the checks only; a push to main also deploys.
+# What is live: https://design.linjiejim.com/version.json
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: gallery
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: gallery/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: gallery/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Registry is up to date
+        run: |
+          pnpm registry:build
+          if [ -n "$(git status --porcelain -- registry.json public/r)" ]; then
+            git status --short -- registry.json public/r
+            echo "::error::Run 'pnpm registry:build' and commit registry.json + public/r"
+            exit 1
+          fi
+      - run: pnpm build
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: gallery/dist
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

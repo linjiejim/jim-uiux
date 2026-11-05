@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toast",
+  "description": "Toasts confirm something that happened away from where the user is",
+  "dependencies": [
+    "lucide-react@^1.66.0",
+    "sonner@^2.0.8"
+  ],
+  "registryDependencies": [
+    "@jim/strings"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/toast.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Toaster as Sonner, toast } from \"sonner\"\nimport { CircleAlert, CircleCheck, Info, TriangleAlert, X } from \"lucide-react\"\nimport { s } from \"@/registry/jim/lib/strings\"\n\n/*\n * Toasts confirm something that happened away from where the user is\n * looking, or offer Undo. Rules:\n *   - success: 4s, only when the result isn't already visible on screen\n *   - undo:    8s, for reversible actions done without a confirm dialog\n *   - error:   stays until closed, with Retry when possible. Errors that\n *              belong to a field or a section are shown there, not here.\n *   - never toast and dialog for the same event\n * Top centre, stacked (newest in front, expands on hover); phones: top,\n * full width, below the safe area. Max 3 visible.\n *\n * Level shows quietly: a raised surface, the icon carries the status colour;\n * only errors (which stay) add a faint red tint.\n */\nexport function Toaster(props: React.ComponentProps<typeof Sonner>) {\n  return (\n    <Sonner\n      position=\"top-center\"\n      visibleToasts={3}\n      gap={8}\n      offset={16}\n      mobileOffset={{ top: \"max(12px, env(safe-area-inset-top))\", left: 12, right: 12 }}\n      toastOptions={{\n        unstyled: true,\n        classNames: {\n          toast:\n            \"group pointer-events-auto flex w-full items-center gap-3 rounded-lg bg-popover px-4 py-3 text-body text-foreground shadow-overlay sm:w-[360px]\",\n          success: \"[&_[data-icon]]:text-success\",\n          info: \"[&_[data-icon]]:text-info\",\n          warning: \"[&_[data-icon]]:text-warning\",\n          error: \"bg-destructive-subtle [&_[data-icon]]:text-destructive\",\n          content: \"min-w-0 flex-1\",\n          title: \"font-normal\",\n          description: \"text-small text-muted-foreground\",\n          icon: \"shrink-0 [&_svg]:size-4\",\n          actionButton:\n            \"shrink-0 rounded-sm px-2 py-0.5 font-medium text-foreground underline-offset-4 hover:underline\",\n          cancelButton: \"shrink-0 rounded-sm px-2 py-0.5 text-muted-foreground hover:text-foreground\",\n          closeButton:\n            \"order-last! static! translate-none! shrink-0 rounded-sm border-0! bg-transparent! text-muted-foreground! hover:text-foreground! [&_svg]:size-4\",\n        },\n      }}\n      icons={{ success: <CircleCheck />, info: <Info />, warning: <TriangleAlert />, error: <CircleAlert />, close: <X /> }}\n      {...props}\n    />\n  )\n}\n\ntype Id = string | number\n\n/** The only way the app raises toasts. Keep messages to one short sentence. */\nexport const notify = Object.assign((message: React.ReactNode) => toast(message, { duration: 4000 }), {\n  success: (message: React.ReactNode) => toast.success(message, { duration: 4000 }),\n  /** Neutral fact the user should know (同步将在后台完成). */\n  info: (message: React.ReactNode) => toast.info(message, { duration: 4000 }),\n  /** Done, but with a caveat (已导出 98 条，2 条因格式问题跳过). */\n  warning: (message: React.ReactNode) => toast.warning(message, { duration: 6000 }),\n  undo: (message: React.ReactNode, onUndo: () => void) =>\n    toast(message, { duration: 8000, action: { label: s().undo, onClick: onUndo } }),\n  error: (message: React.ReactNode, opts?: { retry?: () => void }) =>\n    toast.error(message, {\n      duration: Infinity,\n      closeButton: true,\n      action: opts?.retry ? { label: s().retry, onClick: opts.retry } : undefined,\n    }),\n  dismiss: (id?: Id) => toast.dismiss(id),\n})\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge",
+  "description": "Status and short labels. Colour carries meaning, text always says it too.",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/badge.tsx",
+      "content": "import * as React from \"react\"\nimport { cva, type VariantProps } from \"class-variance-authority\"\nimport { cn } from \"@/lib/utils\"\n\n/*\n * Status and short labels. Colour carries meaning, text always says it too.\n * One fixed vocabulary per project: e.g. 进行中 = info, 已完成 = success,\n * 需处理 = warning, 失败 = danger, 草稿/已归档 = neutral.\n */\nexport const badgeVariants = cva(\n  \"inline-flex h-5 shrink-0 items-center gap-1 whitespace-nowrap rounded-sm px-1.5 text-caption font-medium [&_svg]:size-3\",\n  {\n    variants: {\n      tone: {\n        neutral: \"bg-muted text-muted-foreground\",\n        success: \"bg-success-subtle text-success\",\n        warning: \"bg-warning-subtle text-warning\",\n        danger: \"bg-destructive-subtle text-destructive\",\n        info: \"bg-info-subtle text-info\",\n        outline: \"border text-muted-foreground\",\n      },\n    },\n    defaultVariants: { tone: \"neutral\" },\n  },\n)\n\nexport function Badge({\n  className,\n  tone,\n  dot,\n  children,\n  ...props\n}: React.ComponentProps<\"span\"> & VariantProps<typeof badgeVariants> & { dot?: boolean }) {\n  return (\n    <span className={cn(badgeVariants({ tone }), className)} {...props}>\n      {dot && <span aria-hidden className=\"size-1.5 rounded-full bg-current\" />}\n      {children}\n    </span>\n  )\n}\n\n/** Inline status: a dot plus text, no fill. For dense tables and lists. */\nexport function StatusDot({\n  tone = \"neutral\",\n  children,\n  className,\n}: {\n  tone?: \"neutral\" | \"success\" | \"warning\" | \"danger\" | \"info\"\n  children: React.ReactNode\n  className?: string\n}) {\n  const color = {\n    neutral: \"bg-faint-foreground\",\n    success: \"bg-success\",\n    warning: \"bg-warning\",\n    danger: \"bg-destructive\",\n    info: \"bg-info\",\n  }[tone]\n  return (\n    <span className={cn(\"inline-flex items-center gap-1.5 text-body\", className)}>\n      <span aria-hidden className={cn(\"size-1.5 shrink-0 rounded-full\", color)} />\n      {children}\n    </span>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

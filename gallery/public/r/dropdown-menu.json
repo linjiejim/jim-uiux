@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dropdown-menu",
+  "description": "Row actions, \"more\" menus, account menus. Order: frequent first,",
+  "dependencies": [
+    "lucide-react@^1.66.0",
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/dropdown-menu.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { DropdownMenu as MenuPrimitive } from \"radix-ui\"\nimport { Check } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\n/*\n * Row actions, \"more\" menus, account menus. Order: frequent first,\n * destructive last behind a separator. ≤ 7 items; group with separators.\n */\nexport const DropdownMenu = MenuPrimitive.Root\nexport const DropdownMenuTrigger = MenuPrimitive.Trigger\nexport const DropdownMenuGroup = MenuPrimitive.Group\nexport const DropdownMenuRadioGroup = MenuPrimitive.RadioGroup\n\nexport function DropdownMenuContent({ className, align = \"end\", sideOffset = 4, ...props }: React.ComponentProps<typeof MenuPrimitive.Content>) {\n  return (\n    <MenuPrimitive.Portal>\n      <MenuPrimitive.Content\n        align={align}\n        sideOffset={sideOffset}\n        collisionPadding={8}\n        className={cn(\n          \"z-50 min-w-44 max-w-72 overflow-hidden rounded-lg bg-popover p-1 shadow-popover outline-none\",\n          \"data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out\",\n          className,\n        )}\n        {...props}\n      />\n    </MenuPrimitive.Portal>\n  )\n}\n\nconst itemClass = cn(\n  \"relative flex min-h-(--control-md) cursor-default select-none items-center gap-2 rounded-sm px-2 py-1 text-body outline-none\",\n  \"data-highlighted:bg-accent data-disabled:pointer-events-none data-disabled:text-faint-foreground\",\n  \"[&_svg]:size-4 [&_svg]:text-muted-foreground\",\n)\n\nexport function DropdownMenuItem({\n  className,\n  tone,\n  ...props\n}: React.ComponentProps<typeof MenuPrimitive.Item> & { tone?: \"danger\" }) {\n  return (\n    <MenuPrimitive.Item\n      className={cn(itemClass, tone === \"danger\" && \"text-destructive [&_svg]:text-destructive\", className)}\n      {...props}\n    />\n  )\n}\n\nexport function DropdownMenuRadioItem({ className, children, ...props }: React.ComponentProps<typeof MenuPrimitive.RadioItem>) {\n  return (\n    <MenuPrimitive.RadioItem className={cn(itemClass, \"pr-8\", className)} {...props}>\n      {children}\n      <MenuPrimitive.ItemIndicator className=\"absolute right-2 inline-flex\">\n        <Check className=\"text-foreground!\" />\n      </MenuPrimitive.ItemIndicator>\n    </MenuPrimitive.RadioItem>\n  )\n}\n\nexport function DropdownMenuLabel({ className, ...props }: React.ComponentProps<typeof MenuPrimitive.Label>) {\n  return <MenuPrimitive.Label className={cn(\"px-2 pb-1 pt-1.5 text-caption text-faint-foreground\", className)} {...props} />\n}\n\nexport function DropdownMenuSeparator({ className, ...props }: React.ComponentProps<typeof MenuPrimitive.Separator>) {\n  return <MenuPrimitive.Separator className={cn(\"-mx-1 my-1 h-px bg-border\", className)} {...props} />\n}\n\nexport function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<\"span\">) {\n  return <span className={cn(\"ml-auto pl-4 text-caption text-faint-foreground\", className)} {...props} />\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

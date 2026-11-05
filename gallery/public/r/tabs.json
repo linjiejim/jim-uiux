@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs",
+  "description": "Tabs switch between sections of one page (概览 / 成员 / 设置).",
+  "dependencies": [
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/tabs.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Tabs as TabsPrimitive } from \"radix-ui\"\nimport { cn } from \"@/lib/utils\"\n\n/*\n * Tabs switch between sections of one page (概览 / 成员 / 设置).\n * To switch between 2–4 views of the same content, use Segmented.\n */\nexport const Tabs = TabsPrimitive.Root\nexport const TabsContent = TabsPrimitive.Content\n\nexport function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {\n  return <TabsPrimitive.List className={cn(\"flex gap-5 overflow-x-auto border-b\", className)} {...props} />\n}\n\nexport function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {\n  return (\n    <TabsPrimitive.Trigger\n      className={cn(\n        \"relative -mb-px inline-flex h-(--control-lg) shrink-0 items-center gap-1.5 whitespace-nowrap text-body font-medium text-muted-foreground\",\n        \"transition-colors duration-(--duration-fast) hover:text-foreground data-[state=active]:text-foreground\",\n        \"after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-full after:bg-foreground after:opacity-0\",\n        \"after:transition-opacity after:duration-(--duration-fast) data-[state=active]:after:opacity-100\",\n        \"[&_svg]:size-4\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

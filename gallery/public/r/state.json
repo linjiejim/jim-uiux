@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "state",
+  "description": "The four non-content states. Each looks different so a failure never",
+  "dependencies": [
+    "lucide-react@^1.66.0"
+  ],
+  "registryDependencies": [
+    "@jim/button",
+    "@jim/strings",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/state.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { CircleAlert, Inbox, Lock, SearchX } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\nimport { s } from \"@/registry/jim/lib/strings\"\nimport { Button } from \"@/registry/jim/ui/button\"\n\n/*\n * The four non-content states. Each looks different so a failure never\n * passes for \"no data\".\n *   empty          nothing here yet → one action that creates the first item\n *   no-match       filters/search hide everything → clear filters\n *   no-permission  say so, and who can grant it\n *   error          plain words, no codes → retry\n * One icon, one title, at most one line of text, at most one action.\n */\nexport type StateKind = \"empty\" | \"no-match\" | \"no-permission\" | \"error\"\n\nconst icons: Record<StateKind, React.ReactNode> = {\n  empty: <Inbox />,\n  \"no-match\": <SearchX />,\n  \"no-permission\": <Lock />,\n  error: <CircleAlert />,\n}\n\nexport function StateView({\n  kind,\n  title,\n  description,\n  action,\n  onRetry,\n  onClearFilters,\n  icon,\n  size = \"md\",\n  className,\n}: {\n  kind: StateKind\n  title?: React.ReactNode\n  description?: React.ReactNode\n  /** Overrides the default action of the kind. */\n  action?: React.ReactNode\n  onRetry?: () => void\n  onClearFilters?: () => void\n  icon?: React.ReactNode\n  /** sm inside panels and tables, md for a page section. */\n  size?: \"sm\" | \"md\"\n  className?: string\n}) {\n  const t = s()\n  const defaults = {\n    empty: { title: t.emptyTitle, description: undefined },\n    \"no-match\": { title: t.noMatchTitle, description: undefined },\n    \"no-permission\": { title: t.noPermissionTitle, description: t.noPermissionBody },\n    error: { title: t.errorTitle, description: t.errorBody },\n  }[kind]\n\n  const defaultAction =\n    kind === \"error\" && onRetry ? (\n      <Button size=\"sm\" onClick={onRetry}>\n        {t.retry}\n      </Button>\n    ) : kind === \"no-match\" && onClearFilters ? (\n      <Button size=\"sm\" onClick={onClearFilters}>\n        {t.noMatchAction}\n      </Button>\n    ) : null\n\n  const act = action ?? defaultAction\n  return (\n    <div\n      role={kind === \"error\" ? \"alert\" : undefined}\n      className={cn(\"flex flex-col items-center justify-center text-center\", size === \"sm\" ? \"px-4 py-10\" : \"px-6 py-16\", className)}\n    >\n      <div className={cn(\"mb-3 text-faint-foreground\", size === \"sm\" ? \"[&_svg]:size-6\" : \"[&_svg]:size-8\")}>{icon ?? icons[kind]}</div>\n      <p className=\"text-heading font-medium\">{title ?? defaults.title}</p>\n      {(description ?? defaults.description) && (\n        <p className=\"mt-1 max-w-sm text-body text-muted-foreground\">{description ?? defaults.description}</p>\n      )}\n      {act && <div className=\"mt-4\">{act}</div>}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

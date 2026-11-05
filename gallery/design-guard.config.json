@@ -1,0 +1,6 @@
+{
+  "sourceDirs": ["src"],
+  "themeFiles": ["src/registry/jim/theme/jim-theme.css"],
+  "presetFiles": ["src/registry/jim/theme/presets"],
+  "uiDirs": ["src/registry/jim/ui"]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio-group",
+  "description": "2–5 options in a form when seeing all of them at once helps the choice",
+  "dependencies": [
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/field",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/radio-group.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { RadioGroup as RadioPrimitive } from \"radix-ui\"\nimport { cn } from \"@/lib/utils\"\nimport { useFieldControl } from \"@/registry/jim/ui/field\"\n\n/**\n * 2–5 options in a form when seeing all of them at once helps the choice\n * (plans, visibility, frequency). More options → Select; switching a view →\n * Segmented. Vertical list; each option may carry one line of description.\n */\nexport function RadioGroup<T extends string>({\n  options,\n  value,\n  defaultValue,\n  onValueChange,\n  disabled,\n  className,\n  \"aria-label\": ariaLabel,\n}: {\n  options: { value: T; label: React.ReactNode; description?: React.ReactNode; disabled?: boolean }[]\n  value?: T\n  defaultValue?: T\n  onValueChange?: (v: T) => void\n  disabled?: boolean\n  className?: string\n  \"aria-label\"?: string\n}) {\n  const field = useFieldControl()\n  const base = React.useId()\n  return (\n    <RadioPrimitive.Root\n      value={value}\n      defaultValue={defaultValue}\n      onValueChange={(v) => onValueChange?.(v as T)}\n      disabled={disabled}\n      aria-label={ariaLabel}\n      aria-labelledby={field.id ? `${field.id}-label` : undefined}\n      aria-describedby={field[\"aria-describedby\"]}\n      aria-invalid={field[\"aria-invalid\"]}\n      aria-required={field[\"aria-required\"]}\n      className={cn(\"flex flex-col gap-2.5\", className)}\n    >\n      {options.map((o) => {\n        const id = `${base}-${o.value}`\n        return (\n          <div key={o.value} className=\"flex items-start gap-2.5\">\n            <RadioPrimitive.Item\n              id={id}\n              value={o.value}\n              disabled={o.disabled}\n              className={cn(\n                \"relative mt-[3px] grid size-4 shrink-0 place-items-center rounded-full border border-input bg-background\",\n                \"transition-colors duration-(--duration-fast) hover:border-faint-foreground\",\n                \"data-[state=checked]:border-primary disabled:cursor-not-allowed disabled:opacity-50\",\n                \"after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5\",\n              )}\n            >\n              <RadioPrimitive.Indicator className=\"size-2 rounded-full bg-primary\" />\n            </RadioPrimitive.Item>\n            <label htmlFor={id} className={cn(\"min-w-0 text-body\", o.disabled && \"text-faint-foreground\")}>\n              {o.label}\n              {o.description && <span className=\"block text-small text-muted-foreground\">{o.description}</span>}\n            </label>\n          </div>\n        )\n      })}\n    </RadioPrimitive.Root>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

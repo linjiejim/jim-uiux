@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>jim-uiux</title>
+    <script>
+      (function(){try{var p=localStorage.getItem("appearance");var d=p==="dark"||(p!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);var t=JSON.parse(localStorage.getItem("gallery:knobs")||"{}");for(var k in t){if(t[k])document.documentElement.setAttribute("data-"+k,t[k])}}catch(e){}})()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

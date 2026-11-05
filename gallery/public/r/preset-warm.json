@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "preset-warm",
+  "description": "Preset: Notion-like warm greys",
+  "files": [
+    {
+      "path": "src/registry/jim/theme/presets/warm.css",
+      "content": "/*\n * Preset: Warm — Notion-like warm greys, ink accent. <html data-theme=\"warm\">\n */\n[data-theme=\"warm\"] {\n  --sunken: #f7f7f5;\n  --muted: #efeeeb;\n  --foreground: #37352f;\n  --muted-foreground: #5f5e5b;\n  --faint-foreground: #6f6e69;\n  --border: #e9e9e7;\n  --input: #d3d1cb;\n  --inverse: #2f2e2b;\n  --primary: #37352f;\n}\n\n.dark[data-theme=\"warm\"],\n[data-theme=\"warm\"] .dark {\n  --background: #191919;\n  --sunken: #202020;\n  --muted: #2c2c2b;\n  --popover: #252525;\n  --foreground: #e3e2e0;\n  --muted-foreground: #a5a4a1;\n  --faint-foreground: #8e8d8a;\n  --border: #2f2f2f;\n  --input: #3f3f3e;\n  --inverse: #e3e2e0;\n  --primary: #e3e2e0;\n}\n",
+      "type": "registry:file",
+      "target": "src/styles/presets/warm.css"
+    }
+  ],
+  "type": "registry:file"
+}
