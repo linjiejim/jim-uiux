@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.0 · 2026-11-08
+
+收下游项目验证过的三项（来源和理由见 `references/decisions.md`「1.3.0」）。只加东西，已有默认值不变。
+
+- Toast：`notify.prompt(id, message, action)` 是等用户处理、但不是错误的常驻提示（「新版本已下载 · 重启」），同一个 id 再弹会替换；`notify.loading(message)` 用于用户发起、在别处进行的慢操作，返回 id，结束时 `notify.dismiss(id)`。来自 retrace。
+- 新组件 `ContextMenu`（右键菜单），和 DropdownMenu 共用样式（`menuClass`）；两种菜单都有子菜单（`Sub` / `SubTrigger` / `SubContent`）。`dropdownMenuParts` / `contextMenuParts`（类型 `MenuParts`）让一份项列表同时用于 ⋯ 菜单和右键菜单。来自 retrace。
+- `PopoverAnchor`：浮层锚到触发按钮以外的地方（画布、3D 视图里的点）。来自 arbor。
+- 规范：`components.md`、`patterns/overlays.md`、`patterns/feedback.md`、`patterns/list-crud.md` 写了右键菜单、子菜单、锚点浮层和两种新 Toast 的用法。
+- gallery：数据展示页加右键菜单与子菜单，弹层页加锚到一个点的 Popover，反馈页加常驻提示和后台进度。
+- 升级 retrace 时注意：它自己的 loading Toast 会把转圈画在 Toast 正中，换成 kit 的 `toast.tsx` 就好了。
+
 ## 1.2.0 · 2026-11-08
 
 交互层共用，皮肤开放给项目；记下哪些项目在用，改动能往下推、也能提回来（理由见 `references/decisions.md`「2026-11-08」）。组件和主题的取值没有变。

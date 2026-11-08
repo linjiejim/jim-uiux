@@ -21,10 +21,11 @@
 | 全局搜索、跳转、命令 | `CommandPalette` + `useCommandPalette`（⌘K） |
 | 不可逆操作前的确认 | `ConfirmDialog` / `useConfirm` |
 | 触屏上的选项和操作 | `BottomSheet` |
-| 挂在触发点上的小面板 | `Popover` |
-| 一组命令 | `DropdownMenu` |
+| 挂在触发点上的小面板 | `Popover`；锚到画布、3D 视图里的一个点时加 `PopoverAnchor` |
+| 一组命令 | `DropdownMenu`；一组同类选项放进一层子菜单 |
+| 右键菜单（⋯ 菜单的快捷方式） | `ContextMenu`，项和 ⋯ 菜单共用（`MenuParts`） |
 | 一条短提示 | `Tooltip`（只放补充信息） |
-| 操作结果、撤销、后台错误 | `notify` + `Toaster` |
+| 操作结果、撤销、后台错误、后台进度、等你处理的提示 | `notify` + `Toaster` |
 | 状态标签 | `Badge`；表格里更紧凑的写法用 `StatusDot` |
 | 空、无匹配、无权限、出错 | `StateView` |
 | 加载中的占位 | `Skeleton`（静态）；短操作用 `Spinner` |
@@ -141,12 +142,17 @@
 - 底部按钮平分一行，并留出安全区。
 - 最多叠两层。原生 App 用系统自带的 sheet。
 
-## Popover / DropdownMenu / Tooltip
+## Popover / DropdownMenu / ContextMenu / Tooltip
 
 - `Popover` 默认宽 288，内边距 12，阴影用 `shadow-popover`。
+  - 要出现在触发按钮以外的地方（画布、3D 视图里的一个点，文字里的一个词）：加 `PopoverAnchor`，`virtualRef` 传一个带 `getBoundingClientRect` 的对象。点换了就传新对象，Radix 才会重新定位。打开它的东西仍要有键盘入口。
 - `DropdownMenu`：
   - ≤ 7 项，用分隔线分组。常用的在上，危险项在最后，用 `tone="danger"`。
   - 每项高度用 `--control-md`；图标 16px，用次要文字色。
+  - 子菜单（`DropdownMenuSub` / `SubTrigger` / `SubContent`）只开一层，放一组同类选项（移到哪个项目、按什么排序）；再多就用 Combobox 或弹框。子菜单的第一项和打开它的那一行对齐；键盘 → 打开、← 收起。
+- `ContextMenu`：右键菜单，和 DropdownMenu 共用样式（`menuClass`），也有子菜单。
+  - 只是快捷方式：同一组项、同样顺序也在 ⋯ 菜单里，因为触屏要长按才出来，键盘用户只能靠 ⋯。项只写一次，函数接受 `MenuParts`，分别传 `dropdownMenuParts` 和 `contextMenuParts`。
+  - 用在桌面工具和密集列表里。菜单开着时，被右键的行保持高亮（`data-[state=open]:bg-accent`）。
 - `Tooltip`：延迟 500ms，反色，12px。只放补充信息；触屏上不保证能看到，所以不能放唯一的说明。
 
 ## Tabs / Segmented

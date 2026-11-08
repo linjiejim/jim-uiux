@@ -76,6 +76,18 @@
 | 反哺门槛：两个项目要用，或一个项目验证过、明显通用；不带领域含义 | 防止把一个项目的偏好变成所有项目的默认 | 项目加了就收 |
 | ivan 先按 `aligned` 登记，不急着换组件 | 它的组件手写但完整，交互规则已经一致；换组件是 ivan 自己的工作，先桥接 token，再从浮层和菜单换起 | 立刻把 ivan 迁到 registry；不登记 ivan |
 
+## 2026-11-08 · 1.3.0 收下游的三项
+
+起因：1.2.0 的比对脚本发现 retrace、arbor 在 kit 组件上自己加了几样。它们通用，只用语义 token，按 `downstream.md` 的门槛（一个项目验证过、明显通用）收回来。
+
+| 决策 | 理由 | 被放弃的方案 |
+| --- | --- | --- |
+| `notify.prompt`：常驻、带一个动作、同一个 id 再弹会替换；`notify.loading`：返回 id，结束时收起 | 出自 retrace 的自动更新：「已下载，重启」不是错误，却要等用户处理；下载时要让人知道在进行。桌面应用都会遇到 | 用 `notify.error` 常驻；项目直接调 sonner 的 `toast()` |
+| loading 图标用 kit 的 `Spinner`，Toast 的图标槽加 `relative` 和固定尺寸 | sonner 把自定义 loading 图标绝对定位到最近的定位祖先；unstyled 模式下图标槽没有定位，转圈会画在 Toast 正中、压住文字（retrace 现在就是这样） | 照搬 retrace 的写法 |
+| 新增 `ContextMenu`，两种菜单都加子菜单；样式共用 `menuClass`；`MenuParts` 让一份项列表同时用于 ⋯ 菜单和右键菜单 | retrace 的项目列表右键和 ⋯ 是同一组项，自己写了 MenuKit 保证两边不走样。右键在触屏上要长按、键盘上基本用不了，所以只能是快捷方式 | ContextMenu 复制一份样式；允许操作只放在右键里 |
+| 子菜单只开一层，放一组同类选项 | 多层子菜单要斜着精确移鼠标，键盘也难找；选项多了就该用 Combobox 或弹框 | 不限层数 |
+| 新增 `PopoverAnchor`；点换了就传新的 `virtualRef` 对象 | arbor 在 3D 视图里改尺寸，浮层要锚到一个点。Radix 只在锚对象变了时才重新定位；而且锚对象固定、又有 PopoverTrigger 时，开发环境的 StrictMode 会让 trigger 抢回锚点，浮层跑到左上角（gallery 示例里踩到过） | 在点上叠一个隐藏按钮当触发器；手写绝对定位的浮层 |
+
 ## 待定（等 Jim 拍板）
 
 - 日期选择器、富文本编辑器的规格。

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "context-menu",
+  "description": "Right-click menus, for desktop tools and dense lists. Same look and rules",
+  "dependencies": [
+    "lucide-react@^1.66.0",
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/dropdown-menu",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/context-menu.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { ContextMenu as MenuPrimitive } from \"radix-ui\"\nimport { Check, ChevronRight } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\nimport { DropdownMenuShortcut, menuClass, type MenuParts } from \"@/registry/jim/ui/dropdown-menu\"\n\n/*\n * Right-click menus, for desktop tools and dense lists. Same look and rules\n * as DropdownMenu. Right-click is a shortcut, never the only way in: the row's\n * ⋯ menu offers the same items in the same order (write them once against\n * `MenuParts`), because touch gets it only by long-press and keyboards by ⋯.\n */\nexport const ContextMenu = MenuPrimitive.Root\nexport const ContextMenuTrigger = MenuPrimitive.Trigger\nexport const ContextMenuGroup = MenuPrimitive.Group\nexport const ContextMenuRadioGroup = MenuPrimitive.RadioGroup\nexport const ContextMenuSub = MenuPrimitive.Sub\nexport const ContextMenuShortcut = DropdownMenuShortcut\n\nexport function ContextMenuContent({ className, ...props }: React.ComponentProps<typeof MenuPrimitive.Content>) {\n  return (\n    <MenuPrimitive.Portal>\n      <MenuPrimitive.Content collisionPadding={8} className={cn(menuClass.content, className)} {...props} />\n    </MenuPrimitive.Portal>\n  )\n}\n\nexport function ContextMenuItem({\n  className,\n  tone,\n  ...props\n}: React.ComponentProps<typeof MenuPrimitive.Item> & { tone?: \"danger\" }) {\n  return <MenuPrimitive.Item className={cn(menuClass.item, tone === \"danger\" && menuClass.danger, className)} {...props} />\n}\n\nexport function ContextMenuRadioItem({ className, children, ...props }: React.ComponentProps<typeof MenuPrimitive.RadioItem>) {\n  return (\n    <MenuPrimitive.RadioItem className={cn(menuClass.item, \"pr-8\", className)} {...props}>\n      {children}\n      <MenuPrimitive.ItemIndicator className=\"absolute right-2 inline-flex\">\n        <Check className=\"text-foreground!\" />\n      </MenuPrimitive.ItemIndicator>\n    </MenuPrimitive.RadioItem>\n  )\n}\n\nexport function ContextMenuLabel({ className, ...props }: React.ComponentProps<typeof MenuPrimitive.Label>) {\n  return <MenuPrimitive.Label className={cn(menuClass.label, className)} {...props} />\n}\n\nexport function ContextMenuSeparator({ className, ...props }: React.ComponentProps<typeof MenuPrimitive.Separator>) {\n  return <MenuPrimitive.Separator className={cn(menuClass.separator, className)} {...props} />\n}\n\nexport function ContextMenuSubTrigger({ className, children, ...props }: React.ComponentProps<typeof MenuPrimitive.SubTrigger>) {\n  return (\n    <MenuPrimitive.SubTrigger className={cn(menuClass.item, menuClass.subTrigger, className)} {...props}>\n      {children}\n      <ChevronRight className=\"ml-auto\" />\n    </MenuPrimitive.SubTrigger>\n  )\n}\n\nexport function ContextMenuSubContent({ className, sideOffset = 4, alignOffset = -4, ...props }: React.ComponentProps<typeof MenuPrimitive.SubContent>) {\n  return (\n    <MenuPrimitive.Portal>\n      <MenuPrimitive.SubContent\n        sideOffset={sideOffset}\n        alignOffset={alignOffset}\n        collisionPadding={8}\n        className={cn(menuClass.content, className)}\n        {...props}\n      />\n    </MenuPrimitive.Portal>\n  )\n}\n\n/** Same shape as `dropdownMenuParts`: pass either to a function that writes a row's items. */\nexport const contextMenuParts: MenuParts = {\n  Group: ContextMenuGroup,\n  Label: ContextMenuLabel,\n  Item: ContextMenuItem,\n  RadioGroup: ContextMenuRadioGroup,\n  RadioItem: ContextMenuRadioItem,\n  Separator: ContextMenuSeparator,\n  Shortcut: ContextMenuShortcut,\n  Sub: ContextMenuSub,\n  SubTrigger: ContextMenuSubTrigger,\n  SubContent: ContextMenuSubContent,\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -88,9 +88,6 @@ pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登
 
 | 候选 | 来源 | 判断 |
 | --- | --- | --- |
-| `notify.prompt`（等用户处理的常驻提示，如「更新已下载，重启」）、`notify.loading` | retrace `toast.tsx` | 桌面应用通用，建议收 |
-| `ContextMenu`（右键菜单，和 DropdownMenu 同一套样式）、DropdownMenu 子菜单 | retrace | 桌面工具和列表都用得上，建议收 |
-| `PopoverAnchor`（浮层锚到任意一点） | arbor `popover.tsx` | 两行导出，建议收 |
 | Slider（滑杆 + 精确数值输入框） | arbor `param-slider.tsx` | arbor 写了「确认形态后提回」；补齐规格后收 |
 | ⓘ 按需说明（`Info` + `InfoRows`） | ivan | 规范已经要求「说明放在 ⓘ 后面」，但没有组件，建议收 |
 | `Callout`（info / warning / neutral，图标 + 文字） | ivan、greenhouse（`.gh-callout`） | 两个项目都有，一次性密钥模式也要用，建议收 |

@@ -19,6 +19,8 @@
 | 字段错误 | 在字段下方显示，并把焦点移到第一个错误 |
 | 区块加载失败 | 在区块里显示 `StateView kind="error"`，带「重试」 |
 | 后台操作失败（不属于某个字段或区块） | `notify.error`，不自动消失，能重试时带「重试」 |
+| 等你处理，但不是错误（「新版本已下载，重启后生效」） | `notify.prompt`，带一个动作，不自动消失；同一件事只留一条（同一个 id 再弹会替换） |
+| 你发起的慢操作，在别处进行（下载更新、大批导出） | `notify.loading`，结束时用 id 收起，再按上面的规则反馈结果 |
 | 确认框里的操作失败 | 确认框不关，在框里显示原因 |
 
 同一件事不能既弹 Toast 又弹框。
@@ -30,7 +32,8 @@
 - 顶部居中，多条时叠放（最新的在最前，鼠标悬停时展开）；手机上在顶部、占满宽度，避开刘海安全区。最多同时显示 3 条，悬停时暂停计时。
 - 浮层底（`popover` + `shadow-overlay`）。级别只用图标颜色区分：成功绿、提示蓝、警告黄、错误红；错误不会自动消失，所以再加一层 `destructive-subtle` 淡红底。
 - 一句话，不加标题。尽量带上对象（「已归档 3 个项目」），不写「操作成功」。
-- 只通过 `notify` / `notify.success` / `notify.info` / `notify.warning` / `notify.undo` / `notify.error` 调用。
+- 不自动消失的只有三种：错误、等你处理的提示（`prompt`）、后台进度（`loading`）。页面里的等待用骨架或按钮转圈，不用 `loading`。
+- 只通过 `notify` / `notify.success` / `notify.info` / `notify.warning` / `notify.undo` / `notify.error` / `notify.prompt` / `notify.loading` 调用。
 
 ## 五种数据状态
 
@@ -60,7 +63,7 @@
 
 - 进度未知时转圈，进度已知时显示百分比。
 - 不做假进度条。
-- 超过 10 秒的任务交给后台执行，完成后用 Toast 告知。
+- 超过 10 秒的任务交给后台执行，完成后用 Toast 告知；进行中可以留一条 `notify.loading`。
 
 ## 无限滚动
 

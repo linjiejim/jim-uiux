@@ -7,7 +7,7 @@ import { Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHea
 import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerTrigger } from "@/registry/jim/ui/drawer"
 import { Field, FieldGroup } from "@/registry/jim/ui/field"
 import { Input, Textarea } from "@/registry/jim/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popover"
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popover"
 import { getAppearance, resolveAppearance, setAppearance } from "@/registry/jim/lib/appearance"
 import { Badge } from "@/registry/jim/ui/badge"
 import { CommandGroup, CommandItem, CommandPalette } from "@/registry/jim/ui/command-palette"
@@ -20,7 +20,7 @@ export function OverlaysPage() {
     <DocPage
       title="弹层"
       lead="先选对容器，再填内容。同一个意图永远用同一种弹层。"
-      source="registry/jim/ui/dialog.tsx · drawer.tsx · bottom-sheet.tsx · confirm-dialog.tsx · popover.tsx"
+      source="registry/jim/ui/dialog.tsx · drawer.tsx · bottom-sheet.tsx · confirm-dialog.tsx · popover.tsx · context-menu.tsx"
     >
       <Example title="选哪个" canvas="none">
         <Spec
@@ -31,6 +31,7 @@ export function OverlaysPage() {
             ["BottomSheet", "触屏布局里的选项、操作和短表单。原生 App 用系统 sheet"],
             ["Popover", "不阻断的小面板，挂在触发点上：筛选、选择器、快速改一个值"],
             ["DropdownMenu", "一组命令：行操作、更多菜单"],
+            ["ContextMenu", "右键菜单：和 ⋯ 菜单同一组命令，只是快捷方式（演示在「数据展示」）"],
           ]}
         />
       </Example>
@@ -111,6 +112,13 @@ export function OverlaysPage() {
         </Popover>
       </Example>
 
+      <Example
+        title="Popover · 锚到一个点"
+        note="面板要出现在触发按钮以外的地方（画布、3D 视图里的一个点，文字里的一个词）时，加 PopoverAnchor。点换了就传一个新的 virtualRef 对象，Radix 才会重新定位；它每次现量画布的位置，页面滚动时跟着走。画布本身仍是触发器，所以有键盘入口（回车加在中心），关闭后焦点回到画布。"
+      >
+        <PinCanvas />
+      </Example>
+
       <Example title="用法" canvas="none">
         <Rules
           dos={["Esc、点遮罩、✕ 都能关闭", "关闭后焦点回到触发按钮", "弹框里的表单按回车提交"]}
@@ -126,6 +134,74 @@ export function OverlaysPage() {
         />
       </Example>
     </DocPage>
+  )
+}
+
+type Pin = { x: number; y: number }
+
+function PinCanvas() {
+  const canvas = React.useRef<HTMLButtonElement>(null)
+  const [draft, setDraft] = React.useState<Pin | null>(null)
+  const [pins, setPins] = React.useState<(Pin & { note: string })[]>([])
+  // A new anchor for each point, so Radix re-measures. It reads the canvas's box
+  // each time, so the panel follows the canvas when the page scrolls.
+  const anchor = React.useMemo(() => {
+    const p = draft ?? { x: 0, y: 0 }
+    return {
+      current: {
+        getBoundingClientRect: () => {
+          const r = canvas.current?.getBoundingClientRect()
+          return DOMRect.fromRect({ x: (r?.x ?? 0) + p.x, y: (r?.y ?? 0) + p.y, width: 0, height: 0 })
+        },
+      },
+    }
+  }, [draft])
+  return (
+    <Popover open={draft !== null} onOpenChange={(o) => !o && setDraft(null)}>
+      <PopoverAnchor virtualRef={anchor} />
+      <PopoverTrigger asChild>
+        <button
+          ref={canvas}
+          type="button"
+          aria-label="在画布上加备注"
+          className="relative block h-48 w-full max-w-md cursor-crosshair rounded-lg border bg-sunken text-small text-muted-foreground"
+          onClick={(e) => {
+            e.preventDefault() // place (or move) the note instead of toggling
+            const r = e.currentTarget.getBoundingClientRect()
+            // detail 0: Enter or Space, so put it in the middle
+            setDraft(e.detail === 0 ? { x: r.width / 2, y: r.height / 2 } : { x: e.clientX - r.left, y: e.clientY - r.top })
+          }}
+        >
+          {pins.length === 0 && "点画布上任意位置加备注"}
+          {[...pins, ...(draft ? [{ ...draft, note: "" }] : [])].map((p, i) => (
+            <span
+              key={i}
+              title={p.note || undefined}
+              className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary ring-2 ring-background"
+              style={{ left: p.x, top: p.y }}
+            />
+          ))}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent side="right">
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault()
+            const note = String(new FormData(e.currentTarget).get("note") ?? "").trim()
+            if (draft && note) setPins((ps) => [...ps, { ...draft, note }])
+            setDraft(null)
+          }}
+        >
+          <Field label="备注">
+            <Input name="note" autoFocus />
+          </Field>
+          <Button type="submit" variant="primary" size="sm" className="self-end">
+            添加
+          </Button>
+        </form>
+      </PopoverContent>
+    </Popover>
   )
 }
 
