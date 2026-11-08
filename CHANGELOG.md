@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 · 2026-11-08
+
+- Drawer dock 的宽度把手：方向键处理不再用逗号表达式，项目里的 oxlint / eslint（`no-unused-expressions`）不再报警告。行为不变。
+
 ## 1.3.0 · 2026-11-08
 
 收下游项目验证过的三项（来源和理由见 `references/decisions.md`「1.3.0」）。只加东西，已有默认值不变。
