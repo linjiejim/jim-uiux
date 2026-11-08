@@ -17,7 +17,7 @@
     },
     {
       "name": "arbor",
-      "repo": "linjiejim/featuretree",
+      "repo": "linjiejim/arbor",
       "site": "https://arbor.linjiejim.com",
       "mode": "registry",
       "root": "app",
