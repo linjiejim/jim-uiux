@@ -1,0 +1,32 @@
+{
+  "$comment": "用 jim-uiux 的下游项目。字段说明见 references/adoption.md「下游项目登记」；pnpm --dir gallery consumers 按这里逐个检查。",
+  "consumers": [
+    {
+      "name": "retrace",
+      "repo": "linjiejim/retrace",
+      "site": "https://retrace.linjiejim.com",
+      "mode": "registry",
+      "root": ".",
+      "design": "docs/DESIGN.md",
+      "summary": "Tauri 桌面版 Git 历史查看器。强调色靛蓝，紧凑密度。"
+    },
+    {
+      "name": "arbor",
+      "repo": "linjiejim/featuretree",
+      "site": "https://arbor.linjiejim.com",
+      "mode": "registry",
+      "root": "app",
+      "design": "docs/DESIGN.md",
+      "summary": "工业建模互动课（网页 + Electron 桌面版）。强调色工程蓝，3D 场景色板在项目主题里。"
+    },
+    {
+      "name": "greenhouse",
+      "repo": "linjiejim/greenhouse",
+      "site": "https://greenhouse.linjiejim.com",
+      "mode": "aligned",
+      "root": ".",
+      "design": "apps/client/DESIGN.md",
+      "summary": "一套客户端跑 web / 桌面 / iOS / Android（react-native-web）。自带品牌和 token 包 packages/ui-tokens，交互、反馈、文案和数据状态跟 jim-uiux；1.1.0 的工作台模式出自这里。"
+    }
+  ]
+}

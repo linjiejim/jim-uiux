@@ -40,6 +40,7 @@
    - 把 `APPEARANCE_BOOT_SCRIPT` 内联到 `<head>`。
 6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。
 7. 写 `docs/DESIGN.md`（模板见下文）。
+8. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（见下文「下游项目登记」）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。
 
 也可以只装需要的部分：`npx shadcn add @jim/theme @jim/button @jim/dialog`，registry 会自动带上依赖。
 
@@ -63,6 +64,33 @@
 ## 例外
 - <哪里> 用了 <什么>，因为 <原因>。（代码对应的行上有 design-allow 注释）
 ```
+
+## 下游项目登记
+
+jim-uiux 仓库根目录的 `consumers.json` 是用这套系统的项目名单，每个项目一条：
+
+| 字段 | 含义 |
+| --- | --- |
+| `name` | 短名，命令行里用 |
+| `repo` | GitHub 的 `owner/name` |
+| `site` | 线上地址（可选） |
+| `mode` | `registry`：用 shadcn 从 `@jim` 装组件，可以自动比对；`aligned`：有自己的 token 和组件，规则跟 jim-uiux，改动要手动移植 |
+| `root` | `components.json` 所在目录，相对仓库根（monorepo 里常是子目录） |
+| `design` | 项目的 `DESIGN.md` 路径，相对仓库根；第一行写「基于 jim-uiux X.Y.Z」，脚本从这里读版本号 |
+| `summary` | 一句话：项目是什么，旋钮怎么选的 |
+
+只登记长期维护的项目；试验性的原型不登记。项目停止维护或换掉设计系统时删掉它那条。
+
+检查（在 jim-uiux 的 `gallery/` 里跑，需要登录好的 `gh`）：
+
+```bash
+pnpm consumers                          # 每个项目：标的版本、装了哪些文件、哪些和这里不一样、自己加了哪些组件
+pnpm consumers retrace --diff dialog    # 看一个文件的具体差异：- 是上游，+ 是项目自己的
+pnpm consumers retrace --path ~/Code/retrace   # 读本地检出（比如同步分支），不读 GitHub
+pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登记的仓库
+```
+
+默认读各仓库 GitHub 上的默认分支，对照的是本地 jim-uiux 源码（包括还没发布的改动）。比较前去掉了 `shadcn add` 会改写的部分（`"use client"`、`@/registry/jim/*` 的导入路径），剩下的差异都是真的：要么项目落后，要么项目改过。
 
 ## 已有设计系统的项目
 
@@ -91,14 +119,14 @@
 
 ## 升级
 
-1. 看 `CHANGELOG.md`，确认从当前版本到目标版本之间改了什么。
-2. 重新安装：`npx shadcn add @jim/<item> --overwrite`。会覆盖本地改动，所以先用 `git diff` 确认这些改动是有意的。如果是有意的，要么把它提回 jim-uiux，要么记进项目 `docs/DESIGN.md` 的例外里。
+1. 看 `CHANGELOG.md`，确认从当前版本到目标版本之间改了什么。在 jim-uiux 里跑 `pnpm --dir gallery consumers <项目名>`，看这个项目哪些文件和上游不一样。
+2. 重新安装：`npx shadcn add @jim/<item> --overwrite`。会覆盖本地改动，所以先用 `pnpm --dir gallery consumers <项目名> --diff <item>` 看清 `+` 行（项目自己的改动）是不是有意的。如果是有意的，要么把它提回 jim-uiux，要么记进项目 `docs/DESIGN.md` 的例外里。
 3. 跑守卫和项目自己的测试，用浅色、深色和手机宽度各截一张图。
 4. 更新 `docs/DESIGN.md` 里的版本号。
 
 ## 把改动回馈给 jim-uiux
 
 项目里发现更好的做法时：
-1. 先在项目里验证。
+1. 先在项目里验证。`consumers` 报告里的 `+` 行和「项目自己加的 ui 组件」就是候选。
 2. 再按 SKILL.md 里「Changing the system」的顺序改回 jim-uiux。
 3. 在 `decisions.md` 里写清原因。

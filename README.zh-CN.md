@@ -37,6 +37,14 @@ git clone https://github.com/linjiejim/jim-uiux ~/.claude/skills/jim-uiux
 
 做界面相关的事（「做个设置页」「把这个界面打磨一下」）时会自动触发。项目自己的规则（`AGENTS.md`、已有的设计系统）优先。
 
+## 用它做的项目
+
+- [Retrace](https://github.com/linjiejim/retrace)：Git 历史查看器（桌面版）
+- [Arbor](https://github.com/linjiejim/featuretree)：工业建模互动课
+- [Greenhouse](https://github.com/linjiejim/greenhouse)：自带品牌和 token，交互、反馈和文案跟 jim-uiux
+
+名单和同步方式在 [`consumers.json`](consumers.json)；`pnpm --dir gallery consumers` 逐个比对它们和这里的差异。
+
 ## 开发
 
 ```bash
@@ -45,6 +53,7 @@ pnpm install
 pnpm dev              # http://localhost:5188 ，也提供 /r/{name}.json
 pnpm test             # 守卫，在 gallery 自己身上跑
 pnpm registry:build   # 重新生成 registry.json 和 public/r/*.json
+pnpm consumers        # 下游项目和这里差在哪（需要 gh）
 ```
 
 push 到 `main` 会把 gallery 和 registry 发布到 GitHub Pages，`/version.json` 写着线上是哪个版本。怎么改默认值，见 [`SKILL.md`](SKILL.md) 的「Changing the system」。

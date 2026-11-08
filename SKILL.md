@@ -29,6 +29,7 @@ things that float. The same intent always gets the same component.
    - Project has its own design system → its tokens and components win. Use this skill for the gaps: patterns, behaviour, copy, sizes it doesn't define. Don't import a second system.
    - New React project → install the kit (`references/adoption.md`), pick knobs, write `docs/DESIGN.md`.
    - Not React (Vue/Nuxt, plain CSS) → take `jim-theme.css`, the guards and these docs; rebuild components to the same specs.
+   - A project that newly installs the kit or aligns its own system to these rules gets one entry in this repo's `consumers.json` (fields: `references/adoption.md`), so later changes can find it.
 2. **Before building a screen**, name the pattern (list/CRUD, settings, form, detail…) and read its file in `references/patterns/`. Pick components from `references/components.md`. Don't ask Jim pixel questions; ask only about direction, ≤ 3 questions, each with a recommendation.
 3. **Build** with the kit's components and semantic tokens only.
 4. **Before handing over**, run `references/checklist.md`: the guards, light + dark, phone width, keyboard, all five data states. Screenshot what changed.
@@ -71,7 +72,7 @@ things that float. The same intent always gets the same component.
 | `references/patterns/settings.md` | Settings and preferences pages |
 | `references/patterns/layout.md` | App shell, workbench shell (rail, secondary column, inspector), page widths, responsive rules |
 | `references/content.md` | Any visible text |
-| `references/adoption.md` | Installing into a project, knobs, guards, upgrading, non-React, native apps |
+| `references/adoption.md` | Installing into a project, knobs, guards, upgrading, non-React, native apps, the downstream list |
 | `references/checklist.md` | Before handing over UI work |
 | `references/decisions.md` | Why a default is what it is; where Jim's past projects disagreed |
 
@@ -90,3 +91,12 @@ example → the reference doc → `references/decisions.md` (why) →
 open a pull request (Jim reviews every change); merging to main runs
 `.github/workflows/deploy.yml`, which deploys the gallery and registry to
 GitHub Pages (`/version.json` shows what is live).
+
+Then carry it downstream. `consumers.json` lists the projects built on this
+system; `pnpm --dir gallery consumers` shows, for each, the version its
+`DESIGN.md` names and which `@jim` files differ from the source here (`-` lines
+are upstream changes it lacks, `+` lines are its own). Upgrade each project in
+its own pull request, following「升级」in `references/adoption.md`; projects in
+`aligned` mode port the change into their own components by hand. A `+` that
+belongs in the system comes back here first. `--discover` finds repos that
+mention jim-uiux but are not listed yet.

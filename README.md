@@ -47,6 +47,15 @@ git clone https://github.com/linjiejim/jim-uiux ~/.claude/skills/jim-uiux
 The skill triggers on UI work ("build a settings page", "polish this UI").
 Project rules (`AGENTS.md`, an existing design system) win where they exist.
 
+## Built with it
+
+- [Retrace](https://github.com/linjiejim/retrace): a desktop Git history viewer
+- [Arbor](https://github.com/linjiejim/featuretree): interactive lessons in parametric CAD
+- [Greenhouse](https://github.com/linjiejim/greenhouse): keeps its own brand and tokens, follows jim-uiux for interaction, feedback and copy
+
+The list lives in [`consumers.json`](consumers.json); `pnpm --dir gallery consumers`
+compares each project with the source here.
+
 ## Develop
 
 ```bash
@@ -55,6 +64,7 @@ pnpm install
 pnpm dev              # http://localhost:5188, also serves /r/{name}.json
 pnpm test             # the guards, run on the gallery itself
 pnpm registry:build   # regenerate registry.json and public/r/*.json
+pnpm consumers        # how downstream projects differ from here (needs gh)
 ```
 
 Push to `main` deploys the gallery and registry to GitHub Pages;
