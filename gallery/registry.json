@@ -203,6 +203,25 @@
       ]
     },
     {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "description": "Right-click menus, for desktop tools and dense lists. Same look and rules",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/dropdown-menu",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/context-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:ui",
       "description": "Numbers and amounts: \"right\" (tabular figures are applied). */",
@@ -564,6 +583,7 @@
         "sonner@^2.0.8"
       ],
       "registryDependencies": [
+        "@jim/spinner",
         "@jim/strings"
       ],
       "files": [
@@ -706,7 +726,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.2.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.3.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -718,6 +738,7 @@
         "@jim/combobox",
         "@jim/command-palette",
         "@jim/confirm-dialog",
+        "@jim/context-menu",
         "@jim/data-table",
         "@jim/dialog",
         "@jim/drawer",

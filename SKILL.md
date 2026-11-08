@@ -41,7 +41,7 @@ things that float. The same intent always gets the same component.
 - Text ≥ 12px, from the type scale (`text-caption` … `text-hero`). Weights 400/500/600 only on the web; native titles follow the platform.
 - Touch targets ≥ 44px on touch devices (the kit does this through `pointer: coarse`).
 - One primary button per region. Labels are verb + object (「新建项目」), never 「确定」「提交」.
-- Overlays come from the kit: Dialog / Drawer / ConfirmDialog / BottomSheet / Popover / DropdownMenu. Never `alert()`, `confirm()`, or a hand-written `fixed inset-0`.
+- Overlays come from the kit: Dialog / Drawer / ConfirmDialog / BottomSheet / Popover / DropdownMenu / ContextMenu. A right-click menu is only a shortcut: the same items sit in the ⋯ menu. Never `alert()`, `confirm()`, or a hand-written `fixed inset-0`.
 - One drawer at a time; a list object is viewed, edited and created in that drawer, in place (same layout, values become editable). Dialog is for short tasks outside a list; dialog over dialog only for a confirm. A dialog whose content changes (tabs, a list) is `fixed`: the box never resizes.
 - User-chosen colours (tags, project colours, chart series) come from the nine categorical pairs, stored by name; they are data, never a second accent.
 - Embedded pages (iframes) ask the host to draw confirms and toasts; one Esc closes one layer.

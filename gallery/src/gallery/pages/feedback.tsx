@@ -12,7 +12,10 @@ export function FeedbackPage() {
   const [kind, setKind] = React.useState<"empty" | "no-match" | "no-permission" | "error">("empty")
   return (
     <DocPage title="反馈与状态" lead="每个操作都有回应，但只说一次：结果在屏幕上看得见，就不再弹提示。" source="registry/jim/ui/toast.tsx · state.tsx · skeleton.tsx">
-      <Example title="Toast" note="顶部居中，叠放（悬停展开）。级别只用图标颜色区分，错误加一层很淡的红底。成功、提示 4 秒，警告 6 秒，带撤销 8 秒，错误不自动消失。最多同时 3 条。">
+      <Example
+        title="Toast"
+        note="顶部居中，叠放（悬停展开）。级别只用图标颜色区分，错误加一层很淡的红底。成功、提示 4 秒，警告 6 秒，带撤销 8 秒；错误、等你处理的提示、后台进度不自动消失。最多同时 3 条。"
+      >
         <Row>
           <Button onClick={() => notify.success("报告已导出到「下载」")}>成功</Button>
           <Button onClick={() => notify.info("同步将在后台完成")}>提示</Button>
@@ -20,6 +23,20 @@ export function FeedbackPage() {
           <Button onClick={() => notify.undo("已归档 3 个项目", () => notify("已恢复"))}>撤销</Button>
           <Button onClick={() => notify.error("同步失败，网络连接中断", { retry: () => notify.success("已重新同步") })}>错误</Button>
           <Button onClick={() => notify("链接已复制")}>普通</Button>
+          <Button onClick={() => notify.prompt("update", "新版本已下载，重启后生效", { label: "重启", onClick: () => notify("正在重启") })}>
+            等你处理
+          </Button>
+          <Button
+            onClick={() => {
+              const id = notify.loading("正在导出 1,204 条记录…")
+              setTimeout(() => {
+                notify.dismiss(id)
+                notify.success("报告已导出到「下载」")
+              }, 3000)
+            }}
+          >
+            后台进度
+          </Button>
         </Row>
       </Example>
 
@@ -31,6 +48,8 @@ export function FeedbackPage() {
             ["失败：字段相关", "显示在字段下方"],
             ["失败：区块加载", "区块内显示错误状态 + 重试"],
             ["失败：后台操作", "不消失的错误 Toast + 重试"],
+            ["等你处理，但不是错误：更新已下载", "不消失的 Toast + 一个动作（「重启」）；同一件事只留一条"],
+            ["你发起的慢操作，在别处进行：下载、大批导出", "后台进度 Toast，结束后收起，再按结果反馈"],
           ]}
         />
       </Example>

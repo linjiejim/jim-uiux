@@ -1,8 +1,9 @@
 import * as React from "react"
 import type { ColumnDef } from "@tanstack/react-table"
-import { Archive, Copy, LayoutGrid, List, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
+import { Archive, Copy, FileText, FolderInput, LayoutGrid, List, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { Badge, StatusDot } from "@/registry/jim/ui/badge"
 import { Button, IconButton } from "@/registry/jim/ui/button"
+import { ContextMenu, ContextMenuContent, ContextMenuTrigger, contextMenuParts } from "@/registry/jim/ui/context-menu"
 import { DataTable } from "@/registry/jim/ui/data-table"
 import {
   DropdownMenu,
@@ -11,9 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
+  dropdownMenuParts,
+  type MenuParts,
 } from "@/registry/jim/ui/dropdown-menu"
 import { Segmented } from "@/registry/jim/ui/segmented"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/registry/jim/ui/tabs"
+import { notify } from "@/registry/jim/ui/toast"
 import { Tooltip } from "@/registry/jim/ui/tooltip"
 import { DocPage, Example, Row, Rules, Spec } from "../doc"
 import { fmtMoney, projects, statusMeta, type Project } from "../data"
@@ -34,7 +38,7 @@ const columns: ColumnDef<Project, any>[] = [
 export function DataDisplayPage() {
   const [view, setView] = React.useState<"list" | "board">("list")
   return (
-    <DocPage title="数据展示" lead="表格、徽章、标签页、菜单。完整的列表页见「模式 · 列表与 CRUD」。" source="registry/jim/ui/data-table.tsx · badge.tsx · tabs.tsx · segmented.tsx · dropdown-menu.tsx">
+    <DocPage title="数据展示" lead="表格、徽章、标签页、菜单。完整的列表页见「模式 · 列表与 CRUD」。" source="registry/jim/ui/data-table.tsx · badge.tsx · tabs.tsx · segmented.tsx · dropdown-menu.tsx · context-menu.tsx">
       <Example title="表格" note="悬停行变色，点击表头排序。数字右对齐用等宽数字。改变窗口宽度：lg 以下隐藏「负责人」，md 以下变成摘要列表。" canvas="none">
         <div className="h-[420px] overflow-hidden rounded-lg border">
           <DataTable
@@ -136,10 +140,17 @@ export function DataDisplayPage() {
         </Row>
       </Example>
 
+      <Example
+        title="右键菜单与子菜单"
+        note="在行上点右键，或点 ⋯：两个菜单是同一组项、同样的顺序（项只写一次，分别传 dropdownMenuParts 和 contextMenuParts）。右键只是快捷方式：触屏要长按，键盘用户靠 ⋯。子菜单只开一层，放一组同类的选项；键盘用 → 打开、← 收起。"
+      >
+        <FileRows />
+      </Example>
+
       <Example title="用法" canvas="none">
         <Rules
-          dos={["菜单 ≤ 7 项，用分隔线分组", "常用的在上，危险的在最后", "提示只放补充信息"]}
-          donts={["表格里放卡片", "卡片套卡片", "只靠颜色区分状态", "提示里放必须看到的内容"]}
+          dos={["菜单 ≤ 7 项，用分隔线分组", "常用的在上，危险的在最后", "右键菜单和 ⋯ 菜单同一组项", "提示只放补充信息"]}
+          donts={["表格里放卡片", "卡片套卡片", "只靠颜色区分状态", "操作只放在右键里", "子菜单再套子菜单", "提示里放必须看到的内容"]}
         />
       </Example>
     </DocPage>
@@ -168,6 +179,70 @@ function MenuItems() {
         删除
       </DropdownMenuItem>
     </DropdownMenuContent>
+  )
+}
+
+const folders = ["设计稿", "合同", "归档"]
+const files = ["首页改版.fig", "报价单-11月.pdf", "品牌手册.pdf"]
+
+/** One list of items, rendered in both the ⋯ menu and the right-click menu. */
+function fileMenu(m: MenuParts, file: string) {
+  return (
+    <>
+      <m.Item>
+        <Pencil />
+        重命名
+        <m.Shortcut>F2</m.Shortcut>
+      </m.Item>
+      <m.Item onSelect={() => notify("链接已复制")}>
+        <Copy />
+        复制链接
+      </m.Item>
+      <m.Sub>
+        <m.SubTrigger>
+          <FolderInput />
+          移到
+        </m.SubTrigger>
+        <m.SubContent>
+          {folders.map((f) => (
+            <m.Item key={f} onSelect={() => notify.undo(`已把「${file}」移到「${f}」`, () => notify("已移回"))}>
+              {f}
+            </m.Item>
+          ))}
+        </m.SubContent>
+      </m.Sub>
+      <m.Separator />
+      <m.Item tone="danger">
+        <Trash2 />
+        删除
+      </m.Item>
+    </>
+  )
+}
+
+function FileRows() {
+  return (
+    <div className="max-w-md divide-y rounded-lg border">
+      {files.map((file) => (
+        <ContextMenu key={file}>
+          <ContextMenuTrigger asChild>
+            <div className="flex items-center gap-3 py-1.5 pl-3 pr-1.5 text-body hover:bg-accent data-[state=open]:bg-accent">
+              <FileText className="size-4 shrink-0 text-muted-foreground" />
+              <span className="min-w-0 flex-1 truncate">{file}</span>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <IconButton label={`「${file}」的更多操作`} size="icon-sm" tooltip={false}>
+                    <MoreHorizontal />
+                  </IconButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>{fileMenu(dropdownMenuParts, file)}</DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </ContextMenuTrigger>
+          <ContextMenuContent>{fileMenu(contextMenuParts, file)}</ContextMenuContent>
+        </ContextMenu>
+      ))}
+    </div>
   )
 }
 
