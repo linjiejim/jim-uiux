@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.0 · 2026-11-08
+
+交互层共用，皮肤开放给项目；记下哪些项目在用，改动能往下推、也能提回来（理由见 `references/decisions.md`「2026-11-08」）。组件和主题的取值没有变。
+
+- 新增 `references/downstream.md`：jim-uiux 管交互层、语义名和默认皮肤，项目管自己的皮肤和领域组件；换皮肤不变的底线；`registry` / `aligned` 两种接入；往下推和往回提的流程；当前的反哺候选清单。
+- `tokens.md` 新增「换一整套皮肤」：项目主题文件给语义名赋值，可以桥接原来的 token 名，对比度守卫按项目皮肤算。之前「旋钮以外的值都锁定」只适用于默认皮肤。
+- 新增 `consumers.json`：retrace、arbor（`registry`），greenhouse、ivan（`aligned`）。私有项目写进不提交的 `consumers.local.json`。
+- 新增 `pnpm --dir gallery consumers`：逐个比对项目和这里的差异，汇总反哺候选；`--affected <ref>` 列出一次改动要同步哪些项目；`--discover` 找没登记的仓库。
+- `SKILL.md`、`adoption.md`：接入时登记；改完系统后按名单往下推；`docs/DESIGN.md` 模板加「皮肤」。
+
 ## 1.1.0 · 2026-11-06
 
 吸收 Greenhouse 4.2 里验证过的模式（理由见 `references/decisions.md`「2026-11-06」）。只加东西，已有默认值不变。

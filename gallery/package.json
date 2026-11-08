@@ -1,13 +1,14 @@
 {
   "name": "jim-uiux-gallery",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "registry:build": "node scripts/gen-registry.mjs && shadcn build",
     "typecheck": "tsc -b",
+    "consumers": "node scripts/consumers.mjs",
     "test": "vitest run"
   },
   "dependencies": {

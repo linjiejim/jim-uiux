@@ -40,6 +40,7 @@
    - 把 `APPEARANCE_BOOT_SCRIPT` 内联到 `<head>`。
 6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。
 7. 写 `docs/DESIGN.md`（模板见下文）。
+8. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（字段见 `downstream.md`）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。
 
 也可以只装需要的部分：`npx shadcn add @jim/theme @jim/button @jim/dialog`，registry 会自动带上依赖。
 
@@ -51,6 +52,7 @@
 基于 jim-uiux <版本号>（见 https://github.com/linjiejim/jim-uiux）。本文只记录与默认值不同的地方。
 
 ## 旋钮
+- 皮肤：默认（自己的皮肤写文件位置，和默认不同的取向列在下面）
 - 强调色：默认黑色
 - 圆角：默认 8
 - 密度：舒适
@@ -68,7 +70,8 @@
 
 - 项目自己的 token 和组件优先，不要引入第二套。
 - 本技能只用来补空白：交互模式、行为、文案，以及项目没有定义的尺寸。
-- 想逐步迁移时，先把项目的 token 名对齐到 shadcn 的语义名，再按组件逐个替换。
+- 在 `consumers.json` 里按 `aligned` 登记，写清跟哪些规范（`follows`），上游改了规范才找得到它。
+- 想逐步迁移时，皮肤留着，先把项目的 token 名桥接到语义名，再按组件逐个替换（顺序见 `downstream.md`）。
 
 ## 非 React 项目（Vue / Nuxt / 纯 CSS）
 
@@ -91,14 +94,14 @@
 
 ## 升级
 
-1. 看 `CHANGELOG.md`，确认从当前版本到目标版本之间改了什么。
-2. 重新安装：`npx shadcn add @jim/<item> --overwrite`。会覆盖本地改动，所以先用 `git diff` 确认这些改动是有意的。如果是有意的，要么把它提回 jim-uiux，要么记进项目 `docs/DESIGN.md` 的例外里。
+1. 看 `CHANGELOG.md`，确认从当前版本到目标版本之间改了什么。在 jim-uiux 里跑 `pnpm --dir gallery consumers <项目名>`，看这个项目哪些文件和上游不一样。
+2. 重新安装：`npx shadcn add @jim/<item> --overwrite`。会覆盖本地改动，所以先用 `pnpm --dir gallery consumers <项目名> --diff <item>` 看清 `+` 行（项目自己的改动）是不是有意的。如果是有意的，要么把它提回 jim-uiux，要么记进项目 `docs/DESIGN.md` 的例外里。
 3. 跑守卫和项目自己的测试，用浅色、深色和手机宽度各截一张图。
 4. 更新 `docs/DESIGN.md` 里的版本号。
 
 ## 把改动回馈给 jim-uiux
 
 项目里发现更好的做法时：
-1. 先在项目里验证。
+1. 先在项目里验证。`consumers` 报告里的 `+` 行和「项目自己加的 ui 组件」就是候选。
 2. 再按 SKILL.md 里「Changing the system」的顺序改回 jim-uiux。
 3. 在 `decisions.md` 里写清原因。

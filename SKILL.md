@@ -26,9 +26,10 @@ things that float. The same intent always gets the same component.
 
 1. **Find out where you are.**
    - Project already has jim-uiux (look for `jim-theme.css`, `design-guard.config.json`, `docs/DESIGN.md`) → use its components; read `docs/DESIGN.md` for its knobs and exceptions.
-   - Project has its own design system → its tokens and components win. Use this skill for the gaps: patterns, behaviour, copy, sizes it doesn't define. Don't import a second system.
+   - Project has its own design system → its tokens and components win. Use this skill for the gaps: patterns, behaviour, copy, sizes it doesn't define. Don't import a second system. To adopt the kit's components later, keep its skin and bridge its tokens to the semantic names (`references/downstream.md`).
    - New React project → install the kit (`references/adoption.md`), pick knobs, write `docs/DESIGN.md`.
    - Not React (Vue/Nuxt, plain CSS) → take `jim-theme.css`, the guards and these docs; rebuild components to the same specs.
+   - A project that newly installs the kit or aligns its own system to these rules gets one entry in this repo's `consumers.json` (fields: `references/downstream.md`), so later changes can find it.
 2. **Before building a screen**, name the pattern (list/CRUD, settings, form, detail…) and read its file in `references/patterns/`. Pick components from `references/components.md`. Don't ask Jim pixel questions; ask only about direction, ≤ 3 questions, each with a recommendation.
 3. **Build** with the kit's components and semantic tokens only.
 4. **Before handing over**, run `references/checklist.md`: the guards, light + dark, phone width, keyboard, all five data states. Screenshot what changed.
@@ -53,6 +54,8 @@ things that float. The same intent always gets the same component.
 - Tables: ≤ 6 default columns, numbers right-aligned with tabular figures, row click → detail drawer (edit in place there), no double-click edit, paginate 20/50/100.
 - Light and dark both work; appearance preference is system/light/dark and stored as the preference.
 
+A project may replace the whole skin (neutrals, accent, fonts, radius, shadows, motion, icons, brand) — `references/tokens.md`「换一整套皮肤」. The interaction rules above, one accent with its meaning, and the floors (contrast, 12px, 44px, colour never the only signal, reduced motion) stay; the look itself (black and white, flat 1px cards, 120–240ms motion, weights to 600) is the default skin's.
+
 ## References
 
 | File | Read when |
@@ -72,6 +75,7 @@ things that float. The same intent always gets the same component.
 | `references/patterns/layout.md` | App shell, workbench shell (rail, secondary column, inspector), page widths, responsive rules |
 | `references/content.md` | Any visible text |
 | `references/adoption.md` | Installing into a project, knobs, guards, upgrading, non-React, native apps |
+| `references/downstream.md` | What the system owns vs a project's skin; the `consumers.json` list; pushing a change down; bringing a project's idea back |
 | `references/checklist.md` | Before handing over UI work |
 | `references/decisions.md` | Why a default is what it is; where Jim's past projects disagreed |
 
@@ -90,3 +94,13 @@ example → the reference doc → `references/decisions.md` (why) →
 open a pull request (Jim reviews every change); merging to main runs
 `.github/workflows/deploy.yml`, which deploys the gallery and registry to
 GitHub Pages (`/version.json` shows what is live).
+
+Then carry it downstream (`references/downstream.md`). `consumers.json` lists
+the projects built on this system. `pnpm --dir gallery consumers --affected <ref>`
+names the projects a change reaches and why; `pnpm --dir gallery consumers`
+shows, for each, the version its design doc names and which `@jim` files differ
+from the source here (`-` lines are upstream changes it lacks, `+` lines are its
+own), then sums up what projects added on top of the kit. Upgrade each project
+in its own pull request; `aligned` projects port the change into their own
+components. What several projects added is the first candidate to come back
+here — the list and the bar are in `references/downstream.md`.
