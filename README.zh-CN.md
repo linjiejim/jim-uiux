@@ -42,8 +42,9 @@ git clone https://github.com/linjiejim/jim-uiux ~/.claude/skills/jim-uiux
 - [Retrace](https://github.com/linjiejim/retrace)：Git 历史查看器（桌面版）
 - [Arbor](https://github.com/linjiejim/featuretree)：工业建模互动课
 - [Greenhouse](https://github.com/linjiejim/greenhouse)：自带品牌和 token，交互、反馈和文案跟 jim-uiux
+- [Ivan](https://github.com/linjiejim/ivan)：自己的皮肤「墨」和组件，交互规则一致
 
-名单和同步方式在 [`consumers.json`](consumers.json)；`pnpm --dir gallery consumers` 逐个比对它们和这里的差异。
+名单在 [`consumers.json`](consumers.json)。各项目共用交互层，皮肤可以自己换；改动怎么往下推、项目的好做法怎么提回来，见 [`references/downstream.md`](references/downstream.md)。
 
 ## 开发
 

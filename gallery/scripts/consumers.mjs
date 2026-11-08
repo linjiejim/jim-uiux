@@ -1,12 +1,14 @@
-// Check the downstream projects listed in ../../consumers.json against this
+// Check the downstream projects listed in ../../consumers.json (plus the
+// uncommitted ../../consumers.local.json for private ones) against this
 // registry: which version each one says it is on, which @jim files it has,
-// which of those differ from the source here, and which UI components it
-// added itself (candidates to bring back upstream).
+// which of those differ from the source here, and what it added itself
+// (candidates to bring back upstream). See references/downstream.md.
 //
 //   pnpm consumers                          every project, read from GitHub (default branch)
 //   pnpm consumers <name>                   one project
 //   pnpm consumers <name> --path <dir>      read a local checkout instead (e.g. a sync branch)
 //   pnpm consumers <name> --diff [item]     print the diffs: "-" is jim-uiux, "+" is the project
+//   pnpm consumers --affected [ref]         which projects a change here touches (default: since origin/main)
 //   pnpm consumers --discover [--owner o] [--since YYYY-MM-DD]
 //                                           find repos that mention jim-uiux but are not listed
 //
@@ -19,7 +21,12 @@ import { promisify } from "node:util"
 
 const gallery = path.resolve(import.meta.dirname, "..")
 const repoRoot = path.resolve(gallery, "..")
-const { consumers } = JSON.parse(fs.readFileSync(path.join(repoRoot, "consumers.json"), "utf8"))
+const readList = (file) =>
+  fs.existsSync(path.join(repoRoot, file)) ? JSON.parse(fs.readFileSync(path.join(repoRoot, file), "utf8")).consumers : []
+const consumers = [
+  ...readList("consumers.json"),
+  ...readList("consumers.local.json").map((c) => ({ ...c, private: true })),
+]
 const registry = JSON.parse(fs.readFileSync(path.join(gallery, "registry.json"), "utf8"))
 const version = JSON.parse(fs.readFileSync(path.join(gallery, "package.json"), "utf8")).version
 // jim-uiux 0.1.0 shipped on this day; nothing pushed earlier can use it.
@@ -199,7 +206,7 @@ async function check(c, source, diffItem) {
 
 function report(r) {
   const { c } = r
-  console.log(`\n${c.name}  ·  ${c.mode}  ·  ${r.source.label}`)
+  console.log(`\n${c.name}  ·  ${c.mode}${c.private ? "（私有）" : ""}  ·  ${r.source.label}`)
   if (r.hasDesign === undefined) return console.log(`  ✗ ${r.error}`)
   const stamp = !r.hasDesign
     ? `找不到 ${c.design}`
@@ -208,8 +215,10 @@ function report(r) {
       : `${c.design} 没写版本号（当前 ${version}）`
   console.log(`  ${stamp}`)
   if (r.error) return console.log(`  ✗ ${r.error}`)
+  if (c.own?.length) console.log(`  自己的：${c.own.join("；")}`)
   if (c.mode !== "registry") {
-    console.log("  不装 registry：按 CHANGELOG 对照，改项目自己的 token 包和组件。")
+    console.log(`  跟的规范：${(c.follows ?? []).join("、") || "（没写 follows）"}`)
+    console.log("  不装组件：上游改了这些规范时，按 CHANGELOG 在项目自己的组件里移植。")
     return
   }
   if (r.registryUrl !== "https://design.linjiejim.com/r/{name}.json") console.log(`  registry 地址：${r.registryUrl ?? "未配置"}`)
@@ -226,6 +235,82 @@ function report(r) {
     for (const f of r.ownUi) console.log(`    ${f}`)
   }
   if (r.missing.length) console.log(`  没装：${r.missing.join("、")}`)
+}
+
+// What projects added on top of the kit, across all of them. A file several
+// projects added (or changed the same way) is the strongest case for upstream.
+function candidates(results) {
+  const byKey = new Map()
+  const add = (key, project, what) => {
+    if (!byKey.has(key)) byKey.set(key, [])
+    byKey.get(key).push(`${project}（${what}）`)
+  }
+  for (const r of results) {
+    if (!r.files) continue
+    for (const f of r.ownUi) add(path.posix.basename(f).replace(/\.(tsx?|css)$/, ""), r.c.name, "自己加的组件")
+    for (const f of r.files) if (f.add >= 2 && f.add > f.del) add(f.item, r.c.name, `多 ${f.add} 行`)
+  }
+  if (!byKey.size) return
+  console.log("\n反哺候选（项目在 kit 上加的东西；--diff 看内容，评估记在 references/downstream.md）：")
+  const rows = [...byKey].sort((a, b) => b[1].length - a[1].length)
+  const w = Math.max(...rows.map(([k]) => k.length))
+  for (const [key, from] of rows) console.log(`  ${key.padEnd(w)}  ${from.join("、")}${from.length > 1 ? "  ← 多个项目都有" : ""}`)
+}
+
+// ── affected ─────────────────────────────────────────────────────────────────
+
+// The docs downstream projects implement. decisions / adoption / downstream /
+// checklist are about running this repo, and SKILL.md only sums up these, so a
+// change there asks nothing of a project.
+const SPEC_DOC = /^(principles|tokens|components|content|patterns\/[\w-]+)$/
+
+// A path in this repo → what downstream projects know it as.
+function touched(file) {
+  for (const item of registry.items) {
+    if ((item.files ?? []).some((f) => path.posix.join("gallery", f.path) === file)) return { item: item.name }
+  }
+  const doc = file.match(/^references\/(.+)\.md$/)?.[1]
+  return doc && SPEC_DOC.test(doc) ? { doc } : null
+}
+
+async function affected(ref) {
+  const r = spawnSync("git", ["-C", repoRoot, "diff", "--name-only", ref], { encoding: "utf8" })
+  if (r.status !== 0) throw new Error(`git diff ${ref} 失败：${r.stderr.trim()}`)
+  const changes = r.stdout.split("\n").filter(Boolean).map(touched).filter(Boolean)
+  const items = [...new Set(changes.flatMap((t) => (t.item ? [t.item] : [])))]
+  const docs = [...new Set(changes.flatMap((t) => (t.doc ? [t.doc] : [])))]
+  console.log(`相对 ${ref} 改了：`)
+  console.log(`  组件 / 主题：${items.join("、") || "无"}`)
+  console.log(`  规范文档：${docs.join("、") || "无"}`)
+  if (!items.length && !docs.length) return
+
+  const rows = await pool(consumers, 4, async (c) => {
+    const why = []
+    // registry projects take the whole system; aligned ones only what they follow.
+    const docsHit = c.mode === "registry" ? docs : docs.filter((d) => (c.follows ?? []).includes(d))
+    if (docsHit.length) why.push(`规范 ${docsHit.join("、")}`)
+    if (c.mode === "registry" && items.length) {
+      try {
+        const src = githubSource(c.repo)
+        const cfg = JSON.parse((await src.read(path.posix.join(c.root ?? ".", "components.json"))) ?? "{}")
+        const have = new Set(await src.files())
+        const hit = items.filter((name) =>
+          registry.items
+            .find((i) => i.name === name)
+            ?.files?.some((f) => have.has(path.posix.join(c.root ?? ".", targetOf(f, cfg)))),
+        )
+        if (hit.length) why.push(`装了 ${hit.join("、")}`)
+      } catch (e) {
+        why.push(`读不了，没法判断装了哪些：${e.message}`)
+      }
+    }
+    return { c, why }
+  })
+  console.log("\n要同步的项目：")
+  for (const { c, why } of rows.filter((x) => x.why.length)) console.log(`  ${c.name.padEnd(12)} ${why.join("；")}`)
+  const untouched = rows.filter((x) => !x.why.length).map((x) => x.c.name)
+  if (untouched.length) console.log(`不受影响：${untouched.join("、")}`)
+  console.log("\n每个项目单独提一个 PR，步骤见 references/adoption.md「升级」；aligned 项目在自己的组件里移植。")
 }
 
 // ── discover ─────────────────────────────────────────────────────────────────
@@ -282,11 +367,13 @@ const flag = (name) => {
   return v && !v.startsWith("--") ? v : ""
 }
 const flags = (name) => args.flatMap((a, i) => (a === name && args[i + 1] ? [args[i + 1]] : []))
-const takesValue = new Set(["--path", "--diff", "--owner", "--since"])
+const takesValue = new Set(["--path", "--diff", "--owner", "--since", "--affected"])
 const positional = args.filter((a, i) => !a.startsWith("--") && !takesValue.has(args[i - 1]))
 
 try {
-  if (args.includes("--discover")) {
+  if (args.includes("--affected")) {
+    await affected(flag("--affected") || "origin/main")
+  } else if (args.includes("--discover")) {
     await discover(flags("--owner").length ? flags("--owner") : ["linjiejim"], flag("--since") || FIRST_RELEASE)
   } else {
     const [name] = positional
@@ -300,7 +387,10 @@ try {
     const results = await pool(list, 4, (c) =>
       check(c, local ? localSource(local) : githubSource(c.repo), diffItem).catch((e) => ({ c, source: { label: c.repo }, error: e.message })),
     )
-    if (diffItem === undefined) results.forEach(report)
+    if (diffItem === undefined) {
+      results.forEach(report)
+      candidates(results)
+    }
   }
 } catch (e) {
   console.error(`✗ ${e.message}`)

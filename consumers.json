@@ -1,5 +1,5 @@
 {
-  "$comment": "用 jim-uiux 的下游项目。字段说明见 references/adoption.md「下游项目登记」；pnpm --dir gallery consumers 按这里逐个检查。",
+  "$comment": "用 jim-uiux 的开源项目。字段和分工见 references/downstream.md；私有项目写进不提交的 consumers.local.json。pnpm --dir gallery consumers 按这里逐个比对。",
   "consumers": [
     {
       "name": "retrace",
@@ -8,7 +8,12 @@
       "mode": "registry",
       "root": ".",
       "design": "docs/DESIGN.md",
-      "summary": "Tauri 桌面版 Git 历史查看器。强调色靛蓝，紧凑密度。"
+      "summary": "Tauri 桌面版 Git 历史查看器。",
+      "own": [
+        "强调色靛蓝，紧凑密度",
+        "车道色 --lane-*、diff 底色 --diff-*",
+        "提交图行高 26"
+      ]
     },
     {
       "name": "arbor",
@@ -17,7 +22,13 @@
       "mode": "registry",
       "root": "app",
       "design": "docs/DESIGN.md",
-      "summary": "工业建模互动课（网页 + Electron 桌面版）。强调色工程蓝，3D 场景色板在项目主题里。"
+      "summary": "工业建模互动课，网页 + Electron 桌面版。",
+      "own": [
+        "强调色工程蓝",
+        "3D 场景色板 --scene-* / --axis-*",
+        "讲解动画 0.7–1.4s，不受界面动效时长限制",
+        "沉浸页不用 AppShell"
+      ]
     },
     {
       "name": "greenhouse",
@@ -26,7 +37,30 @@
       "mode": "aligned",
       "root": ".",
       "design": "apps/client/DESIGN.md",
-      "summary": "一套客户端跑 web / 桌面 / iOS / Android（react-native-web）。自带品牌和 token 包 packages/ui-tokens，交互、反馈、文案和数据状态跟 jim-uiux；1.1.0 的工作台模式出自这里。"
+      "summary": "一套客户端跑 web、桌面、iOS、Android（react-native-web）；1.1.0 的工作台模式出自这里。",
+      "follows": ["principles", "content", "patterns/overlays", "patterns/feedback", "patterns/forms", "patterns/list-crud", "patterns/filters", "patterns/settings", "patterns/layout", "patterns/entry-pages", "patterns/one-time-secret"],
+      "own": [
+        "皮肤：Haven 绿、Nunito、自己的 token 包 packages/ui-tokens（同时提供 jim-uiux 的语义名）",
+        "弹框尺寸 DIALOG_SIZES 420 / 560 / 760 / 960",
+        "桌面高密度：行高 32、工具栏控件 28、标题栏 52",
+        "原生端跟平台：系统 sheet、菜单、Alert，标题字重 700"
+      ]
+    },
+    {
+      "name": "ivan",
+      "repo": "linjiejim/ivan",
+      "site": "https://ivan.linjiejim.com",
+      "mode": "aligned",
+      "root": ".",
+      "design": "docs/design-system.md",
+      "summary": "A 股 / 港股策略回测与跟踪。自己的设计系统「墨」，交互规则和 jim-uiux 大体一致，组件是手写的。",
+      "follows": ["principles", "content", "patterns/overlays", "patterns/forms", "patterns/feedback"],
+      "own": [
+        "皮肤「墨」：纸墨中性色、花青强调色（只给 AI、链接、焦点、选中）、Geist、Phosphor 图标、水墨插画",
+        "涨红跌绿：红是「涨」，报错用赭色 warn",
+        "细注 11px（页脚、图例、表单提示）",
+        "表格窄屏先收次要列再横滑，不变摘要列表"
+      ]
     }
   ]
 }

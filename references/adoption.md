@@ -40,7 +40,7 @@
    - 把 `APPEARANCE_BOOT_SCRIPT` 内联到 `<head>`。
 6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。
 7. 写 `docs/DESIGN.md`（模板见下文）。
-8. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（见下文「下游项目登记」）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。
+8. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（字段见 `downstream.md`）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。
 
 也可以只装需要的部分：`npx shadcn add @jim/theme @jim/button @jim/dialog`，registry 会自动带上依赖。
 
@@ -52,6 +52,7 @@
 基于 jim-uiux <版本号>（见 https://github.com/linjiejim/jim-uiux）。本文只记录与默认值不同的地方。
 
 ## 旋钮
+- 皮肤：默认（自己的皮肤写文件位置，和默认不同的取向列在下面）
 - 强调色：默认黑色
 - 圆角：默认 8
 - 密度：舒适
@@ -65,38 +66,12 @@
 - <哪里> 用了 <什么>，因为 <原因>。（代码对应的行上有 design-allow 注释）
 ```
 
-## 下游项目登记
-
-jim-uiux 仓库根目录的 `consumers.json` 是用这套系统的项目名单，每个项目一条：
-
-| 字段 | 含义 |
-| --- | --- |
-| `name` | 短名，命令行里用 |
-| `repo` | GitHub 的 `owner/name` |
-| `site` | 线上地址（可选） |
-| `mode` | `registry`：用 shadcn 从 `@jim` 装组件，可以自动比对；`aligned`：有自己的 token 和组件，规则跟 jim-uiux，改动要手动移植 |
-| `root` | `components.json` 所在目录，相对仓库根（monorepo 里常是子目录） |
-| `design` | 项目的 `DESIGN.md` 路径，相对仓库根；第一行写「基于 jim-uiux X.Y.Z」，脚本从这里读版本号 |
-| `summary` | 一句话：项目是什么，旋钮怎么选的 |
-
-只登记长期维护的项目；试验性的原型不登记。项目停止维护或换掉设计系统时删掉它那条。
-
-检查（在 jim-uiux 的 `gallery/` 里跑，需要登录好的 `gh`）：
-
-```bash
-pnpm consumers                          # 每个项目：标的版本、装了哪些文件、哪些和这里不一样、自己加了哪些组件
-pnpm consumers retrace --diff dialog    # 看一个文件的具体差异：- 是上游，+ 是项目自己的
-pnpm consumers retrace --path ~/Code/retrace   # 读本地检出（比如同步分支），不读 GitHub
-pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登记的仓库
-```
-
-默认读各仓库 GitHub 上的默认分支，对照的是本地 jim-uiux 源码（包括还没发布的改动）。比较前去掉了 `shadcn add` 会改写的部分（`"use client"`、`@/registry/jim/*` 的导入路径），剩下的差异都是真的：要么项目落后，要么项目改过。
-
 ## 已有设计系统的项目
 
 - 项目自己的 token 和组件优先，不要引入第二套。
 - 本技能只用来补空白：交互模式、行为、文案，以及项目没有定义的尺寸。
-- 想逐步迁移时，先把项目的 token 名对齐到 shadcn 的语义名，再按组件逐个替换。
+- 在 `consumers.json` 里按 `aligned` 登记，写清跟哪些规范（`follows`），上游改了规范才找得到它。
+- 想逐步迁移时，皮肤留着，先把项目的 token 名桥接到语义名，再按组件逐个替换（顺序见 `downstream.md`）。
 
 ## 非 React 项目（Vue / Nuxt / 纯 CSS）
 

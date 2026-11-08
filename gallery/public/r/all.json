@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "all",
-  "description": "jim-uiux 1.1.0: theme, every component, hooks and libs",
+  "description": "jim-uiux 1.2.0: theme, every component, hooks and libs",
   "registryDependencies": [
     "@jim/utils",
     "@jim/theme",

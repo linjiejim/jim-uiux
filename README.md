@@ -52,9 +52,11 @@ Project rules (`AGENTS.md`, an existing design system) win where they exist.
 - [Retrace](https://github.com/linjiejim/retrace): a desktop Git history viewer
 - [Arbor](https://github.com/linjiejim/featuretree): interactive lessons in parametric CAD
 - [Greenhouse](https://github.com/linjiejim/greenhouse): keeps its own brand and tokens, follows jim-uiux for interaction, feedback and copy
+- [Ivan](https://github.com/linjiejim/ivan): its own 「墨」 skin and components; shares the interaction rules
 
-The list lives in [`consumers.json`](consumers.json); `pnpm --dir gallery consumers`
-compares each project with the source here.
+The list lives in [`consumers.json`](consumers.json). Projects share the
+interaction layer and may bring their own skin; how changes travel both ways is
+in [`references/downstream.md`](references/downstream.md).
 
 ## Develop
 
