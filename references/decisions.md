@@ -98,11 +98,11 @@
 | 每条 Toast 右上角都有 ✕，`loading` 除外 | 右上角也是页头操作、抽屉 ✕、桌面应用标题栏按钮所在的位置，Toast 盖住了要能一下关掉；`loading` 的生命周期归发起它的代码 | 只有错误和 `prompt` 带 ✕（之前）；悬停才出现 ✕（触屏上没有悬停） |
 | ✕ 24px，跟第一行文字对齐；触屏上点击区扩到 44px | 和 IconButton 的 sm 档一致；文字折成两行时 ✕ 仍在角上 | sonner 默认挂在卡片外角的圆形按钮 |
 | 自己画标题栏的桌面应用用 `offset` 把 Toast 放到标题栏下面 | retrace、turnery 的标题栏右侧都有按钮。标题栏高度各不相同，交给项目传参，kit 不另加选项 | kit 加一个「桌面应用」开关 |
-| 新增 `Info`（ⓘ）：Popover，指上去稍等打开，点一下固定；`PageHeader`、`Field` 的 `info` 改用它 | ivan、turnery（`Hint`）、letpot-hub（`InfoButton`）三个项目都写了，都因为触屏没有悬停而从 Tooltip 换成 Popover；kit 自己的 `info` 还是 Tooltip，手机上点不开。行为取 turnery 的：90ms 打开、180ms 关闭，点一下固定 | 继续用 Tooltip；只能点开（桌面上要多点一下） |
+| 新增 `Info`（ⓘ）：Popover，指上去稍等打开，点一下固定；`PageHeader`、`Field` 的 `info` 改用它 | ivan、turnery（`Hint`）和另一个项目都写了，都因为触屏没有悬停而从 Tooltip 换成 Popover；kit 自己的 `info` 还是 Tooltip，手机上点不开。行为取 turnery 的：90ms 打开、180ms 关闭，点一下固定 | 继续用 Tooltip；只能点开（桌面上要多点一下） |
 | ivan 的 `InfoRows`（ⓘ 里的「标签 · 值」小表）不收 | 只有 ivan 用 | — |
 | 新增 `Kbd`，命令面板改用它 | 命令面板里本来有一个私有的；turnery、ivan 各写了一份。字体用 sans：⌘、↵ 这类符号在等宽字体里不好看 | 等宽字体（turnery） |
-| 新增 `CopyButton`：按钮自己说「已复制」，1.5 秒；失败说「复制失败」；`iconOnly` 用在小地方 | ivan、turnery、letpot-hub 都写了，时长都在 1.5 秒左右；「复制不弹 Toast」原来只写在一次性密钥里，提为通用规则。下游都没处理写剪贴板失败，按「每个操作都有回应」补上 | 复制后弹 `notify.success`（retrace 现在这样） |
-| 新增 `Callout`：info / warning / danger / neutral，淡底 + 图标，文字用正文色，最多一个操作；确认框里的失败原因改用 `danger` | ivan、greenhouse（`.gh-callout`）、letpot-hub（`Notice`）都有。`danger` 来自 greenhouse，正好是「确认框里显示失败原因」那一块；标题（ivan 有）不收，正文里加粗就行 | 文字也染色（原来确认框里的写法）；带标题的 Callout |
+| 新增 `CopyButton`：按钮自己说「已复制」，1.5 秒；失败说「复制失败」；`iconOnly` 用在小地方 | ivan、turnery 和另一个项目都写了，时长都在 1.5 秒左右；「复制不弹 Toast」原来只写在一次性密钥里，提为通用规则。下游都没处理写剪贴板失败，按「每个操作都有回应」补上 | 复制后弹 `notify.success`（retrace 现在这样） |
+| 新增 `Callout`：info / warning / danger / neutral，淡底 + 图标，文字用正文色，最多一个操作；确认框里的失败原因改用 `danger` | ivan、greenhouse（`.gh-callout`）和另一个项目都有。`danger` 来自 greenhouse，正好是「确认框里显示失败原因」那一块；标题（ivan 有）不收，正文里加粗就行 | 文字也染色（原来确认框里的写法）；带标题的 Callout |
 | `IconButton` 的 `tooltip` 可以传文字，`tooltipSide` 改方向 | turnery 在用，改动小、明显通用；避免为了换提示文字在外面再包一层 Tooltip | — |
 | 错误的淡红底改用 `data-[type=error]:` 写 | 之前写在 `error` 的 class 里，生成的 CSS 中 `bg-popover` 排在后面，淡红底从来没生效 | 加 `!important` |
 

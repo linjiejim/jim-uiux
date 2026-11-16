@@ -88,22 +88,22 @@ pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登
 
 | 候选 | 来源 | 判断 |
 | --- | --- | --- |
-| 拖动调宽的把手（`ResizeHandle`） | retrace、turnery、letpot-hub、ivan；kit 里已有（Drawer dock） | 各家方向键步长、双击复位、悬停样式不一样，retrace 的不能用键盘。从 Drawer 抽出来，统一一份规格 |
-| 真实进度条（`Progress`） | letpot-hub（两份）、turnery、ivan；kit 里已有（`upload-queue.tsx`） | 从上传队列抽出来 |
-| 原位改名（`InlineRename`：回车或失焦保存，Esc 还原） | retrace、turnery、letpot-hub | 三家行为一致，只有 turnery 判断了输入法组字（`isComposing`）。要收就同时改 `overlays.md`「重命名用 Dialog」那一行 |
+| 拖动调宽的把手（`ResizeHandle`） | retrace、turnery、ivan 和另一个项目；kit 里已有（Drawer dock） | 各家方向键步长、双击复位、悬停样式不一样，retrace 的不能用键盘。从 Drawer 抽出来，统一一份规格 |
+| 真实进度条（`Progress`） | turnery、ivan 和另一个项目（两份）；kit 里已有（`upload-queue.tsx`） | 从上传队列抽出来 |
+| 原位改名（`InlineRename`：回车或失焦保存，Esc 还原） | retrace、turnery 和另一个项目 | 三家行为一致，只有 turnery 判断了输入法组字（`isComposing`）。要收就同时改 `overlays.md`「重命名用 Dialog」那一行 |
 | Slider（标签 + 滑杆 + 读数，精确数值输入框可选） | turnery `param-slider.tsx` 等、greenhouse `form-controls.web.tsx` | 两个项目都有，补齐规格后收 |
 | 页头次要动作在手机上收进「⋯」（`MoreActions`） | ivan | 写进 `patterns/layout.md`，由 PageHeader 支持 |
 | `Tag`（描边、无底色的分类元数据） | ivan；greenhouse 的 Chip | 和 Badge 的 `outline` 变体基本重复，倾向只补用法说明 |
-| 数字排版（`Stat`：标签、`Info`、数值） | ivan、letpot-hub `KpiCard` | 第二个项目出现了；涨跌配色留给项目 |
-| 拖放上传区（`DropZone`，文件夹逐层展开） | letpot-hub、greenhouse | `feedback.md` 有规则没组件；等上传队列再有项目用时一起收 |
-| 分类色选择（基于 RadioGroup 的色块） | letpot-hub、greenhouse | kit 定了九种分类色，没有选色组件；letpot-hub 的不能用方向键 |
-| 首字母头像（`Avatar`） | greenhouse、letpot-hub | 优先级低 |
-| Drawer 标题区放一组切换（详情 / Copilot） | letpot-hub `dock-panel.tsx` 直接用了底层 Title | kit 缺口：导出 `DrawerTitle`，或让 DrawerHeader 能放切换 |
+| 数字排版（`Stat`：标签、`Info`、数值） | ivan 和另一个项目 | 第二个项目出现了；涨跌配色留给项目 |
+| 拖放上传区（`DropZone`，文件夹逐层展开） | greenhouse 和另一个项目 | `feedback.md` 有规则没组件；等上传队列再有项目用时一起收 |
+| 分类色选择（基于 RadioGroup 的色块） | greenhouse 和另一个项目 | kit 定了九种分类色，没有选色组件；有一份不能用方向键 |
+| 首字母头像（`Avatar`） | greenhouse 和另一个项目 | 优先级低 |
+| Drawer 标题区放一组切换（详情 / Copilot） | 一个项目直接用了底层 Title | kit 缺口：导出 `DrawerTitle`，或让 DrawerHeader 能放切换 |
 | 嵌入页：返回键先在嵌入页内部后退；视图状态写进宿主地址 | greenhouse（`useHostBack`、`greenhouse:route`） | 补进 `overlays.md`「嵌入页」两条规则，嵌入页 kit 仍不收 |
 | kit 内部的界面图标集中到一处，可以整套换图标库 | ivan（Phosphor）、greenhouse（`ICONS`） | 换皮肤的项目需要，见下文「已知限制」 |
 | 桌面高密度档、嵌入页 kit | greenhouse | 已在 `decisions.md`「待定」 |
 
-不收：retrace 的搜索高亮、letpot-hub 的批量选择条（都只有一个项目）；人员选择器（依赖各项目的接口）。
+不收：retrace 的搜索高亮、另一个项目的批量选择条（都只有一个项目）；人员选择器（依赖各项目的接口）。
 
 ## 已知限制
 
