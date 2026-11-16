@@ -96,8 +96,9 @@
 
 1. 看 `CHANGELOG.md`，确认从当前版本到目标版本之间改了什么。在 jim-uiux 里跑 `pnpm --dir gallery consumers <项目名>`，看这个项目哪些文件和上游不一样。
 2. 重新安装：`npx shadcn add @jim/<item> --overwrite`。会覆盖本地改动，所以先用 `pnpm --dir gallery consumers <项目名> --diff <item>` 看清 `+` 行（项目自己的改动）是不是有意的。如果是有意的，要么把它提回 jim-uiux，要么记进项目 `docs/DESIGN.md` 的例外里。
-3. 跑守卫和项目自己的测试，用浅色、深色和手机宽度各截一张图。
-4. 更新 `docs/DESIGN.md` 里的版本号。
+3. 收拾安装器的噪音：shadcn CLI（4.23）重新安装时，会在内容没变的文件里加上或去掉 `"use client"`，会删掉 `lib/` 文件开头的说明注释（`strings.ts`、`appearance.ts`），npm 还可能顺手升级不相干的依赖（`lucide-react`）。把这些还原，让 kit 文件和上游逐字一致，再跑一次 `pnpm --dir gallery consumers <项目名> --path <项目目录>` 确认全是「一致」。
+4. 跑守卫和项目自己的测试，用浅色、深色和手机宽度各截一张图。
+5. 更新 `docs/DESIGN.md` 里的版本号。
 
 ## 把改动回馈给 jim-uiux
 
