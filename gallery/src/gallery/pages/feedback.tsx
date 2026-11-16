@@ -23,7 +23,7 @@ export function FeedbackPage() {
           <Button onClick={() => notify.warning("已导出 98 条，2 条因格式问题跳过")}>警告</Button>
           <Button onClick={() => notify.undo("已归档 3 个项目", () => notify("已恢复"))}>撤销</Button>
           <Button onClick={() => notify.error("同步失败，网络连接中断", { retry: () => notify.success("已重新同步") })}>错误</Button>
-          <Button onClick={() => notify("链接已复制")}>普通</Button>
+          <Button onClick={() => notify("已加入「稍后阅读」")}>普通</Button>
           <Button onClick={() => notify.prompt("update", "新版本已下载，重启后生效", { label: "重启", onClick: () => notify("正在重启") })}>
             等你处理
           </Button>

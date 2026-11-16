@@ -103,6 +103,7 @@
 | 新增 `Kbd`，命令面板改用它 | 命令面板里本来有一个私有的；turnery、ivan 各写了一份。字体用 sans：⌘、↵ 这类符号在等宽字体里不好看 | 等宽字体（turnery） |
 | 新增 `CopyButton`：按钮自己说「已复制」，1.5 秒；失败说「复制失败」；`iconOnly` 用在小地方 | ivan、turnery 和另一个项目都写了，时长都在 1.5 秒左右；「复制不弹 Toast」原来只写在一次性密钥里，提为通用规则。下游都没处理写剪贴板失败，按「每个操作都有回应」补上 | 复制后弹 `notify.success`（retrace 现在这样） |
 | 新增 `Callout`：info / warning / danger / neutral，淡底 + 图标，文字用正文色，最多一个操作；确认框里的失败原因改用 `danger` | ivan、greenhouse（`.gh-callout`）和另一个项目都有。`danger` 来自 greenhouse，正好是「确认框里显示失败原因」那一块；标题（ivan 有）不收，正文里加粗就行 | 文字也染色（原来确认框里的写法）；带标题的 Callout |
+| 从菜单里复制仍用一句 Toast（2026-11-17 补） | 下游收敛时发现：菜单项选中后菜单关闭，按钮不在了，「按钮自己说已复制」做不到。greenhouse 和 kit 的 gallery 都是菜单关闭 + Toast；另一个项目让菜单不关、项自己显示「已复制」，记为候选 | 菜单不关、项自己显示「已复制」 |
 | `IconButton` 的 `tooltip` 可以传文字，`tooltipSide` 改方向 | turnery 在用，改动小、明显通用；避免为了换提示文字在外面再包一层 Tooltip | — |
 | 错误的淡红底改用 `data-[type=error]:` 写 | 之前写在 `error` 的 class 里，生成的 CSS 中 `bg-popover` 排在后面，淡红底从来没生效 | 加 `!important` |
 
