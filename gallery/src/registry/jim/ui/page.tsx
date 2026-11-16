@@ -1,10 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { Info } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { s } from "@/registry/jim/lib/strings"
-import { Tooltip } from "@/registry/jim/ui/tooltip"
+import { Info } from "@/registry/jim/ui/info"
 
 /*
  * Page widths are fixed, never invented per page:
@@ -57,13 +55,7 @@ export function PageHeader({
       {back}
       <div className="flex min-w-0 flex-1 items-center gap-1.5">
         <h1 className="truncate text-title-lg font-semibold">{title}</h1>
-        {info && (
-          <Tooltip content={info}>
-            <button type="button" aria-label={s().moreInfo} className="text-faint-foreground hover:text-foreground [&_svg]:size-4">
-              <Info />
-            </button>
-          </Tooltip>
-        )}
+        {info && <Info>{info}</Info>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </header>

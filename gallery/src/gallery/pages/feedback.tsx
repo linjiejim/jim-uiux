@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Button } from "@/registry/jim/ui/button"
+import { Callout } from "@/registry/jim/ui/callout"
 import { Skeleton } from "@/registry/jim/ui/skeleton"
 import { Spinner } from "@/registry/jim/ui/spinner"
 import { StateView } from "@/registry/jim/ui/state"
@@ -11,10 +12,10 @@ import { DocPage, Example, Row, Rules, Spec } from "../doc"
 export function FeedbackPage() {
   const [kind, setKind] = React.useState<"empty" | "no-match" | "no-permission" | "error">("empty")
   return (
-    <DocPage title="反馈与状态" lead="每个操作都有回应，但只说一次：结果在屏幕上看得见，就不再弹提示。" source="registry/jim/ui/toast.tsx · state.tsx · skeleton.tsx">
+    <DocPage title="反馈与状态" lead="每个操作都有回应，但只说一次：结果在屏幕上看得见，就不再弹提示。" source="registry/jim/ui/toast.tsx · callout.tsx · state.tsx · skeleton.tsx">
       <Example
         title="Toast"
-        note="顶部居中，叠放（悬停展开）。级别只用图标颜色区分，错误加一层很淡的红底。成功、提示 4 秒，警告 6 秒，带撤销 8 秒；错误、等你处理的提示、后台进度不自动消失。最多同时 3 条。"
+        note="桌面在右上角，叠放（悬停展开）；手机在顶部、占满宽度。右上角的 ✕ 随时关掉（后台进度除外）。级别只用图标颜色区分，错误加一层很淡的红底。成功、提示 4 秒，警告 6 秒，带撤销 8 秒；错误、等你处理的提示、后台进度不自动消失。最多同时 3 条。"
       >
         <Row>
           <Button onClick={() => notify.success("报告已导出到「下载」")}>成功</Button>
@@ -38,6 +39,20 @@ export function FeedbackPage() {
             后台进度
           </Button>
         </Row>
+      </Example>
+
+      <Example
+        title="提示框"
+        note="Callout：要一直留在页面上、直到原因消失的提示，比如只显示一次的值、缺少的配置、确认框里操作失败的原因。图标加一两句话，最多一个操作。淡底和图标一起说明级别。"
+      >
+        <div className="flex max-w-xl flex-col gap-3">
+          <Callout tone="info">导入在后台进行，完成后会出现在列表里。</Callout>
+          <Callout tone="warning" action={<Button size="sm">去配置</Button>}>
+            还没有配置发件邮箱，邀请邮件发不出去。
+          </Callout>
+          <Callout tone="danger">删除失败：项目里还有 3 个进行中的任务。</Callout>
+          <Callout tone="neutral">这个视图只显示你有权限查看的项目。</Callout>
+        </div>
       </Example>
 
       <Example title="确认还是撤销" canvas="none">

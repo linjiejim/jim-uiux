@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kbd",
+  "description": "A key as printed beside what it does: 「隐藏 H」, 「⌘K 搜索」, menu shortcuts.",
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/kbd.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\n/**\n * A key as printed beside what it does: 「隐藏 H」, 「⌘K 搜索」, menu shortcuts.\n * Show it where the shortcut works; on touch screens leave it out.\n */\nexport function Kbd({ className, ...props }: React.ComponentProps<\"kbd\">) {\n  return (\n    <kbd\n      className={cn(\n        \"inline-grid h-5 min-w-5 place-items-center rounded-xs border bg-muted px-1 font-sans text-caption leading-none font-normal whitespace-nowrap text-muted-foreground\",\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

@@ -16,13 +16,13 @@
       ]
     },
     {
-      "name": "arbor",
-      "repo": "linjiejim/arbor",
-      "site": "https://arbor.linjiejim.com",
+      "name": "turnery",
+      "repo": "linjiejim/turnery",
+      "site": "https://turnery.linjiejim.com",
       "mode": "registry",
       "root": "app",
       "design": "docs/DESIGN.md",
-      "summary": "工业建模互动课，网页 + Electron 桌面版。",
+      "summary": "参数化 CAD：Electron 桌面应用（Agent 经 MCP 建模）+ 中文机械 CAD 互动课网站。原名 arbor。",
       "own": [
         "强调色工程蓝",
         "3D 场景色板 --scene-* / --axis-*",

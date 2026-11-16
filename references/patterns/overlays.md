@@ -12,6 +12,7 @@
 | 归档、移出、隐藏 | 直接执行，然后 `notify.undo` | 确认框 |
 | 触屏上的操作列表、短选项 | BottomSheet | 居中弹框 |
 | 改一个值、选日期、选颜色 | Popover | Dialog |
+| 标题、字段、指标旁的补充说明 | Info（ⓘ，悬停或点按） | Tooltip（触屏上打不开）、标题下的说明句 |
 | 一组命令 | DropdownMenu | 一排按钮 |
 | 桌面工具、密集列表里的右键 | ContextMenu，和 ⋯ 菜单同一组项 | 只放在右键里的操作 |
 | 浮层要出现在画布、3D 视图里的一个点 | Popover + PopoverAnchor | 手写绝对定位的浮层 |

@@ -124,6 +124,23 @@
       ]
     },
     {
+      "name": "callout",
+      "type": "registry:ui",
+      "description": "A note that stays on the page until its cause is gone: a value shown only",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/callout.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "checkbox",
       "type": "registry:ui",
       "description": "16px box, 44px hit area on touch. Multi-choice and row selection. */",
@@ -173,6 +190,7 @@
         "radix-ui@^1.8.1"
       ],
       "registryDependencies": [
+        "@jim/kbd",
         "@jim/strings",
         "@jim/utils"
       ],
@@ -192,6 +210,7 @@
       ],
       "registryDependencies": [
         "@jim/button",
+        "@jim/callout",
         "@jim/strings",
         "@jim/utils"
       ],
@@ -217,6 +236,25 @@
       "files": [
         {
           "path": "src/registry/jim/ui/context-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "description": "Copies a value. The button itself answers: 「已复制」 (or 「复制失败」) for",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/strings",
+        "@jim/tooltip"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/copy-button.tsx",
           "type": "registry:ui"
         }
       ]
@@ -336,8 +374,7 @@
         "lucide-react@^1.66.0"
       ],
       "registryDependencies": [
-        "@jim/strings",
-        "@jim/tooltip",
+        "@jim/info",
         "@jim/utils"
       ],
       "files": [
@@ -369,6 +406,25 @@
       ]
     },
     {
+      "name": "info",
+      "type": "registry:ui",
+      "description": "ⓘ beside a title, a label or a figure, holding what the page shouldn't say",
+      "dependencies": [
+        "lucide-react@^1.66.0"
+      ],
+      "registryDependencies": [
+        "@jim/popover",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/info.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "registryDependencies": [
@@ -383,15 +439,25 @@
       ]
     },
     {
+      "name": "kbd",
+      "type": "registry:ui",
+      "description": "A key as printed beside what it does: 「隐藏 H」, 「⌘K 搜索」, menu shortcuts.",
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/kbd.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "page",
       "type": "registry:ui",
       "description": "Page widths are fixed, never invented per page:",
-      "dependencies": [
-        "lucide-react@^1.66.0"
-      ],
       "registryDependencies": [
-        "@jim/strings",
-        "@jim/tooltip",
+        "@jim/info",
         "@jim/utils"
       ],
       "files": [
@@ -726,7 +792,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.3.1: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.4.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -734,11 +800,13 @@
         "@jim/badge",
         "@jim/bottom-sheet",
         "@jim/button",
+        "@jim/callout",
         "@jim/checkbox",
         "@jim/combobox",
         "@jim/command-palette",
         "@jim/confirm-dialog",
         "@jim/context-menu",
+        "@jim/copy-button",
         "@jim/data-table",
         "@jim/dialog",
         "@jim/drawer",
@@ -746,7 +814,9 @@
         "@jim/facet-filter",
         "@jim/field",
         "@jim/filter-bar",
+        "@jim/info",
         "@jim/input",
+        "@jim/kbd",
         "@jim/page",
         "@jim/popover",
         "@jim/radio-group",

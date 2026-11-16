@@ -6,6 +6,7 @@ import { Command } from "cmdk"
 import { Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { s } from "@/registry/jim/lib/strings"
+import { Kbd } from "@/registry/jim/ui/kbd"
 
 /*
  * Command palette: ⌘K / Ctrl+K anywhere, the one top-anchored dialog.
@@ -81,14 +82,14 @@ export function CommandPalette({
                 {children}
               </Command.List>
               <div className="flex shrink-0 items-center gap-4 border-t px-4 py-2 text-caption text-faint-foreground max-sm:hidden">
-                <span>
+                <span className="inline-flex items-center gap-1">
                   <Kbd>↑</Kbd>
                   <Kbd>↓</Kbd> {s().commandNavigate}
                 </span>
-                <span>
+                <span className="inline-flex items-center gap-1">
                   <Kbd>↵</Kbd> {s().commandRun}
                 </span>
-                <span>
+                <span className="inline-flex items-center gap-1">
                   <Kbd>esc</Kbd> {s().close}
                 </span>
               </div>
@@ -154,14 +155,6 @@ export function CommandItem({
       {hint && <span className="shrink-0 truncate text-small text-faint-foreground">{hint}</span>}
       {shortcut && <Kbd>{shortcut}</Kbd>}
     </Command.Item>
-  )
-}
-
-function Kbd({ children }: { children: React.ReactNode }) {
-  return (
-    <kbd className="mx-0.5 inline-grid min-w-5 place-items-center rounded-xs border px-1 font-sans text-caption text-muted-foreground">
-      {children}
-    </kbd>
   )
 }
 

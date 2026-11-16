@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "callout",
+  "description": "A note that stays on the page until its cause is gone: a value shown only",
+  "dependencies": [
+    "lucide-react@^1.66.0"
+  ],
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/callout.tsx",
+      "content": "import * as React from \"react\"\nimport { CircleAlert, Info, TriangleAlert } from \"lucide-react\"\nimport { cn } from \"@/lib/utils\"\n\n/**\n * A note that stays on the page until its cause is gone: a value shown only\n * once, a setup that's missing, why the action in this dialog failed. Icon +\n * one or two sentences, at most one action at the end.\n *\n * The tint says the level, the icon says it too (colour is never the only\n * signal). Not for results (Toast), a failed section (StateView), a field's\n * error (Field), or explanations (Info).\n */\nconst tones = {\n  info: { box: \"bg-info-subtle\", icon: \"text-info\", Icon: Info },\n  warning: { box: \"bg-warning-subtle\", icon: \"text-warning\", Icon: TriangleAlert },\n  danger: { box: \"bg-destructive-subtle\", icon: \"text-destructive\", Icon: CircleAlert },\n  neutral: { box: \"bg-muted\", icon: \"text-muted-foreground\", Icon: Info },\n}\n\nexport function Callout({\n  tone = \"info\",\n  icon,\n  action,\n  className,\n  children,\n  ...props\n}: React.ComponentProps<\"div\"> & {\n  tone?: keyof typeof tones\n  /** Replaces the tone's icon. */\n  icon?: React.ReactNode\n  action?: React.ReactNode\n}) {\n  const t = tones[tone]\n  return (\n    <div\n      data-slot=\"callout\"\n      // a failure appears while the user waits on it: say it\n      role={tone === \"danger\" ? \"alert\" : undefined}\n      className={cn(\"flex items-start gap-2 rounded-md px-3 py-2 text-small text-foreground\", t.box, className)}\n      {...props}\n    >\n      <span aria-hidden className={cn(\"flex h-5 shrink-0 items-center [&_svg]:size-4\", t.icon)}>\n        {icon ?? <t.Icon />}\n      </span>\n      <div className=\"min-w-0 flex-1\">{children}</div>\n      {action && <div className=\"-my-0.5 shrink-0\">{action}</div>}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

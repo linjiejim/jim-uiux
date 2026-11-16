@@ -1,12 +1,14 @@
 import * as React from "react"
 import { Copy, Download, MoreHorizontal, Plus, Trash2 } from "lucide-react"
 import { Button, IconButton } from "@/registry/jim/ui/button"
+import { CopyButton } from "@/registry/jim/ui/copy-button"
+import { Kbd } from "@/registry/jim/ui/kbd"
 import { DocPage, Example, Row, Rules, Spec } from "../doc"
 
 export function ButtonsPage() {
   const [saving, setSaving] = React.useState(false)
   return (
-    <DocPage title="按钮" lead="一个区域只有一个主按钮。标签写动词加对象。" source="registry/jim/ui/button.tsx">
+    <DocPage title="按钮" lead="一个区域只有一个主按钮。标签写动词加对象。" source="registry/jim/ui/button.tsx · copy-button.tsx · kbd.tsx">
       <Example title="层级">
         <Row>
           <Button variant="primary">
@@ -58,6 +60,36 @@ export function ButtonsPage() {
           <IconButton label="删除" variant="secondary">
             <Trash2 />
           </IconButton>
+          <IconButton label="导出" tooltip="导出为 CSV（当前筛选结果）" tooltipSide="bottom">
+            <Download />
+          </IconButton>
+        </Row>
+      </Example>
+      <Example
+        title="复制"
+        note="CopyButton 点了以后按钮自己变成「已复制」，1.5 秒后恢复；失败时显示「复制失败」。不弹 Toast：结果就在点的地方。地方小（代码块角上、提交号旁边）用 iconOnly，文字放进悬停提示。"
+      >
+        <Row>
+          <CopyButton value="sk-live-4f9a2c71e0b8" label="复制密钥" />
+          <CopyButton value="https://design.linjiejim.com" label="复制链接" variant="ghost" />
+          <span className="inline-flex items-center gap-1 font-mono text-small text-muted-foreground">
+            3f9c2e1
+            <CopyButton value="3f9c2e1a7b04d5e6f8091a2b3c4d5e6f7a8b9c0d" label="复制完整提交号" iconOnly />
+          </span>
+        </Row>
+      </Example>
+      <Example title="按键提示" note="Kbd 放在能用这个快捷键的地方：菜单项、命令面板、按钮旁。触屏上不显示。">
+        <Row className="text-small text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            搜索 <Kbd>⌘K</Kbd>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            隐藏面板 <Kbd>H</Kbd>
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Kbd>↑</Kbd>
+            <Kbd>↓</Kbd> 选择
+          </span>
         </Row>
       </Example>
       <Example title="排列" canvas="none">
