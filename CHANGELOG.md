@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.4.0 · 2026-11-16
+
+Toast 到右上角；收回下游三个以上项目各写了一份的四个小组件（理由见 `references/decisions.md`「1.4.0」）。`notify` 和已有组件的用法不变。
+
+- 桌面上 Toast 改到右上角；手机仍在顶部、占满宽度。
+- 每条 Toast 右上角都有 ✕（之前只有错误和 `prompt` 有），后台进度（`loading`）除外；触屏上点击区 44px。✕ 和通知区的读屏名称改用 kit 文案（「关闭」「通知」），之前是 sonner 的英文。`strings.ts` 新增 `notifications`。
+- 修复：错误 Toast 的淡红底之前被 `bg-popover` 盖住，从来没显示过。
+- 新组件 `Info`（ⓘ 补充说明）：指上去稍等打开，点一下（触屏点按、键盘回车）固定，触屏上也能用。`PageHeader`、`Field` 的 `info` 改用它，之前是 Tooltip，手机上点不开。
+- 新组件 `Kbd`（按键提示），命令面板改用它。
+- 新组件 `CopyButton`：按钮自己变成「已复制」，1.5 秒后恢复；失败时「复制失败」；`iconOnly` 用在小地方。`strings.ts` 新增 `copy`、`copied`、`copyFailed`。
+- 新组件 `Callout`：info / warning / danger / neutral 四种提示框。`ConfirmDialog` 里的失败原因改用 `Callout tone="danger"`（多了图标，文字改用正文色）。
+- `IconButton`：`tooltip` 可以传文字，`tooltipSide` 改方向。
+- 规范：`patterns/feedback.md` 写了新位置、✕，以及自己画标题栏的桌面应用怎么用 `offset` 避开标题栏；复制到剪贴板不弹 Toast 成为通用规则。`components.md`、`patterns/overlays.md`、`patterns/one-time-secret.md` 写了四个新组件。
+- gallery：按钮页加复制和按键提示，弹层页加 ⓘ 说明，反馈页加提示框。
+- 下游：`consumers.json` 里的 arbor 改为 turnery（仓库已改名为 `linjiejim/turnery`）；`downstream.md` 的反哺候选清单按 2026-11-16 的盘点更新。
+- 升级时注意：retrace、turnery 的标题栏右侧有按钮，装上新的 `toast.tsx` 后给 `<Toaster>` 传 `offset={{ top: 标题栏高度 + 8, right: 16 }}`。
+
 ## 1.3.1 · 2026-11-08
 
 - Drawer dock 的宽度把手：方向键处理不再用逗号表达式，项目里的 oxlint / eslint（`no-unused-expressions`）不再报警告。行为不变。

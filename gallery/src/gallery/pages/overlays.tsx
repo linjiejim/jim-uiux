@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/registry/jim/ui/confirm-dialog"
 import { Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/registry/jim/ui/dialog"
 import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerTrigger } from "@/registry/jim/ui/drawer"
 import { Field, FieldGroup } from "@/registry/jim/ui/field"
+import { Info } from "@/registry/jim/ui/info"
 import { Input, Textarea } from "@/registry/jim/ui/input"
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popover"
 import { getAppearance, resolveAppearance, setAppearance } from "@/registry/jim/lib/appearance"
@@ -20,7 +21,7 @@ export function OverlaysPage() {
     <DocPage
       title="弹层"
       lead="先选对容器，再填内容。同一个意图永远用同一种弹层。"
-      source="registry/jim/ui/dialog.tsx · drawer.tsx · bottom-sheet.tsx · confirm-dialog.tsx · popover.tsx · context-menu.tsx"
+      source="registry/jim/ui/dialog.tsx · drawer.tsx · bottom-sheet.tsx · confirm-dialog.tsx · popover.tsx · info.tsx · context-menu.tsx"
     >
       <Example title="选哪个" canvas="none">
         <Spec
@@ -110,6 +111,21 @@ export function OverlaysPage() {
             </form>
           </PopoverContent>
         </Popover>
+      </Example>
+
+      <Example
+        title="ⓘ 说明"
+        note="页面标题、字段标签、指标旁边的补充说明：口径、这个设置会改变什么、注意事项。鼠标指上去稍等就打开，点一下（触屏点按、键盘回车）就固定，点别处或 Esc 关闭。只放文字，不放操作。PageHeader 和 Field 的 info 用的就是它。"
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-1.5">
+            <span className="text-title font-semibold">本月净利润</span>
+            <Info>按结算口径：已签收的订单扣除平台佣金、物流和退款。当天的数据次日 10 点前更新。</Info>
+          </div>
+          <Field label="保留天数" info="超过这个天数的记录会移进归档，仍可在归档里搜索和恢复。" className="max-w-60">
+            <Input defaultValue="90" inputMode="numeric" />
+          </Field>
+        </div>
       </Example>
 
       <Example
