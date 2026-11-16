@@ -35,6 +35,7 @@ export function Info({
   // focus goes back to the ⓘ only when it was pinned (Esc after Enter), never after a hover
   const refocus = React.useRef(false)
   const timer = React.useRef<number | undefined>(undefined)
+  const textId = React.useId()
   const cancel = () => window.clearTimeout(timer.current)
   React.useEffect(() => cancel, [])
 
@@ -63,6 +64,8 @@ export function Info({
         <button
           type="button"
           aria-label={label ?? s().moreInfo}
+          // the text is portaled away from the ⓘ: say it when focus stays on the ⓘ
+          aria-describedby={open ? textId : undefined}
           className={cn(
             "relative inline-grid size-5 shrink-0 place-items-center rounded-full text-faint-foreground transition-colors duration-(--duration-fast) hover:text-foreground [&_svg]:size-3.5",
             "after:absolute pointer-coarse:after:-inset-3",
@@ -88,6 +91,7 @@ export function Info({
         side={side}
         align={align}
         className="text-small"
+        aria-label={label ?? s().moreInfo}
         onOpenAutoFocus={(e) => e.preventDefault()}
         onCloseAutoFocus={(e) => {
           if (!refocus.current) e.preventDefault()
@@ -95,7 +99,7 @@ export function Info({
         onPointerEnter={(e) => hover(e, true)}
         onPointerLeave={(e) => hover(e, false)}
       >
-        {children}
+        <div id={textId}>{children}</div>
       </PopoverContent>
     </Popover>
   )

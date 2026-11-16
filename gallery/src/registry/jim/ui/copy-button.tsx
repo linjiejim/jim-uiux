@@ -19,7 +19,7 @@ export function CopyButton({
   variant,
   size,
   ...props
-}: Omit<ButtonProps, "children" | "onClick" | "value" | "size"> & {
+}: Omit<ButtonProps, "children" | "onClick" | "value" | "size" | "asChild"> & {
   value: string
   /** What the button says before copying; defaults to 「复制」. */
   label?: string
@@ -27,25 +27,29 @@ export function CopyButton({
   size?: "sm" | "md" | "icon" | "icon-sm"
 }) {
   const [state, setState] = React.useState<"idle" | "copied" | "failed">("idle")
-  React.useEffect(() => {
-    if (state === "idle") return
-    const t = window.setTimeout(() => setState("idle"), 1500)
-    return () => window.clearTimeout(t)
-  }, [state])
+  const timer = React.useRef<number | undefined>(undefined)
+  React.useEffect(() => () => window.clearTimeout(timer.current), [])
+  // every copy restarts the 1.5s, so a second click shows the full answer again
+  const answer = (next: "copied" | "failed") => {
+    window.clearTimeout(timer.current)
+    setState(next)
+    timer.current = window.setTimeout(() => setState("idle"), 1500)
+  }
 
   const name = label ?? s().copy
   const text = state === "copied" ? s().copied : state === "failed" ? s().copyFailed : name
   const button = (
     <Button
+      type="button"
       variant={variant ?? (iconOnly ? "ghost" : "secondary")}
       size={size ?? (iconOnly ? "icon-sm" : "sm")}
       aria-label={iconOnly ? name : undefined}
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(value)
-          setState("copied")
+          answer("copied")
         } catch {
-          setState("failed")
+          answer("failed")
         }
       }}
       {...props}
