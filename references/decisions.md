@@ -117,6 +117,7 @@
 | 方向键每步 16px；Home / End 到最小 / 最大；按键不再传给页面 | 16 来自 kit 和 retrace（turnery、ivan 用 24）：步子小一点，按两下也能到 24 的位置。Home / End 是 WAI-ARIA 分隔条的标准键位。retrace 的方向键还管提交列表导航，把手处理过的按键必须拦下 | 24px；Shift 加大步长（没有项目这么做） |
 | 双击回到 `defaultValue`（给了才有） | turnery、ivan 都有，桌面工具常见；kit 的停靠栏也加上（回到 400） | 不提供复位 |
 | 悬停是 `input` 色细线，键盘聚焦和拖动时用强调色（`ring`） | 强调色只给焦点和选中，悬停不是选中（kit、retrace 是这样；turnery、ivan 悬停就用强调色） | 悬停也用强调色 |
+| 鼠标按下拿到的焦点不亮焦点线，第一次按键才亮（1.5.1） | 下游收敛时发现：按下时程序给的焦点被浏览器算作 focus-visible，拖完之后强调色的线一直留着，像是还选中着 | `focus({ focusVisible: false })`（浏览器支持不齐）；按下时不给焦点（拖完方向键就作用到别处去了） |
 | 新增 `Progress`：`value / max`（默认 100），4px 高，强调色，`role="progressbar"`；不提供不确定态 | 上传队列、turnery、ivan 和另一个项目（两份）的形态一样。`value / max` 和 HTML `<progress>`、Radix 一致，分数、条数、百分比都能直接传。kit 原来的进度条没有 `role="progressbar"`，读屏读不到。不确定态就是 Spinner，规则本来就不许画假进度 | 只收 0–1 的分数；带不确定态动画 |
 
 ## 待定（等 Jim 拍板）
