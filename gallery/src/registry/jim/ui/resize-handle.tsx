@@ -48,8 +48,23 @@ export function ResizeHandle({
   const clamp = (v: number) => Math.round(Math.min(max, Math.max(min, v)))
   const drag = React.useRef<{ at: number; from: number; now: number } | null>(null)
   const [dragging, setDragging] = React.useState(false)
+  // the page's cursor before a drag, put back however the drag ends (even by unmounting mid-drag)
+  const pageCursor = React.useRef<string | null>(null)
+  const restoreCursor = () => {
+    if (pageCursor.current === null) return
+    document.documentElement.style.cursor = pageCursor.current
+    pageCursor.current = null
+  }
+  React.useEffect(
+    () => () => {
+      if (pageCursor.current !== null) document.documentElement.style.cursor = pageCursor.current
+    },
+    [],
+  )
 
   const commit = (v: number) => {
+    // mid-drag the pointer owns the size: a key or double-click now would be undone on release
+    if (drag.current) return
     const next = clamp(v)
     onValueChange(next)
     onValueCommit?.(next)
@@ -59,7 +74,7 @@ export function ResizeHandle({
     const last = drag.current.now
     drag.current = null
     setDragging(false)
-    document.documentElement.style.removeProperty("cursor")
+    restoreCursor()
     onValueCommit?.(last)
   }
 
@@ -75,12 +90,15 @@ export function ResizeHandle({
       data-dragging={dragging || undefined}
       onPointerDown={(e) => {
         if (e.button !== 0) return
-        // no text selection while dragging
+        // take focus (so the arrow keys work next), but no text selection while dragging
+        e.currentTarget.focus({ preventScroll: true })
         e.preventDefault()
         e.currentTarget.setPointerCapture(e.pointerId)
         drag.current = { at: vertical ? e.clientX : e.clientY, from: value, now: value }
         setDragging(true)
         // keep the resize cursor when the pointer runs ahead of the handle
+        restoreCursor()
+        pageCursor.current = document.documentElement.style.cursor
         document.documentElement.style.cursor = vertical ? "col-resize" : "row-resize"
       }}
       onPointerMove={(e) => {
@@ -93,6 +111,7 @@ export function ResizeHandle({
       }}
       onPointerUp={end}
       onPointerCancel={end}
+      onLostPointerCapture={end}
       onDoubleClick={defaultValue === undefined ? undefined : () => commit(defaultValue)}
       onKeyDown={(e) => {
         if (e.key === grow) commit(value + step)
