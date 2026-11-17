@@ -4,7 +4,8 @@ import { BottomSheet, BottomSheetBody, BottomSheetContent, BottomSheetFooter, Bo
 import { Button, IconButton } from "@/registry/jim/ui/button"
 import { ConfirmDialog } from "@/registry/jim/ui/confirm-dialog"
 import { Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/registry/jim/ui/dialog"
-import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerTrigger } from "@/registry/jim/ui/drawer"
+import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerPager, DrawerTrigger, useListPaging } from "@/registry/jim/ui/drawer"
+import { cn } from "@/lib/utils"
 import { Field, FieldGroup } from "@/registry/jim/ui/field"
 import { Info } from "@/registry/jim/ui/info"
 import { Input, Textarea } from "@/registry/jim/ui/input"
@@ -56,6 +57,13 @@ export function OverlaysPage() {
         <Row>
           <DetailDrawer />
         </Row>
+      </Example>
+
+      <Example
+        title="列表详情 · 遮罩与翻页"
+        note="在一个列表里一条一条看（读信息流、分诊、审阅）时用：模态抽屉加遮罩，点遮罩、Esc、✕ 都能关。打开后用 ↑ / ↓（也可以 ← / →、K / J）翻到上一条、下一条，抽屉不关，头部显示位置。这个列表未读排在前面：翻过的条目变成已读、换了位置，翻页仍然按打开时的顺序走，关掉抽屉后才用新顺序。"
+      >
+        <ListDetailDemo />
       </Example>
 
       <Example
@@ -547,5 +555,60 @@ function FeedbackSheet() {
         </BottomSheetFooter>
       </BottomSheetContent>
     </BottomSheet>
+  )
+}
+
+const INBOX = [
+  { id: "m1", title: "温室看板：图表方案二选一", from: "Dave · 08:40", body: "两个方案都写进交付文档了。A 改动小；B 对长时间序列更顺，但要换图表库。" },
+  { id: "m2", title: "letpot-mono PR 482 等你 review", from: "GitHub · 2 小时前", body: "设备配网流程重构，+320 −85，CI 已通过。" },
+  { id: "m3", title: "每日科技新闻速递 · 11-17", from: "Jimmy · 09:10", body: "精选 10 条、热门项目 4 个、智能硬件 1 个、AI 专递 3 条。" },
+  { id: "m4", title: "每日持仓监控 · 11-17", from: "Iva · 16:31", body: "今日组合上涨 0.4%，无异动。" },
+  { id: "m5", title: "Hen 每日选题 · 11-17", from: "Hen · 10:06", body: "今天入池 2 条待审，都在移远（官方新闻稿）。" },
+  { id: "m6", title: "jim-server 备份完成", from: "运维 · 04:15", body: "完整性校验通过，保留 14 份。" },
+]
+
+/** Unread first, so opening an item moves it: paging keeps the order it was opened from. */
+function ListDetailDemo() {
+  const [open, setOpen] = React.useState<string | null>(null)
+  const [read, setRead] = React.useState<ReadonlySet<string>>(new Set(["m6"]))
+  const show = React.useCallback((id: string) => {
+    setOpen(id)
+    setRead((r) => new Set(r).add(id))
+  }, [])
+  const items = [...INBOX].sort((a, b) => Number(read.has(a.id)) - Number(read.has(b.id)))
+  const paging = useListPaging({ items: items.map((i) => i.id), current: open, onChange: show })
+  const cur = INBOX.find((i) => i.id === open)
+  return (
+    <>
+      <div className="w-full max-w-[560px] divide-y overflow-hidden rounded-lg border">
+        {items.map((i) => (
+          <button
+            key={i.id}
+            type="button"
+            onClick={() => show(i.id)}
+            className={cn(
+              "flex w-full items-center gap-3 px-3.5 py-2.5 text-left text-body transition-colors duration-(--duration-fast) hover:bg-accent",
+              open === i.id && "bg-pressed hover:bg-pressed",
+            )}
+          >
+            <span className={cn("size-1.5 shrink-0 rounded-full", read.has(i.id) ? "bg-transparent" : "bg-foreground")} />
+            <span className={cn("min-w-0 flex-1 truncate", read.has(i.id) ? "text-muted-foreground" : "font-medium")}>{i.title}</span>
+            <span className="shrink-0 text-caption text-faint-foreground">{i.from}</span>
+          </button>
+        ))}
+      </div>
+      <Drawer open={!!open} onOpenChange={(v) => !v && setOpen(null)}>
+        <DrawerContent>
+          {cur && (
+            <>
+              <DrawerHeader title={cur.title} description={cur.from} actions={<DrawerPager {...paging} />} />
+              <DrawerBody>
+                <p className="text-reading">{cur.body}</p>
+              </DrawerBody>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
+    </>
   )
 }

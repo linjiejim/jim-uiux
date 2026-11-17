@@ -18,6 +18,7 @@
 | 不属于列表对象的短任务 | `Dialog` |
 | 看、改、新建列表里的一个对象 | `Drawer` + `DetailList`（原位编辑） |
 | 工作台里的详情栏（主区保持可点） | `Drawer mode="dock"` + `useInspectorStack` |
+| 列表里一条一条看（带遮罩，↑ / ↓ 翻页） | `Drawer` + `useListPaging` + `DrawerPager` |
 | 全局搜索、跳转、命令 | `CommandPalette` + `useCommandPalette`（⌘K） |
 | 不可逆操作前的确认 | `ConfirmDialog` / `useConfirm` |
 | 触屏上的选项和操作 | `BottomSheet` |
@@ -109,6 +110,9 @@
   - 宽 360–520，默认 400（`INSPECTOR_WIDTH`）；拖左边缘（`ResizeHandle`）或聚焦后按 ← → 调整，双击回到 400，按 `DrawerContent storageKey` 记住（一个地点一个 key）。
   - `useInspectorStack()`：`show` 从主区打开（新的一叠），`push` 从 inspector 里打开关联对象（最多 3 层，再多替换最上层），`back`、`close`。`DrawerHeader onBack` 显示「返回」。提升到主区 = 调用方导航后 `close()`。
   - Esc 只关最上层；inspector 上面可以开 Dialog、ConfirmDialog。
+- 列表详情翻页（规则见 `patterns/overlays.md`「列表详情」）：
+  - `useListPaging({ items, current, onChange })`：`items` 是屏幕顺序的 id 列表，`current` 是打开的 id。抽屉开着时绑定 ↑ / ↓、← / →、K / J；焦点在输入框里或按着 ⌘ / Ctrl / Alt 时不响应。抽屉开着时一直按打开那一刻的顺序翻（哪怕打开导致重新排序、当前项挪走或掉出列表），关掉后才用新顺序。返回 `index`、`total`、`hasPrev`、`hasNext`、`goPrev`、`goNext`。
+  - `DrawerPager`：放进 `DrawerHeader actions`，把 `useListPaging` 的返回值整个传进去。显示「3 / 12」和上一条、下一条按钮，提示里写着快捷键；列表不到两项时不显示。文案在 `strings.ts`（`previousItem`、`nextItem`、`itemPosition`）。
 
 ## CommandPalette
 

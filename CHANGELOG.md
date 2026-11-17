@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.6.0 · 2026-11-17
+
+列表详情的新用法：模态抽屉加遮罩，方向键翻页。来自 jim-hub，理由见 `references/decisions.md`「1.6.0」。已有组件的用法不变。
+
+- 新 hook `useListPaging`（在 `drawer.tsx`）：抽屉开着时，↑ / ↓（也接受 ← / →、K / J）切到列表的上一条、下一条；焦点在输入框里或按着 ⌘ / Ctrl / Alt 时不响应；抽屉开着时一直按打开那一刻的顺序翻，打开导致的重新排序不会让当前项跳走。
+- 新组件 `DrawerPager`：放在 `DrawerHeader actions` 里，显示「3 / 12」和上一条、下一条按钮，提示里带快捷键。
+- `strings.ts` 新增 `previousItem`、`nextItem`、`itemPosition`。
+- 规范：`patterns/overlays.md` 新增「列表详情：遮罩与翻页」，选择表里把它和 dock inspector 分开；`components.md` 补上两个新 API。
+- gallery：弹层页加「列表详情 · 遮罩与翻页」示例（未读排前，翻页时顺序不跳）。
+
 ## 1.5.1 · 2026-11-17
 
 - `ResizeHandle`：用鼠标拖完之后，强调色的焦点线不再一直亮着。按下时把手会拿到焦点（好让方向键接着用），浏览器把这种程序给的焦点也算作 focus-visible；现在按下后只留悬停线，第一次按键时焦点线再出来。键盘操作不变。
