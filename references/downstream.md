@@ -99,6 +99,7 @@ pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登
 | Drawer 标题区放一组切换（详情 / Copilot） | 一个项目直接用了底层 Title | kit 缺口：导出 `DrawerTitle`，或让 DrawerHeader 能放切换 |
 | 菜单里的复制项：项自己显示「已复制」，菜单不关 | 一个项目 | 规范现在是菜单关闭 + 一句 Toast（greenhouse、kit 的 gallery 都这样）；等第二个项目也这么做再议 |
 | Callout 放两个操作（「发现未保存的草稿：恢复 / 丢弃」） | 一个项目 | Callout 规定最多一个操作；先观察 |
+| 分段进度条（「已签 / 待提交」两段） | 一个项目 | `Progress` 只有一段，换用后只画已完成的那段，另一段的数字写在旁边；等第二个项目也要分段再收 |
 | 嵌入页：返回键先在嵌入页内部后退；视图状态写进宿主地址 | greenhouse（`useHostBack`、`greenhouse:route`） | 补进 `overlays.md`「嵌入页」两条规则，嵌入页 kit 仍不收 |
 | kit 内部的界面图标集中到一处，可以整套换图标库 | ivan（Phosphor）、greenhouse（`ICONS`） | 换皮肤的项目需要，见下文「已知限制」 |
 | 桌面高密度档、嵌入页 kit | greenhouse | 已在 `decisions.md`「待定」 |
