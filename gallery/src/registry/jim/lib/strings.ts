@@ -67,6 +67,9 @@ const zh = {
   copy: "复制",
   copied: "已复制",
   copyFailed: "复制失败",
+  previousItem: "上一条",
+  nextItem: "下一条",
+  itemPosition: (i: number, n: number) => `${i} / ${n}`,
 }
 
 export type Strings = typeof zh

@@ -318,6 +318,7 @@
         "@jim/button",
         "@jim/confirm-dialog",
         "@jim/field",
+        "@jim/kbd",
         "@jim/resize-handle",
         "@jim/strings",
         "@jim/use-guarded-open",
@@ -823,7 +824,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.5.1: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.6.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
