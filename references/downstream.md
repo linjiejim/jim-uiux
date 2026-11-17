@@ -84,12 +84,10 @@ pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登
 
 ### 候选清单（2026-11-16 盘点）
 
-收了或否了就从这里删掉，结论写进 `decisions.md`（1.4.0 收了 `Info`、`Kbd`、`CopyButton`、`Callout` 和 IconButton 的提示文字）。「kit 里已有」指 kit 组件内部已经私下实现了一份，收回来主要是导出、统一规格。
+收了或否了就从这里删掉，结论写进 `decisions.md`（1.4.0 收了 `Info`、`Kbd`、`CopyButton`、`Callout` 和 IconButton 的提示文字；1.5.0 收了 `ResizeHandle`、`Progress`）。「kit 里已有」指 kit 组件内部已经私下实现了一份，收回来主要是导出、统一规格。
 
 | 候选 | 来源 | 判断 |
 | --- | --- | --- |
-| 拖动调宽的把手（`ResizeHandle`） | retrace、turnery、ivan 和另一个项目；kit 里已有（Drawer dock） | 各家方向键步长、双击复位、悬停样式不一样，retrace 的不能用键盘。从 Drawer 抽出来，统一一份规格 |
-| 真实进度条（`Progress`） | turnery、ivan 和另一个项目（两份）；kit 里已有（`upload-queue.tsx`） | 从上传队列抽出来 |
 | 原位改名（`InlineRename`：回车或失焦保存，Esc 还原） | retrace、turnery 和另一个项目 | 三家行为一致，只有 turnery 判断了输入法组字（`isComposing`）。要收就同时改 `overlays.md`「重命名用 Dialog」那一行 |
 | Slider（标签 + 滑杆 + 读数，精确数值输入框可选） | turnery `param-slider.tsx` 等、greenhouse `form-controls.web.tsx` | 两个项目都有，补齐规格后收 |
 | 页头次要动作在手机上收进「⋯」（`MoreActions`） | ivan | 写进 `patterns/layout.md`，由 PageHeader 支持 |

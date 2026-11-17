@@ -107,6 +107,18 @@
 | `IconButton` 的 `tooltip` 可以传文字，`tooltipSide` 改方向 | turnery 在用，改动小、明显通用；避免为了换提示文字在外面再包一层 Tooltip | — |
 | 错误的淡红底改用 `data-[type=error]:` 写 | 之前写在 `error` 的 class 里，生成的 CSS 中 `bg-popover` 排在后面，淡红底从来没生效 | 加 `!important` |
 
+## 2026-11-17 · 1.5.0 抽出 ResizeHandle 和 Progress
+
+起因：1.4.0 盘点时，这两样在 kit 里已经有私下的实现（Drawer dock 的宽度把手、上传队列的进度条），下游四五个项目也各写了一份，规格不统一。
+
+| 决策 | 理由 | 被放弃的方案 |
+| --- | --- | --- |
+| 新增 `ResizeHandle`：`side` 指它在面板的哪条边，`value / min / max` 是面板尺寸；`onValueChange` 拖动中调用，`onValueCommit` 完成后调用 | Drawer、retrace、turnery（两份）、ivan 和另一个项目都写了；turnery 的 `edge` 写法能覆盖停靠栏、侧栏和上下分栏。拖动中只改界面、完成后再存，这是 kit 的 Drawer 和 turnery 共同的做法 | 每次移动都存；按「哪一侧的面板」而不是「哪条边」来写方向 |
+| 方向键每步 16px；Home / End 到最小 / 最大；按键不再传给页面 | 16 来自 kit 和 retrace（turnery、ivan 用 24）：步子小一点，按两下也能到 24 的位置。Home / End 是 WAI-ARIA 分隔条的标准键位。retrace 的方向键还管提交列表导航，把手处理过的按键必须拦下 | 24px；Shift 加大步长（没有项目这么做） |
+| 双击回到 `defaultValue`（给了才有） | turnery、ivan 都有，桌面工具常见；kit 的停靠栏也加上（回到 400） | 不提供复位 |
+| 悬停是 `input` 色细线，键盘聚焦和拖动时用强调色（`ring`） | 强调色只给焦点和选中，悬停不是选中（kit、retrace 是这样；turnery、ivan 悬停就用强调色） | 悬停也用强调色 |
+| 新增 `Progress`：`value / max`（默认 100），4px 高，强调色，`role="progressbar"`；不提供不确定态 | 上传队列、turnery、ivan 和另一个项目（两份）的形态一样。`value / max` 和 HTML `<progress>`、Radix 一致，分数、条数、百分比都能直接传。kit 原来的进度条没有 `role="progressbar"`，读屏读不到。不确定态就是 Spinner，规则本来就不许画假进度 | 只收 0–1 的分数；带不确定态动画 |
+
 ## 待定（等 Jim 拍板）
 
 - 日期选择器、富文本编辑器的规格。
