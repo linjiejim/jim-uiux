@@ -823,7 +823,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.5.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.5.1: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
