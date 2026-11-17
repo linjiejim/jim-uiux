@@ -559,12 +559,12 @@ function FeedbackSheet() {
 }
 
 const INBOX = [
-  { id: "m1", title: "温室看板：图表方案二选一", from: "Dave · 08:40", body: "两个方案都写进交付文档了。A 改动小；B 对长时间序列更顺，但要换图表库。" },
-  { id: "m2", title: "letpot-mono PR 482 等你 review", from: "GitHub · 2 小时前", body: "设备配网流程重构，+320 −85，CI 已通过。" },
-  { id: "m3", title: "每日科技新闻速递 · 11-17", from: "Jimmy · 09:10", body: "精选 10 条、热门项目 4 个、智能硬件 1 个、AI 专递 3 条。" },
-  { id: "m4", title: "每日持仓监控 · 11-17", from: "Iva · 16:31", body: "今日组合上涨 0.4%，无异动。" },
-  { id: "m5", title: "Hen 每日选题 · 11-17", from: "Hen · 10:06", body: "今天入池 2 条待审，都在移远（官方新闻稿）。" },
-  { id: "m6", title: "jim-server 备份完成", from: "运维 · 04:15", body: "完整性校验通过，保留 14 份。" },
+  { id: "m1", title: "数据看板：图表方案二选一", from: "设计 · 08:40", body: "两个方案都写进交付文档了。A 改动小；B 对长时间序列更顺，但要换图表库。" },
+  { id: "m2", title: "PR 482 等你 review", from: "GitHub · 2 小时前", body: "登录流程重构，+320 −85，CI 已通过。" },
+  { id: "m3", title: "每日新闻速递 · 11-17", from: "新闻 · 09:10", body: "精选 10 条、热门项目 4 个。" },
+  { id: "m4", title: "本周销售周报", from: "运营 · 16:31", body: "环比 +6%，两个渠道待跟进。" },
+  { id: "m5", title: "下周选题待定", from: "内容 · 10:06", body: "入池 2 条待审。" },
+  { id: "m6", title: "数据库备份完成", from: "运维 · 04:15", body: "完整性校验通过，保留 14 份。" },
 ]
 
 /** Unread first, so opening an item moves it: paging keeps the order it was opened from. */
