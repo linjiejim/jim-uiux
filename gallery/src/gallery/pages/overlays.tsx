@@ -9,6 +9,7 @@ import { Field, FieldGroup } from "@/registry/jim/ui/field"
 import { Info } from "@/registry/jim/ui/info"
 import { Input, Textarea } from "@/registry/jim/ui/input"
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popover"
+import { ResizeHandle } from "@/registry/jim/ui/resize-handle"
 import { getAppearance, resolveAppearance, setAppearance } from "@/registry/jim/lib/appearance"
 import { Badge } from "@/registry/jim/ui/badge"
 import { CommandGroup, CommandItem, CommandPalette } from "@/registry/jim/ui/command-palette"
@@ -21,7 +22,7 @@ export function OverlaysPage() {
     <DocPage
       title="弹层"
       lead="先选对容器，再填内容。同一个意图永远用同一种弹层。"
-      source="registry/jim/ui/dialog.tsx · drawer.tsx · bottom-sheet.tsx · confirm-dialog.tsx · popover.tsx · info.tsx · context-menu.tsx"
+      source="registry/jim/ui/dialog.tsx · drawer.tsx · bottom-sheet.tsx · confirm-dialog.tsx · popover.tsx · info.tsx · context-menu.tsx · resize-handle.tsx"
     >
       <Example title="选哪个" canvas="none">
         <Spec
@@ -59,7 +60,7 @@ export function OverlaysPage() {
 
       <Example
         title="Drawer · dock（Inspector）"
-        note="工作台的详情栏：不模态、没有遮罩，主区还能点。视口 ≥ 1440 时作为一栏停靠在主区旁边，更窄时浮起，点外面关闭。宽 360–520，拖左边缘调整，按地点记住。里面打开关联对象最多叠 3 层，可以提升到主区。示例见「模式 · 工作台外壳」。"
+        note="工作台的详情栏：不模态、没有遮罩，主区还能点。视口 ≥ 1440 时作为一栏停靠在主区旁边，更窄时浮起，点外面关闭。宽 360–520，拖左边缘调整（双击复位 400），按地点记住。里面打开关联对象最多叠 3 层，可以提升到主区。示例见「模式 · 工作台外壳」。"
         canvas="none"
       >
         <Row>
@@ -67,6 +68,13 @@ export function OverlaysPage() {
             <a href="#/workbench">打开工作台示例</a>
           </Button>
         </Row>
+      </Example>
+
+      <Example
+        title="拖动调宽（ResizeHandle）"
+        note="面板边缘上 8px 宽的拖动区：悬停显示一条细线，键盘聚焦和拖动时用强调色。拖它，或聚焦后按方向键（每步 16px，Home / End 到最小 / 最大）；双击回到默认宽度。拖动时只改界面，松手后再存（按地点记住）。Drawer 的停靠栏用的就是它。"
+      >
+        <SplitDemo />
       </Example>
 
       <Example title="命令面板" note="⌘K（Windows 上 Ctrl+K）在任何页面打开，本站也可以。唯一一个顶部对齐的弹框：640×480，距顶部 120；结果变化时框不变，只有列表滚动。分组有标题，选中后执行并关闭。">
@@ -154,6 +162,22 @@ export function OverlaysPage() {
 }
 
 type Pin = { x: number; y: number }
+
+function SplitDemo() {
+  const [width, setWidth] = React.useState(240)
+  const [saved, setSaved] = React.useState(240)
+  return (
+    <div className="flex h-48 overflow-hidden rounded-lg border">
+      <aside className="relative shrink-0 border-r bg-sunken p-3 text-small text-muted-foreground" style={{ width }}>
+        <div className="tabular">
+          侧栏 {width}px · 已存 {saved}px
+        </div>
+        <ResizeHandle side="right" value={width} min={160} max={360} defaultValue={240} onValueChange={setWidth} onValueCommit={setSaved} label="调整侧栏宽度" />
+      </aside>
+      <div className="min-w-0 flex-1 p-3 text-small text-muted-foreground">主区</div>
+    </div>
+  )
+}
 
 function PinCanvas() {
   const canvas = React.useRef<HTMLButtonElement>(null)

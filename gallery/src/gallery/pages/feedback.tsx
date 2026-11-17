@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Button } from "@/registry/jim/ui/button"
 import { Callout } from "@/registry/jim/ui/callout"
+import { Progress } from "@/registry/jim/ui/progress"
 import { Skeleton } from "@/registry/jim/ui/skeleton"
 import { Spinner } from "@/registry/jim/ui/spinner"
 import { StateView } from "@/registry/jim/ui/state"
@@ -12,7 +13,7 @@ import { DocPage, Example, Row, Rules, Spec } from "../doc"
 export function FeedbackPage() {
   const [kind, setKind] = React.useState<"empty" | "no-match" | "no-permission" | "error">("empty")
   return (
-    <DocPage title="反馈与状态" lead="每个操作都有回应，但只说一次：结果在屏幕上看得见，就不再弹提示。" source="registry/jim/ui/toast.tsx · callout.tsx · state.tsx · skeleton.tsx">
+    <DocPage title="反馈与状态" lead="每个操作都有回应，但只说一次：结果在屏幕上看得见，就不再弹提示。" source="registry/jim/ui/toast.tsx · callout.tsx · state.tsx · skeleton.tsx · progress.tsx">
       <Example
         title="Toast"
         note="桌面在右上角，叠放（悬停展开）；手机在顶部、占满宽度。右上角的 ✕ 随时关掉（后台进度除外）。级别只用图标颜色区分，错误加一层很淡的红底。成功、提示 4 秒，警告 6 秒，带撤销 8 秒；错误、等你处理的提示、后台进度不自动消失。最多同时 3 条。"
@@ -116,6 +117,13 @@ export function FeedbackPage() {
       </Example>
 
       <Example
+        title="进度"
+        note="Progress 只画真实的、知道总量的进度：已传的字节、处理完的条数、跑完的步数。不知道总量时用转圈，不画按时间走的假进度条。数字也写出来，进度条给读屏一个名字。"
+      >
+        <ProgressDemo />
+      </Example>
+
+      <Example
         title="上传队列"
         note="右下角排队，3 个同时传。状态词固定：等待 / 上传中 x% / 已添加 / 已存在 / 失败（重试）。全部成功 4 秒后自动收起；有失败时不收起。传完前离开页面会先问。"
       >
@@ -158,5 +166,29 @@ function UploadDemo() {
       <Button onClick={() => queue.add(files(["生菜.jpg", "番茄.jpg"]))}>再添加 2 个</Button>
       <UploadQueuePanel queue={queue} />
     </Row>
+  )
+}
+
+function ProgressDemo() {
+  const [done, setDone] = React.useState(312)
+  const total = 1204
+  return (
+    <div className="flex max-w-md flex-col gap-2">
+      <div className="flex items-center justify-between text-small">
+        <span id="export-progress">正在导出记录</span>
+        <span className="tabular text-muted-foreground">
+          {done} / {total}
+        </span>
+      </div>
+      <Progress value={done} max={total} aria-labelledby="export-progress" />
+      <Row className="mt-2">
+        <Button size="sm" onClick={() => setDone((d) => Math.min(total, d + 200))}>
+          再处理 200 条
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setDone(0)}>
+          重来
+        </Button>
+      </Row>
+    </div>
   )
 }

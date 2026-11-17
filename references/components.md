@@ -33,6 +33,8 @@
 | 状态标签 | `Badge`；表格里更紧凑的写法用 `StatusDot` |
 | 空、无匹配、无权限、出错 | `StateView` |
 | 加载中的占位 | `Skeleton`（静态）；短操作用 `Spinner` |
+| 知道总量的进度（上传、导出、批处理） | `Progress`；不知道总量用 `Spinner` |
+| 拖动调整面板的宽或高 | `ResizeHandle` |
 | 数据表格 | `DataTable` |
 | 页面骨架 | `Page`、`PageHeader`、`Section` |
 | 列表筛选 | `FilterBar`、`SearchInput`、`FilterSelect`、`FilterBoolean` |
@@ -104,7 +106,7 @@
 - 打开时聚焦面板本身，不聚焦第一个按钮，避免一打开就弹出按钮的悬停提示；标了 `autoFocus` 的输入框（编辑、新建）保留焦点。
 - `mode="dock"`：工作台的 inspector。不模态、没有遮罩；把 `<Drawer mode="dock">` 放在主区所在的 flex 行最后。
   - 视口 ≥ 1440（`DOCK_MIN`）停靠成一栏：主区让出宽度，点主区不关闭，打开时不抢焦点。更窄时浮起，点外面关闭。手机上全宽。
-  - 宽 360–520，默认 400（`INSPECTOR_WIDTH`）；拖左边缘或聚焦后按 ← → 调整，按 `DrawerContent storageKey` 记住（一个地点一个 key）。
+  - 宽 360–520，默认 400（`INSPECTOR_WIDTH`）；拖左边缘（`ResizeHandle`）或聚焦后按 ← → 调整，双击回到 400，按 `DrawerContent storageKey` 记住（一个地点一个 key）。
   - `useInspectorStack()`：`show` 从主区打开（新的一叠），`push` 从 inspector 里打开关联对象（最多 3 层，再多替换最上层），`back`、`close`。`DrawerHeader onBack` 显示「返回」。提升到主区 = 调用方导航后 `close()`。
   - Esc 只关最上层；inspector 上面可以开 Dialog、ConfirmDialog。
 
@@ -187,7 +189,17 @@
   - `error` 传 `onRetry` 时自动带「重试」按钮。
   - `no-match` 传 `onClearFilters` 时自动带「清除筛选」按钮。
 - `Skeleton`：静态的灰块，形状接近即将出现的内容，不闪光、不脉冲。配合 `useDelayedFlag` 使用：300ms 后才出现，出现后至少保留 600ms。
-- `Spinner`：只用于短等待（按钮里、字段旁）。
+- `Spinner`：只用于短等待（按钮里、字段旁），或者不知道总量的进度。
+- `Progress`：真实的、知道总量的进度。高 4，圆角，强调色。`value` / `max`（默认 100；分数传 `max={1}`，条数传总数）。要有名字：`aria-label`，或用 `aria-labelledby` 指向旁边的文字；数字也用文字写出来（「312 / 1,204」「上传中 40%」）。不画按时间走的假进度。
+
+## ResizeHandle
+
+- 面板边缘上的拖动区，用来调整停靠栏、侧栏、分栏的宽或高。`side` 是它所在的那条边（右侧面板的把手在 `left`），面板要 `position: relative`。
+- 8px 宽的拖动区，骑在边线上；悬停时显示一条 2px 的 `input` 色细线，键盘聚焦和拖动时用强调色（`ring`）。拖动时整页保持调整光标，不选中文字。
+- 键盘：聚焦后按方向键调整（每步 16px），Home / End 到最小 / 最大；方向键不会再传给页面（列表的上下键导航不受影响）。双击回到 `defaultValue`（给了才有）。
+- `onValueChange` 在拖动过程中调用，只改界面；`onValueCommit` 在松手、按键、双击后各调一次，在这里存宽度（按地点记住）。
+- `role="separator"`，带 `aria-valuenow / min / max`；名字默认「调整宽度」，一页有几个时用 `label` 区分。
+- 手机上面板通常全宽，把手跟着隐藏（`className="max-sm:hidden"`）。
 
 ## Toast（notify）
 

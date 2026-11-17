@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.5.0 · 2026-11-17
+
+把 kit 里两处私下的实现抽成组件，下游各自写的那几份可以换掉了（理由见 `references/decisions.md`「1.5.0」）。已有组件的用法不变。
+
+- 新组件 `ResizeHandle`：面板边缘的拖动区。拖动，或聚焦后按方向键（每步 16px，Home / End 到最小 / 最大），双击回到 `defaultValue`；`onValueChange` 拖动中调用，`onValueCommit` 完成后调用（在这里存宽度）。
+- 新组件 `Progress`：知道总量的进度，`value / max`，带 `role="progressbar"`。
+- `Drawer mode="dock"` 的宽度把手改用 `ResizeHandle`：多了双击回到 400、Home / End，按键不再传给页面。
+- `UploadQueuePanel` 的进度条改用 `Progress`，读屏现在能读到每个文件的进度。
+- 规范：`components.md` 写了两个组件，`patterns/layout.md`、`patterns/feedback.md` 指向它们；`downstream.md` 候选清单删掉这两项。
+- gallery：弹层页加「拖动调宽」，反馈页加「进度」。
+
 ## 1.4.0 · 2026-11-16
 
 Toast 到右上角；收回下游三个以上项目各写了一份的四个小组件（理由见 `references/decisions.md`「1.4.0」）。`notify` 和已有组件的用法不变。

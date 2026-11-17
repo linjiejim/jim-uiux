@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, CircleAlert, CircleCheck, Copy, X } from "lucid
 import { cn } from "@/lib/utils"
 import { s } from "@/registry/jim/lib/strings"
 import { Button, IconButton } from "@/registry/jim/ui/button"
+import { Progress } from "@/registry/jim/ui/progress"
 import { Spinner } from "@/registry/jim/ui/spinner"
 
 /*
@@ -206,12 +207,7 @@ export function UploadQueuePanel({ queue, className }: { queue: UploadQueue; cla
                 </div>
                 <div className="mt-0.5 flex items-center gap-2">
                   {item.status === "uploading" && item.progress !== undefined && (
-                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-primary transition-[width] duration-(--duration-base)"
-                        style={{ width: `${Math.round(item.progress * 100)}%` }}
-                      />
-                    </div>
+                    <Progress value={item.progress} max={1} aria-label={item.file.name} className="flex-1" />
                   )}
                   <span
                     className={cn(
