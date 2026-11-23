@@ -97,7 +97,7 @@ items.push({
   name: "release-notes-script",
   type: "registry:file",
   description: descriptions["release-notes-script"],
-  files: [{ path: "src/registry/jim/scripts/release-notes.mjs", type: "registry:file", target: "scripts/release-notes.mjs" }],
+  files: [{ path: "src/registry/jim/scripts/release-notes.mjs", type: "registry:file", target: "~/scripts/release-notes.mjs" }],
 })
 
 // everything at once
