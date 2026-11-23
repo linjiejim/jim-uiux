@@ -20,6 +20,7 @@ const descriptions = {
   "preset-warm": "Preset: Notion-like warm greys",
   utils: "cn() with tailwind-merge taught the semantic type scale",
   guards: "Vitest guards: no raw colours, type floor, no native dialogs, contrast matrix",
+  "release-notes-script": "scripts/release-notes.mjs: a CHANGELOG section for a release body or updater, drafted from Conventional Commits",
 }
 
 const items = []
@@ -91,12 +92,20 @@ items.push({
   files: guardFiles.map((f) => ({ path: `src/registry/jim/guards/${f}`, type: "registry:file", target: `tests/design/${f}` })),
 })
 
+// a project script, not app code: installed like the guards, left out of `all`
+items.push({
+  name: "release-notes-script",
+  type: "registry:file",
+  description: descriptions["release-notes-script"],
+  files: [{ path: "src/registry/jim/scripts/release-notes.mjs", type: "registry:file", target: "scripts/release-notes.mjs" }],
+})
+
 // everything at once
 items.push({
   name: "all",
   type: "registry:item",
   description: `jim-uiux ${version}: theme, every component, hooks and libs`,
-  registryDependencies: items.filter((i) => !i.name.startsWith("preset-") && i.name !== "guards").map((i) => `@jim/${i.name}`),
+  registryDependencies: items.filter((i) => !i.name.startsWith("preset-") && !["guards", "release-notes-script"].includes(i.name)).map((i) => `@jim/${i.name}`),
 })
 
 const registry = {

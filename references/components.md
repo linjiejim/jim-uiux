@@ -31,6 +31,7 @@
 | 复制一个值 | `CopyButton`（按钮自己说「已复制」） |
 | 快捷键提示 | `Kbd` |
 | 操作结果、撤销、后台错误、后台进度、等你处理的提示 | `notify` + `Toaster` |
+| 更新后说改了什么；web 部署了新版本 | `useReleaseNotes` + `ReleaseNotesDialog`；`useNewVersionPrompt` |
 | 状态标签 | `Badge`；表格里更紧凑的写法用 `StatusDot` |
 | 空、无匹配、无权限、出错 | `StateView` |
 | 加载中的占位 | `Skeleton`（静态）；短操作用 `Spinner` |
@@ -207,7 +208,16 @@
 
 ## Toast（notify）
 
-见 `patterns/feedback.md`。只通过 `notify` 调用，不直接用 sonner 的 `toast()`。
+见 `patterns/feedback.md`。只通过 `notify` 调用，不直接用 sonner 的 `toast()`。`notify.info(message, { action })` 带动作时停留 8 秒。
+
+## ReleaseNotes / useReleaseNotes / useNewVersionPrompt
+
+见 `patterns/updates.md`。更新内容来自应用自己的 `CHANGELOG.md`，构建时打进包里，用 `parseChangelog`（`lib/changelog.ts`）读。
+
+- `useReleaseNotes({ version, releases })`：版本号比上次记下的新、而且这几版写了更新内容时，弹一次「已更新到 x · 查看更新内容」（`notify.info` 带动作，8s）。首次安装只记版本号，不提示；`version` 可以晚到（Tauri 的 `getVersion()`）。返回 `dialog`（交给 `ReleaseNotesDialog`）和 `openAll()`（设置里的「查看更新内容」）。
+- `ReleaseNotesDialog`：md 尺寸，每版一节，新的在前；「注意」一组放在 `Callout tone="warning"` 里。`moreHref` 或 `onMore` 在底部加「全部更新记录」。只从 Toast 或设置里打开，不自己弹出来。
+- `ReleaseNotes`：只有列表，放在关于页、设置页里。
+- `useNewVersionPrompt({ current })`：web 应用把构建时的提交号和 `/version.json` 里的比较（标签页回到前台时最多一分钟一次，另外每 10 分钟一次），不一样就留一条「新版本已发布，刷新后生效 · 刷新页面」。不自动刷新；刷新前要存的东西放进 `onReload`。
 
 ## DataTable
 

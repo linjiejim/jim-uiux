@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.7.0 · 2026-11-23
+
+版本更新的整套说法：有新版本时怎么提示，更新以后怎么说改了什么，更新内容怎么写，CI 怎么从提交起草（理由见 `references/decisions.md`「1.7.0」）。已有组件的用法不变。
+
+- 新规范 `patterns/updates.md`：什么时候说什么（下载中、等重启、等刷新、更新后第一次打开、设置里）；`CHANGELOG.md` 的模板（注意 / 新增 / 改进 / 修复）和写法；从提交到 Release、更新清单、应用里的流程。
+- 新组件 `ReleaseNotesDialog`、`ReleaseNotes`，hook `useReleaseNotes`（更新后说一次「已更新到 x · 查看更新内容」）和 `useNewVersionPrompt`（web 部署了新版本：「刷新页面」）。新 lib `changelog.ts`：`parseChangelog`、`unseenReleases`、`compareVersions`，也认 Keep a Changelog 和 release-please 的标题。
+- 新 registry 条目 `@jim/release-notes-script`：`scripts/release-notes.mjs`。`draft` 从 Conventional Commits 起草下一节，`notes` 取出一版给 Release 和更新清单（缺了用提交兜底），`check` 在 PR 里核对版本号有没有更新内容。不依赖任何包，不在 `@jim/all` 里。
+- `notify.info` 可以带一个动作，带动作时停留 8 秒。
+- 修复：Toast 上的动作打开对话框时，对话框不再一打开就关掉（动作执行前，按钮先交出焦点）。
+- `strings.ts` 新增 `whatsNew`、`seeWhatsNew`、`updatedTo`、`allReleaseNotes`、`releaseNotesEmpty`、`releaseDate`、`newVersionReady`、`reload`。
+- 规范：`feedback.md`、`components.md`、`content.md`、`adoption.md`、`checklist.md` 指向新规范；`SKILL.md` 加一条硬规则。
+- gallery：新页「版本更新」；侧栏的版本号打开 jim-uiux 自己的更新内容，部署了新版本时提示刷新。
+- CI：PR 检查版本号有没有对应的一节；合进 main 并部署后，新版本自动发 GitHub Release（tag `v1.7.0` 起），说明取自本文件。
+- 升级时注意：用 `notify.prompt` 说「已下载 · 重启」的桌面应用（retrace、turnery），重启之后的那一步接上 `useReleaseNotes`。
+
 ## 1.6.0 · 2026-11-17
 
 列表详情的新用法：模态抽屉加遮罩，方向键翻页。来自下游项目的反馈，理由见 `references/decisions.md`「1.6.0」。已有组件的用法不变。

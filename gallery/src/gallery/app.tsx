@@ -16,11 +16,13 @@ import {
   TextCursorInput,
   Type,
   Square,
+  RefreshCw,
 } from "lucide-react"
 import { LucideProvider } from "lucide-react"
 import { setAppearance, resolveAppearance, getAppearance } from "@/registry/jim/lib/appearance"
 import { AppShell, NavGroup, NavItem } from "@/registry/jim/ui/app-shell"
 import { CommandGroup, CommandItem, CommandPalette, useCommandPalette } from "@/registry/jim/ui/command-palette"
+import { ReleaseNotesDialog, useNewVersionPrompt, useReleaseNotes } from "@/registry/jim/ui/release-notes"
 import { Toaster } from "@/registry/jim/ui/toast"
 import { TooltipProvider } from "@/registry/jim/ui/tooltip"
 import { ThemeKnobs } from "./knobs"
@@ -35,6 +37,8 @@ import { CrudPattern } from "./pages/crud"
 import { SettingsPattern } from "./pages/settings-pattern"
 import { WorkbenchPattern } from "./pages/workbench"
 import { MediaGridPattern } from "./pages/media-grid"
+import { UpdatesPattern } from "./pages/updates"
+import { kitReleases, RELEASES_URL } from "./changelog"
 
 type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean }
 
@@ -54,6 +58,7 @@ const routes: Record<string, RouteDef> = {
   settings: { label: "设置页", icon: <Settings />, page: SettingsPattern, group: "模式" },
   workbench: { label: "工作台外壳", icon: <PanelsTopLeft />, page: WorkbenchPattern, group: "模式", fill: true },
   media: { label: "分面筛选与媒体网格", icon: <Images />, page: MediaGridPattern, group: "模式" },
+  updates: { label: "版本更新", icon: <RefreshCw />, page: UpdatesPattern, group: "模式" },
 }
 
 function useRoute() {
@@ -74,6 +79,9 @@ export function App() {
   const Page = route.page
   const groups = [...new Set(Object.values(routes).map((r) => r.group))]
   const [paletteOpen, setPaletteOpen] = useCommandPalette()
+  // the gallery follows its own pattern: what changed since your last visit, and a newer deploy
+  const notes = useReleaseNotes({ version: __JIM_UIUX_VERSION__, releases: kitReleases, storageKey: "jim-uiux:gallery:seen" })
+  useNewVersionPrompt({ current: import.meta.env.PROD ? __JIM_UIUX_COMMIT__ : null })
 
   React.useEffect(() => {
     document.title = `${route.label} · jim-uiux`
@@ -85,7 +93,15 @@ export function App() {
         <AppShell
           brand={
             <span className="text-body font-semibold">
-              jim-uiux <span className="text-caption font-normal text-muted-foreground">v{__JIM_UIUX_VERSION__}</span>
+              jim-uiux{" "}
+              <button
+                type="button"
+                onClick={notes.openAll}
+                title="更新内容"
+                className="rounded-sm text-caption font-normal text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              >
+                v{__JIM_UIUX_VERSION__}
+              </button>
             </span>
           }
           footer={<ThemeKnobs />}
@@ -126,6 +142,7 @@ export function App() {
           </CommandGroup>
         </CommandPalette>
         <Toaster />
+        <ReleaseNotesDialog {...notes.dialog} moreHref={RELEASES_URL} />
       </TooltipProvider>
     </LucideProvider>
   )

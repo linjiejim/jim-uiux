@@ -34,6 +34,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: gallery/pnpm-lock.yaml
       - run: pnpm install --frozen-lockfile
+      # A version bump comes with its CHANGELOG.md section (references/patterns/updates.md)
+      - run: node src/registry/jim/scripts/release-notes.mjs check --file ../CHANGELOG.md
       - run: pnpm typecheck
       - run: pnpm test
       - name: Registry is up to date
@@ -63,3 +65,24 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v5
+
+  # The first time a version reaches main and is live, it gets a GitHub release (and tag vX.Y.Z)
+  # with its CHANGELOG.md section as the notes, so projects watching the repo hear about it.
+  release:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(jq -r .version gallery/package.json)
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "v$version is already released"
+            exit 0
+          fi
+          node gallery/src/registry/jim/scripts/release-notes.mjs notes "$version" > "$RUNNER_TEMP/notes.md"
+          gh release create "v$version" --target "$GITHUB_SHA" --title "jim-uiux $version" --notes-file "$RUNNER_TEMP/notes.md"
