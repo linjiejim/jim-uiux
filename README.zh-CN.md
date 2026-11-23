@@ -1,3 +1,5 @@
+<img src="gallery/public/favicon.svg" width="56" alt="">
+
 # jim-uiux
 
 一套小而有主见的 React UI/UX 设计系统：Notion 式的简洁，默认黑白，用几个旋钮换主题。三样东西放在同一个仓库里，免得互相脱节：

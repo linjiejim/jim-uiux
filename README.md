@@ -1,3 +1,5 @@
+<img src="gallery/public/favicon.svg" width="56" alt="">
+
 # jim-uiux
 
 A small, opinionated UI/UX design system for React apps — Notion-like minimal,

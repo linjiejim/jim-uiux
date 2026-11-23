@@ -43,6 +43,7 @@ import { UpdatesPattern } from "./pages/updates"
 import { StudioPage } from "./pages/studio"
 import { LayoutsPage } from "./pages/layouts"
 import { kitReleases, RELEASES_URL } from "./changelog"
+import { LogoMark } from "./logo"
 
 type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean }
 
@@ -99,6 +100,7 @@ export function App() {
         <AppShell
           brand={
             <span className="text-body font-semibold">
+              <LogoMark className="mr-1.5 inline-block size-4 align-[-3px]" />
               jim-uiux{" "}
               <button
                 type="button"
