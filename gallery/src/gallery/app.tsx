@@ -43,7 +43,7 @@ import { UpdatesPattern } from "./pages/updates"
 import { StudioPage } from "./pages/studio"
 import { LayoutsPage } from "./pages/layouts"
 import { kitReleases, RELEASES_URL } from "./changelog"
-import { LogoMark } from "./logo"
+import { Wordmark } from "./logo"
 
 type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean }
 
@@ -100,8 +100,8 @@ export function App() {
         <AppShell
           brand={
             <span className="text-body font-semibold">
-              <LogoMark className="mr-1.5 inline-block size-4 align-[-3px]" />
-              jim-uiux{" "}
+              {/* 19 units tall, 5 of them below the baseline: sit on the text baseline */}
+              <Wordmark className="mr-1 inline h-[1.2em] w-auto align-[-0.316em]" />{" "}
               <button
                 type="button"
                 onClick={notes.openAll}
