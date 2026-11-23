@@ -99,8 +99,85 @@ function localSource(dir) {
 
 // ── registry → project paths ─────────────────────────────────────────────────
 
-// adoption.md requires `@/*` → `./src/*`.
-const aliasDir = (alias) => alias.replace(/^@\//, "src/")
+// tsconfig is JSON with comments and trailing commas. Strings are copied as they
+// are, so the "/*" in "@/*" is not taken for a comment.
+function parseJsonc(text) {
+  let out = ""
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
+    if (ch === '"') {
+      let j = i + 1
+      while (j < text.length && text[j] !== '"') j += text[j] === "\\" ? 2 : 1
+      out += text.slice(i, j + 1)
+      i = j
+    } else if (ch === "/" && text[i + 1] === "/") {
+      while (i + 1 < text.length && text[i + 1] !== "\n") i++
+    } else if (ch === "/" && text[i + 1] === "*") {
+      const end = text.indexOf("*/", i + 2)
+      i = end < 0 ? text.length : end + 1
+    } else if (ch === "}" || ch === "]") {
+      // A string always ends in a quote, so a comma left at the end is a trailing one.
+      const t = out.trimEnd()
+      out = (t.endsWith(",") ? t.slice(0, -1) : out) + ch
+    } else out += ch
+  }
+  return JSON.parse(out.replace(/^\uFEFF/, ""))
+}
+
+// One tsconfig with what it extends, merged the way tsc does: the file's own
+// options win, `paths` resolve against `baseUrl` if one is set, else against the
+// file that wrote them. Extends from a package (node_modules) can't be read here.
+async function tsconfig(source, file, chain = []) {
+  if (chain.includes(file)) return null
+  const text = await source.read(file)
+  if (text == null) return null
+  let json
+  try {
+    json = parseJsonc(text)
+  } catch (e) {
+    throw new Error(`读不懂 ${file}：${e.message}`)
+  }
+  const dir = path.posix.dirname(file)
+  const opts = {}
+  for (const ext of [json.extends ?? []].flat()) {
+    if (!/^\.\.?\//.test(ext)) continue
+    const parent = path.posix.join(dir, ext.endsWith(".json") ? ext : `${ext}.json`)
+    Object.assign(opts, (await tsconfig(source, parent, [...chain, file]))?.opts)
+  }
+  const own = json.compilerOptions ?? {}
+  if (own.paths) opts.paths = { map: own.paths, dir }
+  if (own.baseUrl != null) opts.baseUrl = path.posix.join(dir, own.baseUrl)
+  const refs = (json.references ?? []).map((r) => {
+    const p = path.posix.join(dir, r.path)
+    return p.endsWith(".json") ? p : path.posix.join(p, "tsconfig.json")
+  })
+  return { opts, refs }
+}
+
+// Where `@/` points, relative to the project root: tsconfig.json's
+// `paths["@/*"]`, else the first project it references that sets one (Vite's
+// tsconfig.app.json). Usually `src`, but an app can live elsewhere (`./web/src/*`);
+// with no tsconfig saying otherwise it is `src`.
+async function aliasRoot(source, root) {
+  const seen = new Set()
+  const find = async (file) => {
+    if (seen.has(file)) return null
+    seen.add(file)
+    const t = await tsconfig(source, file)
+    if (!t) return null
+    const target = t.opts.paths?.map["@/*"]?.[0]
+    if (target) return path.posix.join(t.opts.baseUrl ?? t.opts.paths.dir, target.replace(/\*$/, ""))
+    for (const ref of t.refs) {
+      const hit = await find(ref)
+      if (hit) return hit
+    }
+    return null
+  }
+  const hit = await find(path.posix.join(root, "tsconfig.json"))
+  return hit ? path.posix.relative(root, hit) || "." : "src"
+}
+
+const aliasDir = (alias, base) => (alias.startsWith("@/") ? path.posix.join(base, alias.slice(2)) : alias)
 
 function aliasesOf(cfg) {
   const a = cfg.aliases ?? {}
@@ -111,15 +188,21 @@ function aliasesOf(cfg) {
   }
 }
 
-function targetOf(file, cfg) {
+// Where a registry file can be in the project, relative to its root, most
+// likely first; the first one the project has is the one compared. `base` is
+// where `@/` points (aliasRoot).
+function targetsOf(file, cfg, base) {
   const a = aliasesOf(cfg)
-  const base = path.posix.basename(file.path)
-  if (file.type === "registry:ui") return `${aliasDir(a.ui)}/${base}`
-  if (file.type === "registry:hook") return `${aliasDir(a.hooks)}/${base}`
-  if (file.type === "registry:lib") return `${aliasDir(a.lib)}/${base}`
-  // shadcn puts a file target under src/ in a src-dir project; "~/" means the project root.
-  if (file.target.startsWith("~/")) return file.target.slice(2)
-  return file.target.startsWith("src/") ? file.target : `src/${file.target}`
+  const name = path.posix.basename(file.path)
+  if (file.type === "registry:ui") return [`${aliasDir(a.ui, base)}/${name}`]
+  if (file.type === "registry:hook") return [`${aliasDir(a.hooks, base)}/${name}`]
+  if (file.type === "registry:lib") return [`${aliasDir(a.lib, base)}/${name}`]
+  // "~/" means the project root. "src/" means the app's source, where `@/` points.
+  if (file.target.startsWith("~/")) return [file.target.slice(2)]
+  if (file.target.startsWith("src/")) return [path.posix.join(base, file.target.slice(4))]
+  // Anything else shadcn puts under src/ when there is one, else at the root
+  // (the guards: some projects run them from the root, next to vitest.config).
+  return [...new Set([path.posix.join(base, file.target), file.target])]
 }
 
 // Undo what `shadcn add` rewrites, so only real differences are left.
@@ -175,11 +258,15 @@ async function check(c, source, diffItem) {
   if (!cfgText) return { ...result, error: `找不到 ${rel("components.json")}` }
   const cfg = JSON.parse(cfgText)
   result.registryUrl = cfg.registries?.["@jim"]
+  const base = (result.base = await aliasRoot(source, c.root ?? "."))
 
-  const entries = registry.items.flatMap((item) =>
-    (item.files ?? []).map((file) => ({ item: item.name, file, target: targetOf(file, cfg) })),
-  )
   const have = new Set(files)
+  const entries = registry.items.flatMap((item) =>
+    (item.files ?? []).map((file) => {
+      const targets = targetsOf(file, cfg, base)
+      return { item: item.name, file, target: targets.find((t) => have.has(rel(t))) ?? targets[0] }
+    }),
+  )
   const installed = entries.filter((e) => have.has(rel(e.target)))
   const installedNames = new Set(installed.map((e) => e.item))
   result.missing = registry.items.filter((i) => i.files?.length && !installedNames.has(i.name)).map((i) => i.name)
@@ -190,7 +277,7 @@ async function check(c, source, diffItem) {
     return { ...e, upstream, project, ...(upstream === project ? { add: 0, del: 0 } : numstat(upstream, project)) }
   })
 
-  const uiDir = rel(aliasDir(aliasesOf(cfg).ui)) + "/"
+  const uiDir = rel(aliasDir(aliasesOf(cfg).ui, base)) + "/"
   const known = new Set(entries.filter((e) => e.file.type === "registry:ui").map((e) => rel(e.target)))
   result.ownUi = files.filter((f) => f.startsWith(uiDir) && !f.slice(uiDir.length).includes("/") && !known.has(f))
 
@@ -222,6 +309,7 @@ function report(r) {
     return
   }
   if (r.registryUrl !== "https://design.linjiejim.com/r/{name}.json") console.log(`  registry 地址：${r.registryUrl ?? "未配置"}`)
+  if (r.base !== "src") console.log(`  @/ 指向 ${r.base}（tsconfig 的 paths）`)
   const same = r.files.filter((f) => f.add + f.del === 0)
   const diff = r.files.filter((f) => f.add + f.del > 0).sort((a, b) => b.add + b.del - (a.add + a.del))
   console.log(`  装了 ${r.files.length} 个文件：一致 ${same.length}，有差异 ${diff.length}`)
@@ -292,12 +380,14 @@ async function affected(ref) {
     if (c.mode === "registry" && items.length) {
       try {
         const src = githubSource(c.repo)
-        const cfg = JSON.parse((await src.read(path.posix.join(c.root ?? ".", "components.json"))) ?? "{}")
+        const root = c.root ?? "."
+        const cfg = JSON.parse((await src.read(path.posix.join(root, "components.json"))) ?? "{}")
+        const base = await aliasRoot(src, root)
         const have = new Set(await src.files())
         const hit = items.filter((name) =>
           registry.items
             .find((i) => i.name === name)
-            ?.files?.some((f) => have.has(path.posix.join(c.root ?? ".", targetOf(f, cfg)))),
+            ?.files?.some((f) => targetsOf(f, cfg, base).some((t) => have.has(path.posix.join(root, t)))),
         )
         if (hit.length) why.push(`装了 ${hit.join("、")}`)
       } catch (e) {

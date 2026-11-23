@@ -61,7 +61,7 @@ pnpm consumers --affected <ref>         # 这里相对 <ref> 改了什么、要�
 pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登记的仓库
 ```
 
-默认读各仓库 GitHub 上的默认分支，对照的是本地 jim-uiux 源码（包括还没发布的改动）。比较前去掉了 `shadcn add` 会改写的部分（`"use client"`、`@/registry/jim/*` 的导入路径），剩下的差异都是真的：要么项目落后，要么项目改过。`aligned` 项目没法自动比对，脚本只列出它跟的规范和自己保留的部分。
+默认读各仓库 GitHub 上的默认分支，对照的是本地 jim-uiux 源码（包括还没发布的改动）。文件按项目 `tsconfig.json` 里 `@/*` 指向的目录找（也看它 `extends`、`references` 的配置），没写就当是 `src/`；`@/` 不在 `src/` 时报告里会写出来。比较前去掉了 `shadcn add` 会改写的部分（`"use client"`、`@/registry/jim/*` 的导入路径），剩下的差异都是真的：要么项目落后，要么项目改过。`aligned` 项目没法自动比对，脚本只列出它跟的规范和自己保留的部分。
 
 ## 往下推：上游改了
 
