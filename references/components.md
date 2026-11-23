@@ -12,6 +12,8 @@
 | 从 ≤ 8 个选项里选一个 | `Select` |
 | 从更多选项里选、或要边打边搜 | `Combobox` |
 | 2–4 个视图之间切换 | `Segmented` |
+| 范围里的一个数值，手感比精确数字重要（圆角、音量、阈值） | `Slider` |
+| 从固定的一组颜色里选一个（标签色、项目色、主题预设） | `SwatchPicker`；分类色用 `categoricalOptions()` |
 | 页面的不同部分之间切换 | `Tabs` |
 | 立即生效的开 / 关 | `Switch` |
 | 多选；或者点「保存」才生效的开关 | `Checkbox` |
@@ -38,7 +40,9 @@
 | 知道总量的进度（上传、导出、批处理） | `Progress`；不知道总量用 `Spinner` |
 | 拖动调整面板的宽或高 | `ResizeHandle` |
 | 数据表格 | `DataTable` |
-| 页面骨架 | `Page`、`PageHeader`、`Section` |
+| 页面骨架 | `Page`、`PageHeader`、`Section`；主栏 + 侧栏用 `PageColumns`。选哪种骨架见 `patterns/page-layouts.md` |
+| 要自己边界的一组内容（图表、网格里的一项、登录卡片） | `Card`；自动列数的一排卡片用 `CardGrid` |
+| 仪表盘上单独成立的数字 | `Stat` + `StatGrid` |
 | 列表筛选 | `FilterBar`、`SearchInput`、`FilterSelect`、`FilterBoolean` |
 | 多个维度一起筛、多选 | `FacetFilter` + `useFacetParams` |
 | 多个文件上传 | `useUploadQueue` + `UploadQueuePanel` |
@@ -230,9 +234,40 @@
 - `mobile: "title" | "meta" | "hidden"`：这一列在手机摘要列表里的角色。
 - `wrap`：允许换行（很少用）。
 
+## Slider
+
+- 一个范围里的数值，手感比精确数字更重要时用：圆角、音量、透明度、阈值。精确数字重要时，旁边再放一个 `Input`。
+- 轨道 4，填充是强调色；滑块 16（触屏 20，点击区 44），白底细边框加 `shadow-popover`；高度占 `--control-md`。
+- `format` 决定右侧的读数，也是读屏念的值（`aria-valuetext`）：写上单位（「8px」「40%」），端点可以换成词（「静音」）。
+- 键盘：← → 一步，PageUp / PageDown 十步，Home / End 到两端。
+- `onValueChange` 在拖动中调用，只改界面；要存的值在 `onValueCommit`（松手、按键后）里存。
+- 放在 `Field` 里时，字段标签就是它的名字；否则传 `aria-label`。
+
+## SwatchPicker
+
+- 从固定的一组颜色里选一个：标签和项目的颜色（九种分类色，`categoricalOptions()`，存名字）、主题预设。不给用户数据提供任意取色。
+- 色块 24（`sm` 20），之间 10（触屏 12，点击区 44）；每个色块有一圈 1px 的描边，白色和接近画布的颜色也看得出边界。
+- 选中的色块外面加一圈 2px 的正文色环：选中不只靠颜色。每个色块都有名字（悬停提示 + 读屏），名字来自 `strings.ts` 的 `colorName`。
+- 基于 RadioGroup：整组只占一个 Tab 位，方向键移动并选中。
+
+## Card / CardGrid
+
+- `Card`：需要自己边界的一组内容。1px 细线、`rounded-lg`、内边距 `--space-card`（16）；不加阴影，不套卡片。`title`（14 / 500）在左，`actions`（≤ 2 个小按钮）在右。
+- 页面上的区块不是卡片，用 `Section`。设置分组用 `SettingsSection`。
+- `CardGrid`：每列最窄 `min`（默认 240），列数自动；间距 `--space-card`。图片的比例写在图片上（16:9、4:3、1:1），一个网格只用一种。
+
+## Stat / StatGrid
+
+- `Stat`：标签（13，次要文字色）+ ⓘ（统计口径）+ 数值（28，600，等宽数字）+ 一行说明（「较上周 +3」「截至 9:00」）。自带卡片边框。
+- 说明那一行 kit 不上色：涨跌用什么颜色归项目（有的市场红色表示涨）。
+- 加载时保持高度（`Skeleton`），不显示 0（`feedback.md`「五种数据状态」）。
+- `StatGrid`：手机 1 列、sm 起 2 列、xl 起 4 列；只放一行、最多 4 个。
+
 ## AppShell / Page
 
-见 `patterns/layout.md`。
+见 `patterns/layout.md`。页面里面怎么排（概览、详情页、分栏、看板……）见 `patterns/page-layouts.md`。
+
+- `PageColumns`：主栏 + 320 的侧栏（lg 起），侧栏吸顶；lg 以下侧栏落到主栏下面。`asideLabel` 给侧栏起名字（读屏用）。
 
 ## 字符串
 

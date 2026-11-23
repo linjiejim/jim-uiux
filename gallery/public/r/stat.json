@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stat",
+  "description": "A number that matters on its own (a dashboard KPI): the label, ⓘ for how it is counted, the",
+  "registryDependencies": [
+    "@jim/info",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/stat.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\nimport { Info } from \"@/registry/jim/ui/info\"\n\n/**\n * A number that matters on its own (a dashboard KPI): the label, ⓘ for how it is counted, the\n * value at display size in tabular figures, and one line of context (「较上周 +12%」「截至 9:00」).\n * The kit doesn't colour that line: what rising and falling look like belongs to the project\n * (in some markets red means up). Loading keeps the tile's height (Skeleton), never shows 0.\n */\nexport function Stat({\n  label,\n  info,\n  value,\n  meta,\n  className,\n}: {\n  label: React.ReactNode\n  info?: React.ReactNode\n  value: React.ReactNode\n  meta?: React.ReactNode\n  className?: string\n}) {\n  return (\n    <div data-slot=\"stat\" className={cn(\"flex min-w-0 flex-col gap-1 rounded-lg border bg-card p-(--space-card)\", className)}>\n      <div className=\"flex min-h-5 items-center gap-1 text-small text-muted-foreground\">\n        <span className=\"truncate\">{label}</span>\n        {info && <Info>{info}</Info>}\n      </div>\n      <div className=\"tabular truncate text-display font-semibold\">{value}</div>\n      {meta && <div className=\"truncate text-caption text-faint-foreground\">{meta}</div>}\n    </div>\n  )\n}\n\n/** A row of Stats: one column on phones, two from sm, four from xl. Keep it to one row of ≤ 4. */\nexport function StatGrid({ className, ...props }: React.ComponentProps<\"div\">) {\n  return <div data-slot=\"stat-grid\" className={cn(\"grid gap-(--space-card) sm:grid-cols-2 xl:grid-cols-4\", className)} {...props} />\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

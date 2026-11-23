@@ -38,13 +38,22 @@
 | `*-subtle` | 状态色的浅底 | 状态色按 9–11% 混入画布 | 按 14% 混入 |
 | `scrim` | 遮罩 | 黑 32% | 黑 60% |
 
-对比度门槛由 `guards/contrast.test.ts` 检查：
+对比度门槛由 `guards/contrast.test.ts` 检查（规则在 `guards/contrast-lib.ts`，主题工作室用的是同一份）：
 
 - 正文 ≥ 7:1。
 - 次要文字、元信息、状态色文字（包括画在自己 subtle 底上的）≥ 4.5:1。
 - 强调色和焦点环对画布 ≥ 3:1。
+- 每个中性色预设 × 每个强调色预设 × 浅色 / 深色 × 增强对比度，都要过。
 
-已知取舍：控件边框 `input` 没有达到 3:1（那样会太重）。控件靠标签、形状和 ≥ 3:1 的焦点环来识别。
+已知取舍：控件边框 `input` 没有达到 3:1（那样会太重）。控件靠标签、形状和 ≥ 3:1 的焦点环来识别。需要的人打开系统的「增强对比度」，控件边框就到 3:1（见下文「增强对比度」）。
+
+## 增强对比度
+
+系统设置里打开「增强对比度」（macOS / iOS 的 Increase contrast，Windows 的对比度主题，都报告 `prefers-contrast: more`）时自动生效；`<html data-contrast="more">` 可以强制打开。
+
+- 次要文字 ≥ 7:1，元信息 ≥ 5.5:1，控件边框 ≥ 3:1（WCAG 1.4.11），细线、悬停和按下的填充加深，焦点环加粗到 3px。
+- 取值从当前皮肤的 `foreground` 和 `background` 混出来，所以任何预设、任何项目皮肤都适用；用 `!important`，因为可访问性偏好要压过皮肤的选择器。
+- 守卫对每个 scope 都按这套更严的门槛再查一遍。项目皮肤的正文色太浅（比如对比度调得很柔和）时，会在这里失败。
 
 ## 分类色
 
@@ -73,6 +82,10 @@
 ## 文字
 
 一个无衬线字族：Inter（自带打包，不走 CDN），中文回落到苹方 / 雅黑 / Noto。
+
+- 装带光学尺寸轴的 Inter：`import "@fontsource-variable/inter/opsz.css"`。浏览器默认 `font-optical-sizing: auto`，20px 以上的西文和数字自动换成 Display 字形（字距更紧、更精致），中文不受影响。只装 `wght` 版也能用，大字会松一些。
+- 标题 `text-wrap: balance`（几行一样长），段落 `text-wrap: pretty`（末行不留孤字），主题的 base 层已经写好。
+- 不给标题加负字距：负字距也会挤压中文。
 
 | 类名 | 字号 / 行高 | 用途 |
 | --- | --- | --- |
@@ -105,8 +118,18 @@
 
 沿用 Tailwind 的 4px 刻度，只用这几档：2 4 6 8 12 16 20 24 32 40 48 64。
 
-- 控件内边距 8–12，字段之间 16，区块之间 32。
-- 页面内边距 24（手机 16）。
+- 控件内边距 8–12。
+- 版面的四个距离是 token，由「留白」旋钮（`data-spacing`）一起调：
+
+| Token | 用途 | 紧凑 | 标准 | 宽松 |
+| --- | --- | --- | --- | --- |
+| `--space-page` | 页面内边距（手机上固定 16） | 20 | 24 | 32 |
+| `--space-section` | 区块之间、主栏和侧栏之间 | 24 | 32 | 48 |
+| `--space-field` | 字段之间（`FieldGroup`） | 12 | 16 | 20 |
+| `--space-card` | 卡片之间、卡片内边距 | 12 | 16 | 20 |
+
+- 用法：`px-(--space-page)`、`gap-(--space-section)`。`Page`、`Section`、`PageColumns`、`FieldGroup`、`Card`、`CardGrid`、`StatGrid` 已经在用，页面里不另写这些距离。
+- 密度（`data-density`）管控件和行有多高，留白管版面之间隔多远，两个旋钮互不影响。
 
 ## 圆角
 
@@ -161,24 +184,38 @@
 
 | 旋钮 | 怎么调 |
 | --- | --- |
-| 强调色 | 覆盖 `--primary`、`--primary-foreground`（需要时再加 `--primary-hover`），浅色和深色各一份 |
-| 中性色调 + 强调色整套 | 预设 `presets/warm.css`，用 `<html data-theme="…">` 启用 |
-| 圆角 | `<html data-radius="sharp|round">`：4 或 12，整套圆角按比例一起缩放 |
-| 密度 | `<html data-density="compact">` |
+| 强调色 | 预设 `presets/accents.css`：`<html data-accent="blue|indigo|violet|pink|teal">`；或者覆盖 `--primary`、`--primary-foreground`（需要时再加 `--primary-hover`），浅色和深色各一份 |
+| 中性色调 | 预设 `presets/warm.css`（暖灰，Notion 风）、`slate.css`（冷灰）、`sage.css`（灰绿）、`mauve.css`（灰紫），用 `<html data-theme="…">` 启用；可以和任何强调色预设组合 |
+| 圆角 | `<html data-radius="sharp|round">`：4 或 12，整套圆角按比例一起缩放；其他值写 `--radius` |
+| 密度 | `<html data-density="compact">`：控件和行高 |
+| 留白 | `<html data-spacing="compact|relaxed">`：页边距、区块、字段、卡片之间（上文「间距」） |
+| 对比度 | 皮肤里的取值（主题工作室的「层次」）；系统「增强对比度」或 `data-contrast="more"` 自动加深 |
 | 字体 | 覆盖 `--font-sans`；如果要单独的标题字体，覆盖 `--font-display` |
 | 默认外观 | `lib/appearance.ts`：跟随系统、浅色或深色 |
 
+搭配建议（取自 Radix）：蓝、靛配冷灰；紫、玫红配灰紫；青配灰绿；暖灰配墨。强调色预设里没有红、绿、黄、橙：红是危险，绿是成功，黄是「需要你处理」，橙离红太近。
+
+## 主题工作室
+
+gallery 的 `#/studio`（线上 https://design.linjiejim.com/#/studio）：在真实组件上调中性色（预设或色相 + 浓度）、强调色（预设或任意颜色）、对比度、圆角、密度、留白和字体，整个 gallery 跟着换；右边列出每一条对比度检查（浅色、深色、增强对比度），然后导出一个皮肤文件。
+
+- 源头仍是 CSS：工作室从 `jim-theme.css` 和 `presets/*.css` 读取默认值和预设，不另存一份。设成某个预设时，导出的就是那个预设的值（测试保证）。
+- 在 OKLCH 里改：色调 = 色相 + 浓度，按 token 分配（近白的表面只带一点）；对比度 = 表面、细线、文字之间的明度差。改完再按守卫的门槛逐条检查，不达标的文字和强调色自动挪到刚好达标，挪了哪些会列出来。
+- 自定义强调色：保持色相和尽量多的饱和度，只移动明度，直到对画布和浮层 ≥ 3:1、上面的白字 ≥ 4.5:1；颜色很浅（黄、浅粉）时改用深色字。和危险、成功、警告的色相差不到 25° 时，会提示「分不清」。
+- 导出：`:root` 和 `.dark` 两块，只给语义名赋值；密度和留白是 `<html>` 上的属性，不写进 CSS（触屏 44px 的下限靠它们）。「复制链接」能把这一套设置原样分享。
+- 它是设计时的工具：产品里不给用户换皮肤（`principles.md`「不做的事」）。
+
 新建预设的步骤：
 
-1. 拷贝 `presets/warm.css`，只改**值**，不改名字。
-2. 浅色和深色都写。
-3. 跑 `contrast.test.ts`，它会自动发现新预设。
+1. 在主题工作室里调出来，导出 CSS。
+2. 中性色预设：拷贝 `presets/warm.css` 的结构，只改**值**，不改名字，浅色和深色都写。强调色预设：在 `presets/accents.css` 里加两行（`html[data-accent="…"]` 和 `html.dark[data-accent="…"]`）。
+3. 跑 `contrast.test.ts`，它会自动发现新预设，并和所有已有的预设组合检查。
 
 ## 换一整套皮肤
 
 项目有自己的品牌时，可以不调旋钮，把取值整套换掉。交互层、语义名和底线不变，分工见 `downstream.md`。
 
-1. 在项目里写一个主题文件（比如 `src/styles/<项目>-theme.css`），在 `jim-theme.css` 之后引入；浅色写在 `:root`，深色写在 `.dark`。
+1. 在项目里写一个主题文件（比如 `src/styles/<项目>-theme.css`），在 `jim-theme.css` 之后引入；浅色写在 `:root`，深色写在 `.dark`。颜色可以先在主题工作室里调好再导出，导出的文件就是这个格式。
 2. 只给已有的语义名赋值：颜色、`--radius`、`--font-sans` / `--font-display` / `--font-mono`、阴影、`--duration-*` / `--ease-*`。不改名字的含义；项目自己的名字（领域色）另起，加进 `@theme inline`。
 3. 项目原来的 token 名可以留着，把语义名指过去：`--background: var(--page)`。
 4. 把这个文件加进 `design-guard.config.json` 的 `themeFiles`，跑守卫：对比度矩阵会按项目的皮肤算，浅色、深色都要过。

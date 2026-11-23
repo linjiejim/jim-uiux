@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.8.0 · 2026-11-23
+
+主题工作室、更多配色预设、增强对比度、版面留白和页面布局规范（理由见 `references/decisions.md`「1.8.0」）。默认皮肤的取值不变，已有组件的用法不变。
+
+- gallery 新页「主题工作室」（`#/studio`）：调中性色（预设，或色相 + 浓度）、强调色（预设，或任意颜色）、对比度（柔和 ↔ 高）、圆角（0–16）、密度、留白和字体，整个 gallery 实时换上。每一条对比度检查（浅色、深色、增强对比度）都列出来，不达标的自动挪到刚好达标；导出的皮肤文件放在 `jim-theme.css` 之后就能用，「复制链接」可以原样分享。
+- 新预设：中性色 `slate`（冷灰）、`sage`（灰绿）、`mauve`（灰紫），`<html data-theme>`；强调色 `accents.css`：蓝、靛、紫、玫红、青，`<html data-accent>`，可以和任何中性色组合。registry：`@jim/preset-slate`、`@jim/preset-sage`、`@jim/preset-mauve`、`@jim/preset-accents`。
+- 增强对比度：系统打开「增强对比度」（`prefers-contrast: more`）时自动生效，`data-contrast="more"` 可以强制。次要文字 ≥ 7:1，元信息 ≥ 5.5:1，控件边框 ≥ 3:1，焦点环 3px；任何皮肤都适用。
+- 留白旋钮 `data-spacing="compact|relaxed"` 和 token `--space-page`、`--space-section`、`--space-field`、`--space-card`；`Page`、`Section`、`FieldGroup` 改用它们，默认值和原来一样。
+- 新组件：`Slider`（读数在右，方向键可调）、`SwatchPicker`（从固定的一组颜色里选，`categoricalOptions()` 给九种分类色）、`Stat` / `StatGrid`（仪表盘指标）、`Card` / `CardGrid`（卡片和自动列数的卡片网格）、`PageColumns`（主栏 + 320 的侧栏）。`strings.ts` 新增 `colorName`。
+- 新规范 `patterns/page-layouts.md`：概览、列表、对象详情页、列表-详情分栏、主栏 + 侧栏、设置、分步表单、空页与结果页、单卡片页、编辑器、看板、卡片网格，各自的宽度、间距和组件，以及滚动和吸顶的规则。gallery 新页「页面布局」有每种的线框图。
+- 守卫：对比度规则抽成 `guards/contrast-lib.ts`（工作室用同一份）；现在检查每个中性色预设 × 每个强调色预设 × 浅色 / 深色 × 增强对比度。缺了某个 token 也算失败。
+- 细节：字体改用带光学尺寸轴的 Inter（`@fontsource-variable/inter/opsz.css`），大字和数字更精致，中文不受影响；标题 `text-wrap: balance`、段落 `pretty`；触屏不再有灰色点击高亮；Windows、Linux 上的滚动条跟主题色。
+- gallery：左下角「主题与旋钮」和工作室共用一份设置（旧设置自动迁移），可以切中性色、强调色预设；表单页加滑杆和色块示例，颜色页加预设说明。
+- 升级时注意：要光学尺寸，把入口的 `import "@fontsource-variable/inter"` 换成 `import "@fontsource-variable/inter/opsz.css"`（不换也能用）。重新装 `@jim/guards` 后，对比度测试会多出增强对比度一档；项目皮肤的正文色太浅时会在这里失败。
+
 ## 1.7.0 · 2026-11-23
 
 版本更新的整套说法：有新版本时怎么提示，更新以后怎么说改了什么，更新内容怎么写，CI 怎么从提交起草（理由见 `references/decisions.md`「1.7.0」）。已有组件的用法不变。

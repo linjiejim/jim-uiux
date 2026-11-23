@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "all",
-  "description": "jim-uiux 1.7.0: theme, every component, hooks and libs",
+  "description": "jim-uiux 1.8.0: theme, every component, hooks and libs",
   "registryDependencies": [
     "@jim/utils",
     "@jim/theme",
@@ -10,6 +10,7 @@
     "@jim/bottom-sheet",
     "@jim/button",
     "@jim/callout",
+    "@jim/card",
     "@jim/checkbox",
     "@jim/combobox",
     "@jim/command-palette",
@@ -36,8 +37,11 @@
     "@jim/select",
     "@jim/settings",
     "@jim/skeleton",
+    "@jim/slider",
     "@jim/spinner",
+    "@jim/stat",
     "@jim/state",
+    "@jim/swatch-picker",
     "@jim/switch",
     "@jim/tabs",
     "@jim/toast",

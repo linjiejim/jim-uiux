@@ -1,0 +1,16 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card",
+  "description": "A group that needs its own boundary: a chart on a dashboard, an item in a card grid,",
+  "registryDependencies": [
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/card.tsx",
+      "content": "import * as React from \"react\"\nimport { cn } from \"@/lib/utils\"\n\n/**\n * A group that needs its own boundary: a chart on a dashboard, an item in a card grid,\n * the card of a sign-in page. 1px line, rounded-lg, --space-card (16) inside. Never a\n * shadow, never a card inside a card; the sections of a page are not cards (Section).\n * `title` is the card's name (14 / 500), `actions` sit at its right (≤ 2, small).\n */\nexport function Card({\n  title,\n  actions,\n  className,\n  children,\n  ...props\n}: Omit<React.ComponentProps<\"section\">, \"title\"> & { title?: React.ReactNode; actions?: React.ReactNode }) {\n  return (\n    <section data-slot=\"card\" className={cn(\"min-w-0 rounded-lg border bg-card p-(--space-card)\", className)} {...props}>\n      {(title || actions) && (\n        <div className=\"mb-3 flex min-h-(--control-sm) items-center gap-2\">\n          {title && <h3 className=\"min-w-0 flex-1 truncate text-body font-medium\">{title}</h3>}\n          {actions && <div className=\"flex shrink-0 items-center gap-1\">{actions}</div>}\n        </div>\n      )}\n      {children}\n    </section>\n  )\n}\n\n/**\n * Cards in a grid that fills the width: as many columns as fit at `min` (240 by default),\n * --space-card between them. For media, set the aspect on the image (16 / 9, 4 / 3, 1 / 1).\n */\nexport function CardGrid({ min = 240, className, style, ...props }: React.ComponentProps<\"div\"> & { min?: number }) {\n  return (\n    <div\n      data-slot=\"card-grid\"\n      className={cn(\"grid gap-(--space-card)\", className)}\n      style={{ gridTemplateColumns: `repeat(auto-fill, minmax(min(${min}px, 100%), 1fr))`, ...style }}\n      {...props}\n    />\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

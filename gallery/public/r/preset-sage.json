@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "preset-sage",
+  "description": "Preset: green-grey neutrals (pairs with teal)",
+  "files": [
+    {
+      "path": "src/registry/jim/theme/presets/sage.css",
+      "content": "/*\n * Preset: Sage — green-grey neutrals, ink accent. <html data-theme=\"sage\">\n * Pairs with the teal accent. Values from the theme studio (hue 160, chroma 12).\n */\n[data-theme=\"sage\"] {\n  --sunken: #f5f8f6;\n  --muted: #edf1ef;\n  --foreground: #151c18;\n  --muted-foreground: #595d5b;\n  --faint-foreground: #676d6a;\n  --border: #e6e9e7;\n  --input: #d0d6d2;\n  --inverse: #1c201e;\n  --inverse-foreground: #f3f6f4;\n  --primary: #151c18;\n}\n\n.dark[data-theme=\"sage\"],\n[data-theme=\"sage\"] .dark {\n  --background: #181a18;\n  --sunken: #1e211f;\n  --muted: #282b29;\n  --popover: #242624;\n  --foreground: #eaedeb;\n  --muted-foreground: #a3a7a5;\n  --faint-foreground: #8c908e;\n  --border: #2c2f2d;\n  --input: #3a3e3c;\n  --inverse: #eaedeb;\n  --inverse-foreground: #181a18;\n  --primary: #eaedeb;\n  --primary-foreground: #181a18;\n}\n",
+      "type": "registry:file",
+      "target": "src/styles/presets/sage.css"
+    }
+  ],
+  "type": "registry:file"
+}

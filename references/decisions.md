@@ -155,6 +155,31 @@
 
 jim-uiux 自己从 1.7.0 起，每个版本合进 main 并部署后自动发一个 GitHub Release（tag `vX.Y.Z`），说明取自 `CHANGELOG.md`；PR 里检查版本号有没有对应的一节。
 
+## 2026-11-23 · 1.8.0 主题工作室、配色预设、增强对比度、页面布局
+
+起因：Jim 要在线调配色并预览，能个性化间距和对比度，有一组预设颜色；同时把常见页面布局沉淀成规范，并对照公认的好产品把细节做得更精致。当天调研了 Radix Themes（ThemePanel、12 级色阶、灰色和强调色的搭配）、shadcn（themes、create）和 tweakcn、Linear 2024 的主题系统（base + accent + contrast）、Material 3 动态配色（contrast level −1…1 与按角色的对比度曲线）、Adobe Leonardo（按对比度求色），以及 Primer、Polaris、Atlassian、Material 3、Carbon、Ant Design Pro、shadcn blocks、Stripe Apps、Geist 的布局代码和文档。这一版是无人值守做的（`/yolo`），下表里的取舍都由实现者决定，Jim 在 PR 上可以推翻。
+
+| 决策 | 理由 | 被放弃的方案 |
+| --- | --- | --- |
+| 主题工作室放在 gallery（`#/studio`），整个 gallery 跟着换；导出皮肤文件，不进产品 | 「不做多皮肤选择器」针对的是产品的用户；定皮肤的是做设计的人，而且要在真实组件上看。Radix 的 ThemePanel、tweakcn 都是这种设计时工具 | 做成 registry 组件让产品里可以换皮肤 |
+| 工作室从 `jim-theme.css` 和 `presets/*.css` 读值（Vite `?raw`），不另存一份；测试保证「设成预设 = 预设文件」 | 「值只在主题里」：再存一份就会和 CSS 走样。默认值、每个预设都由测试逐项比对 | 在 TS 里写一份色板，再生成 CSS |
+| 规则抽成 `guards/contrast-lib.ts`，守卫和工作室共用 | 工作室说「达标」和项目构建说「达标」必须是同一个判断 | 工作室自己写一份检查 |
+| 改色在 OKLCH 里做：色调 = 色相 + 浓度，按 token 分配；对比度 = 表面、细线、文字之间的明度差（−100…100，0 是主题原值）；改完逐条检查，不达标的文字、状态色、强调色挪到刚好达标，并列出挪了哪些 | Linear 用 base + accent + contrast 三个输入生成整套主题，Material 的 contrast level 也是一个 −1…1 的数；两者都没有公开算法。逐条检查再挪，比推导公式简单，而且结果一定过守卫（测试扫了约 280 种设置，每种查浅色、深色和各自的增强对比度） | Radix 的 12 级色阶生成器（为 APCA 而非 WCAG 调校，色阶也比这套 token 多）；只给几档固定的对比度 |
+| 色调的分配按 Notion 暖灰校准：近白的表面只带浓度的 0.35–0.45，正文带满 | 暖灰预设就是这个比例；表面带满会像有色的纸 | 所有 token 同样浓度 |
+| 自定义强调色：保持色相和尽量多的饱和度，只移动明度，直到对画布和浮层 ≥ 3:1、白字 ≥ 4.5:1；很浅的颜色改用深色字；和危险、成功、警告色相差 < 25° 时提示 | 和守卫的门槛一致；Material 也是在浅色调上换深色字。提示落实「红色只表示危险」 | 让用户分别指定浅色、深色两套 |
+| 中性色预设加冷灰（slate）、灰绿（sage）、灰紫（mauve），暖灰不动 | Radix 的灰色家族里最常用的三种，shadcn 的 zinc / mist / olive 也在这个范围；暖灰是 Notion 的值，保留原样 | 加 sand、olive（和暖灰太近） |
+| 强调色预设：蓝、靛、紫、玫红、青，一个文件 `accents.css`，`<html data-accent>`，可以和任何中性色组合 | 不放红、绿、黄、橙：红是危险，绿是成功，黄是「需要你处理」，橙离红太近（色相差 15°）。数值取 Tailwind 600 档或 Linear 的靛色，过工作室的求解：浅色、深色都是白字 | 每个强调色一个文件；放绿色（和成功色同色相） |
+| 强调色选择器用 `html[data-accent]` | 比中性色预设的 `[data-theme]` 高一级，无论引入顺序都能盖过预设里的墨色强调色 | 靠引入顺序 |
+| 新增增强对比度：`prefers-contrast: more` 自动生效，`data-contrast="more"` 强制；从 foreground / background 混出，`!important` | macOS、iOS、Windows 都有这个系统设置；从前景、背景混出，任何皮肤都适用；可访问性偏好要压过皮肤的选择器。门槛：次要文字 7、元信息 5.5、控件边框 3（WCAG 1.4.11），焦点环 3px | 每个预设各写一套高对比度值；不支持 |
+| 新增「留白」旋钮 `data-spacing`（紧凑 / 标准 / 宽松）和四个 token：`--space-page` / `-section` / `-field` / `-card` | Jim 要个性化间距。tweakcn 的 `--spacing`、Radix 的 scaling 会把图标、侧栏宽度一起缩放，打破 4px 刻度和「按钮里图标 16」；只动版面的四个距离，控件高度仍归密度管。取值都在刻度上：20/24/32、24/32/48、12/16/20 | 改 Tailwind 的 `--spacing`；第三档密度（Material 只往紧凑方向调） |
+| 新增 `Slider`、`SwatchPicker`、`Stat` / `StatGrid`、`Card` / `CardGrid`、`PageColumns` | 前三个在下游候选清单里已经够门槛（`downstream.md`：Slider 是 turnery 和 greenhouse，色块是 greenhouse 和另一个项目，Stat 是 ivan 和另一个项目），工作室和布局页正好要用。`Card`、`PageColumns` 把规范里已有的「卡片 = 细线 + 16 内边距」「侧栏 320」变成组件，免得各页手写 | 只写规范不出组件 |
+| SwatchPicker 选中用 `aria-checked` 写样式 | 每个色块外面包了 Tooltip，Radix 的 Tooltip 触发器会把自己的 `data-state` 写到色块上，盖掉 RadioGroup 的 `data-state=checked`（写示例时踩到） | 去掉色块的提示 |
+| 新增 `references/patterns/page-layouts.md`：12 种页面骨架，带数值；gallery「页面布局」有线框图和实际样子 | 调研里各家一致的部分：侧栏 296–320、两栏从 1024 起、看板列宽 272–350、空页最宽 ≈ 464、登录卡片 384–400、仪表盘指标 1 → 2 → 4 列。不一致的取 kit 刻度上的值 | 每种布局各出一个模板组件 |
+| 对象详情页只给「有自己的标签页、子列表或要能用链接打开」的对象 | 和「列表对象在抽屉里看、改、新建」不冲突：抽屉是默认，页面是例外 | 每个对象都有详情页 |
+| 字体换成带光学尺寸轴的 Inter（`opsz.css`） | 20px 以上的西文和数字自动用 Display 字形，标题和指标数字明显更精致；中文回落到苹方，不受影响。拉丁字符集多 24KB | 给标题加负字距（Linear、Geist 的做法，会挤压中文） |
+| base 层加：标题 `text-wrap: balance`、段落 `pretty`、去掉触屏的点击高亮、滚动条用主题色 | 都是零成本的细节；滚动条只在系统画经典滚动条时生效（Windows、Linux），macOS 的浮动滚动条不受影响 | 细滚动条（`scrollbar-width: thin`，难点中） |
+| gallery 的旋钮弹层和工作室共用一份状态（`studio/store.ts`），旧的 `gallery:knobs` 自动迁移 | 两个入口各存一份会互相打架 | 弹层保留 data-theme / data-radius 属性 |
+
 ## 待定（等 Jim 拍板）
 
 - 日期选择器、富文本编辑器的规格。

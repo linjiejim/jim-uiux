@@ -10,10 +10,14 @@ things that stay in one repo so they can't drift apart:
 - **A shadcn registry** (`@jim/*`): Radix + Tailwind v4 components built to those
   specs, served from `https://design.linjiejim.com/r/{name}.json`.
 - **A living gallery** at **https://design.linjiejim.com** that runs the real
-  components, with the theme knobs live.
+  components, with the theme knobs live, and a
+  [theme studio](https://design.linjiejim.com/#/studio): tune neutrals, accent,
+  contrast, radius, density and spacing on the real components, see every
+  contrast check pass, and export the skin as CSS.
 
 Plus vitest guards that fail a project's build on raw colours, text under 12px,
-native dialogs, emoji icons and WCAG contrast misses in every theme.
+native dialogs, emoji icons and WCAG contrast misses in every theme (each preset
+combination, light and dark, and the OS "increase contrast" mode).
 
 [中文说明 →](README.zh-CN.md)
 

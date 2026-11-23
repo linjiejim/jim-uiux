@@ -4,9 +4,9 @@
 
 - **Agent 技能**（`SKILL.md` + `references/`）：已经定好的默认值，包括 token、弹框和抽屉尺寸、表格行为、反馈、文案规范。agent 做界面时不用再纠结小事。
 - **shadcn registry**（`@jim/*`）：按这些规范做的 Radix + Tailwind v4 组件，地址 `https://design.linjiejim.com/r/{name}.json`。
-- **活的 gallery**：**https://design.linjiejim.com** ，跑的是真组件，主题旋钮可以实时切换。
+- **活的 gallery**：**https://design.linjiejim.com** ，跑的是真组件，主题旋钮可以实时切换；[主题工作室](https://design.linjiejim.com/#/studio)里调中性色、强调色、对比度、圆角、密度和留白，逐条校验对比度，导出皮肤 CSS。
 
-另有一组 vitest 守卫：项目里出现裸色值、小于 12px 的字、原生弹框、emoji 图标，或任一主题的 WCAG 对比度不达标，测试就会失败。
+另有一组 vitest 守卫：项目里出现裸色值、小于 12px 的字、原生弹框、emoji 图标，或任一主题（每个预设组合、浅色深色、增强对比度）的 WCAG 对比度不达标，测试就会失败。
 
 [English →](README.md)
 

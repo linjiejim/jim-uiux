@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "preset-mauve",
+  "description": "Preset: violet-grey neutrals (pairs with violet, pink)",
+  "files": [
+    {
+      "path": "src/registry/jim/theme/presets/mauve.css",
+      "content": "/*\n * Preset: Mauve — violet-grey neutrals, ink accent. <html data-theme=\"mauve\">\n * Pairs with the violet and pink accents. Values from the theme studio (hue 305, chroma 12).\n */\n[data-theme=\"mauve\"] {\n  --sunken: #f8f6f9;\n  --muted: #f1eff3;\n  --foreground: #1b191f;\n  --muted-foreground: #5d5b5f;\n  --faint-foreground: #6c6a6f;\n  --border: #e9e7ea;\n  --input: #d5d3d9;\n  --inverse: #201e22;\n  --inverse-foreground: #f6f4f7;\n  --primary: #1b191f;\n}\n\n.dark[data-theme=\"mauve\"],\n[data-theme=\"mauve\"] .dark {\n  --background: #19191a;\n  --sunken: #212022;\n  --muted: #2b292d;\n  --popover: #252526;\n  --foreground: #edebee;\n  --muted-foreground: #a7a5a9;\n  --faint-foreground: #908e92;\n  --border: #2f2d30;\n  --input: #3e3c40;\n  --inverse: #edebee;\n  --inverse-foreground: #19191a;\n  --primary: #edebee;\n  --primary-foreground: #19191a;\n}\n",
+      "type": "registry:file",
+      "target": "src/styles/presets/mauve.css"
+    }
+  ],
+  "type": "registry:file"
+}
