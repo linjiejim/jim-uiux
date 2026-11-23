@@ -39,7 +39,7 @@ things that float. The same intent always gets the same component.
 - Semantic tokens only. No hex, `rgb()`, `bg-white`, `text-gray-*`, `text-[11px]` outside the theme. A new value → a new token, in the theme, with a gallery example.
 - One accent colour. Red only for danger/failure, yellow for "needs you". Colour is never the only signal.
 - Text ≥ 12px, from the type scale (`text-caption` … `text-hero`). Weights 400/500/600 only on the web; native titles follow the platform.
-- The four layout distances (page edge, between sections, between fields, cards) come from `--space-page` / `-section` / `-field` / `-card` (the kit's Page, Section, FieldGroup, Card already use them), so the spacing knob reaches every page.
+- The four layout distances (page edge, between sections, between fields, cards) come from `--space-page` / `-section` / `-field` / `-card` (the kit's Page, Section, PageColumns, FieldGroup, Card and StatGrid use them), so the spacing knob reaches every page built from them.
 - Touch targets ≥ 44px on touch devices (the kit does this through `pointer: coarse`).
 - One primary button per region. Labels are verb + object (「新建项目」), never 「确定」「提交」.
 - Overlays come from the kit: Dialog / Drawer / ConfirmDialog / BottomSheet / Popover / DropdownMenu / ContextMenu. A right-click menu is only a shortcut: the same items sit in the ⋯ menu. Never `alert()`, `confirm()`, or a hand-written `fixed inset-0`.

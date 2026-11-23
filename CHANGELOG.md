@@ -11,7 +11,7 @@
 - 新组件：`Slider`（读数在右，方向键可调）、`SwatchPicker`（从固定的一组颜色里选，`categoricalOptions()` 给九种分类色）、`Stat` / `StatGrid`（仪表盘指标）、`Card` / `CardGrid`（卡片和自动列数的卡片网格）、`PageColumns`（主栏 + 320 的侧栏）。`strings.ts` 新增 `colorName`。
 - 新规范 `patterns/page-layouts.md`：概览、列表、对象详情页、列表-详情分栏、主栏 + 侧栏、设置、分步表单、空页与结果页、单卡片页、编辑器、看板、卡片网格，各自的宽度、间距和组件，以及滚动和吸顶的规则。gallery 新页「页面布局」有每种的线框图。
 - 守卫：对比度规则抽成 `guards/contrast-lib.ts`（工作室用同一份）；现在检查每个中性色预设 × 每个强调色预设 × 浅色 / 深色 × 增强对比度。缺了某个 token 也算失败。
-- 细节：字体改用带光学尺寸轴的 Inter（`@fontsource-variable/inter/opsz.css`），大字和数字更精致，中文不受影响；标题 `text-wrap: balance`、段落 `pretty`；触屏不再有灰色点击高亮；Windows、Linux 上的滚动条跟主题色。
+- 细节：字体改用带光学尺寸轴的 Inter（`@fontsource-variable/inter/opsz.css`），大字和数字更精致，中文不受影响；标题 `text-wrap: balance`、段落 `pretty`；触屏不再有灰色点击高亮。
 - 修复：`PageHeader` 的操作多时，手机上标题不再被挤得看不见（操作换到下一行）。
 - gallery：左下角「主题与旋钮」和工作室共用一份设置（旧设置自动迁移），可以切中性色、强调色预设；表单页加滑杆和色块示例，颜色页加预设说明。
 - 升级时注意：要光学尺寸，把入口的 `import "@fontsource-variable/inter"` 换成 `import "@fontsource-variable/inter/opsz.css"`（不换也能用）。重新装 `@jim/guards` 后，对比度测试会多出增强对比度一档；项目皮肤的正文色太浅时会在这里失败。

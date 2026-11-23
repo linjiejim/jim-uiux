@@ -203,6 +203,11 @@ export function generate(state: StudioState, blocks: Block[]): Generated {
     scopes[mode] = decls
     scopes[dark ? "darkMore" : "lightMore"] = { ...decls, ...more }
   }
+  // A skin's :root block is imported after the theme's .dark, so a token written for one
+  // appearance only would leak into the other: write every moved token in both.
+  for (const [mode, other] of [["light", "dark"], ["dark", "light"]] as const) {
+    for (const t of Object.keys(out[mode])) if (!(t in out[other])) out[other][t] = hex(resolveColor(`var(${t})`, scopes[other]))
+  }
   const root: Decls = {}
   if (state.radius !== DEFAULT_STATE.radius) root["--radius"] = `${state.radius}px`
   if (state.font === "system") root["--font-sans"] = SYSTEM_FONT
@@ -287,6 +292,7 @@ const block = (selector: string, decls: Decls) =>
 /** A skin file for a project: import it after jim-theme.css (tokens.md「换一整套皮肤」). */
 export function toCss(g: Generated, comment: string): string {
   return `/*\n${comment
+    .replaceAll("*/", "* /")
     .split("\n")
     .map((l) => ` * ${l}`.trimEnd())
     .join("\n")}\n */\n\n${block(":root", { ...g.root, ...g.light })}\n\n${block(".dark", g.dark)}\n`

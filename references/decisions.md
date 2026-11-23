@@ -178,7 +178,7 @@ jim-uiux 自己从 1.7.0 起，每个版本合进 main 并部署后自动发一�
 | 新增 `references/patterns/page-layouts.md`：12 种页面骨架，带数值；gallery「页面布局」有线框图和实际样子 | 调研里各家一致的部分：侧栏 296–320、两栏从 1024 起、看板列宽 272–350、空页最宽 ≈ 464、登录卡片 384–400、仪表盘指标 1 → 2 → 4 列。不一致的取 kit 刻度上的值 | 每种布局各出一个模板组件 |
 | 对象详情页只给「有自己的标签页、子列表或要能用链接打开」的对象 | 和「列表对象在抽屉里看、改、新建」不冲突：抽屉是默认，页面是例外 | 每个对象都有详情页 |
 | 字体换成带光学尺寸轴的 Inter（`opsz.css`） | 20px 以上的西文和数字自动用 Display 字形，标题和指标数字明显更精致；中文回落到苹方，不受影响。拉丁字符集多 24KB | 给标题加负字距（Linear、Geist 的做法，会挤压中文） |
-| base 层加：标题 `text-wrap: balance`、段落 `pretty`、去掉触屏的点击高亮、滚动条用主题色 | 都是零成本的细节；滚动条只在系统画经典滚动条时生效（Windows、Linux），macOS 的浮动滚动条不受影响 | 细滚动条（`scrollbar-width: thin`，难点中） |
+| base 层加：标题 `text-wrap: balance`、段落 `pretty`、去掉触屏的点击高亮 | 都是零成本的细节，不影响已有的写法 | 在 `html` 上设 `scrollbar-color`（评审时发现：它会继承，Chrome 121 起元素上有它就忽略 `::-webkit-scrollbar`，下游自己画的滚动条会悄悄失效） |
 | gallery 的旋钮弹层和工作室共用一份状态（`studio/store.ts`），旧的 `gallery:knobs` 自动迁移 | 两个入口各存一份会互相打架 | 弹层保留 data-theme / data-radius 属性 |
 
 ## 待定（等 Jim 拍板）

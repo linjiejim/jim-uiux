@@ -33,13 +33,18 @@ export function StudioPage() {
   const { resolved } = useAppearance()
   const dark = resolved === "dark"
 
-  // #/studio?t=… opens a shared skin
+  // #/studio?t=… opens a shared skin, also when pasted while the studio is already open
   React.useEffect(() => {
-    const t = new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("t")
-    if (!t) return
-    const s = decodeState(t)
-    if (s) setStudio(s)
-    window.history.replaceState(null, "", "#/studio")
+    const open = () => {
+      const t = new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("t")
+      if (!t) return
+      const s = decodeState(t)
+      if (s) setStudio(s)
+      window.history.replaceState(null, "", "#/studio")
+    }
+    open()
+    window.addEventListener("hashchange", open)
+    return () => window.removeEventListener("hashchange", open)
   }, [])
 
   const link = `${window.location.origin}${window.location.pathname}#/studio?t=${encodeState(state)}`
@@ -235,7 +240,10 @@ function CustomAccent({ value }: { value: string }) {
   }
   return (
     <div className="-mt-2 flex items-center gap-2 rounded-md bg-sunken p-3">
-      <label className="relative size-(--control-md) shrink-0 overflow-hidden rounded-md border border-input" style={{ background: value }}>
+      <label
+        className="relative size-(--control-md) shrink-0 overflow-hidden rounded-md border border-input has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring"
+        style={{ background: value }}
+      >
         <span className="sr-only">选择颜色</span>
         <input
           type="color"

@@ -87,7 +87,13 @@ describe("theme studio", () => {
     for (const neutral of ["", ...presetNames(blocks, "theme")]) {
       for (const contrast of [-100, 100]) states.push({ ...DEFAULT_STATE, neutral, contrast, accent: "blue" })
     }
-    const fails = states.flatMap((s) => guardFailures(toCss(generate(s, blocks), "test")).map((f) => `${JSON.stringify(s)} → ${f}`))
+    const fails = states.flatMap((s) => {
+      const g = generate(s, blocks)
+      // a token written for one appearance only would leak into the other (:root is imported after .dark)
+      const keys = (d: Record<string, string>) => Object.keys(d).sort().join()
+      const leak = keys(g.light) === keys(g.dark) ? [] : [`light and dark write different tokens`]
+      return [...leak, ...guardFailures(toCss(g, "test"))].map((f) => `${JSON.stringify(s)} → ${f}`)
+    })
     expect(fails.slice(0, 10), `${fails.length} failures`).toEqual([])
   }, 60_000)
 

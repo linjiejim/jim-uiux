@@ -65,6 +65,7 @@ export function Slider({
           aria-label={ariaLabel}
           aria-labelledby={!ariaLabel && field.id ? `${field.id}-label` : undefined}
           aria-describedby={field["aria-describedby"]}
+          aria-invalid={field["aria-invalid"]}
           aria-valuetext={text}
           className={cn(
             "relative block size-4 rounded-full border border-input bg-background shadow-popover",

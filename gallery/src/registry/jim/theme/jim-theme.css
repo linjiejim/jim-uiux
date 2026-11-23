@@ -391,8 +391,6 @@
     -webkit-font-smoothing: antialiased;
     /* the kit draws its own pressed states; the grey flash on tap is noise */
     -webkit-tap-highlight-color: transparent;
-    /* quiet, theme-coloured scrollbars where the OS draws classic ones (Windows, Linux) */
-    scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent;
   }
 
   /* headings break into even lines; paragraphs avoid a lone last word */

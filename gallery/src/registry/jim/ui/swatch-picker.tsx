@@ -45,6 +45,8 @@ export function SwatchPicker<T extends string>({
       aria-label={ariaLabel}
       aria-labelledby={!ariaLabel && field.id ? `${field.id}-label` : undefined}
       aria-describedby={field["aria-describedby"]}
+      aria-invalid={field["aria-invalid"]}
+      aria-required={field["aria-required"]}
       data-slot="swatch-picker"
       className={cn("flex flex-wrap items-center", size === "sm" ? "gap-2" : "gap-2.5", "pointer-coarse:gap-3", className)}
     >

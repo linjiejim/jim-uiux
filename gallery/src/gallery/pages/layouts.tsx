@@ -155,7 +155,7 @@ const wires: { key: string; name: string; use: string; spec: string; wire: React
     key: "aside",
     name: "主栏 + 侧栏",
     use: "内容，旁边是属性、相关、帮助",
-    spec: "wide · 侧栏 320 · 主栏 ≥ 544 · 吸顶",
+    spec: "wide · 侧栏 320 · 主栏 ≥ 528 · 吸顶",
     wire: (
       <>
         <Head />
