@@ -79,6 +79,22 @@ system" in [`SKILL.md`](SKILL.md).
 
 The docs are written in Chinese; component APIs and code are in English.
 
+### Screenshots in pull requests
+
+```bash
+node scripts/pr-assets.mjs 14 light.png dark.png demo.mp4   # 14 is the PR number; before opening it, use draft
+```
+
+The script commits the files to `refs/pr-assets/pr-14` in this repository and
+prints markdown to paste into the PR description (links pinned to the commit
+SHA; videos become GIFs if `ffmpeg` is installed). The ref is outside
+`refs/heads`, so `git clone` never downloads the images. Uploads are public for
+good: no real user data, keys or local paths. Where that push is refused
+(Claude cloud sessions only allow `refs/heads/*`), the script pushes a
+`pr-assets-inbox/…` branch instead and the
+[PR assets inbox](.github/workflows/pr-assets-inbox.yml) workflow moves it over.
+Same script as excalidesk's; keep the two in sync.
+
 ## License
 
 MIT

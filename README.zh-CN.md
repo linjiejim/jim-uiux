@@ -59,6 +59,20 @@ pnpm consumers        # 下游项目和这里差在哪（需要 gh）
 
 push 到 `main` 会把 gallery 和 registry 发布到 GitHub Pages，`/version.json` 写着线上是哪个版本。怎么改默认值，见 [`SKILL.md`](SKILL.md) 的「Changing the system」。
 
+### PR 里的截图和录屏
+
+```bash
+node scripts/pr-assets.mjs 14 light.png dark.png demo.mp4   # 14 是 PR 号；还没开 PR 就写 draft
+```
+
+脚本把文件提交到本仓库的 `refs/pr-assets/pr-14`，在标准输出打印一段 markdown，直接贴进 PR 描述：链接钉在提交 SHA 上；装了 `ffmpeg` 的话视频会转成 GIF 内嵌。
+
+- 这个 ref 不在 `refs/heads` 下，`git clone`、`git fetch` 默认都不拉，仓库不会因为截图变大。
+- **传上去就永久公开**：截图里不能有真实用户的数据、密钥、本机路径。
+- Claude 云端会话只能推 `refs/heads/*`：脚本被拒后改推临时分支 `pr-assets-inbox/<PR号>-<随机>`，[PR assets inbox](.github/workflows/pr-assets-inbox.yml) 工作流把素材搬进 `refs/pr-assets/pr-<PR号>` 再删掉分支。
+- 想看一个 PR 传过哪些文件：`git fetch origin refs/pr-assets/pr-14 && git ls-tree -r --name-only FETCH_HEAD`。
+- 脚本和 excalidesk 的是同一份，改了两边一起同步。
+
 ## 许可
 
 MIT
