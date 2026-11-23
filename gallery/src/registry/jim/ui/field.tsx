@@ -98,7 +98,7 @@ export function Field({
   )
 }
 
-/** Vertical stack of fields; 16px between fields, 32px between groups. */
+/** Vertical stack of fields; --space-field (16) between fields, --space-section (32) between groups. */
 export function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("flex flex-col gap-4", className)} {...props} />
+  return <div className={cn("flex flex-col gap-(--space-field)", className)} {...props} />
 }
