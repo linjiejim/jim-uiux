@@ -230,9 +230,10 @@ export function solveAccent(input: string, decls: Decls, mode: Mode): { "--prima
       if (ok && (!best[kind] || Math.abs(l - want.l) < Math.abs(best[kind]!.l - want.l))) best[kind] = { l, color }
     }
   }
-  const light = best.light
-  const dark = best.dark
-  const pickDark = !light || (dark && Math.abs(dark.l - want.l) + 0.12 < Math.abs(light.l - want.l))
+  const { light, dark } = best
+  // no lightness works with either label (surfaces this extreme don't occur in a sane skin): keep the input
+  if (!light && !dark) return { "--primary": hex(src), "--primary-foreground": labels.light }
+  const pickDark = !light || (!!dark && Math.abs(dark.l - want.l) + 0.12 < Math.abs(light.l - want.l))
   const chosen = pickDark ? dark! : light!
   return { "--primary": chosen.color, "--primary-foreground": pickDark ? labels.dark : labels.light }
 }

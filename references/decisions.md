@@ -174,6 +174,7 @@ jim-uiux 自己从 1.7.0 起，每个版本合进 main 并部署后自动发一�
 | 新增「留白」旋钮 `data-spacing`（紧凑 / 标准 / 宽松）和四个 token：`--space-page` / `-section` / `-field` / `-card` | Jim 要个性化间距。tweakcn 的 `--spacing`、Radix 的 scaling 会把图标、侧栏宽度一起缩放，打破 4px 刻度和「按钮里图标 16」；只动版面的四个距离，控件高度仍归密度管。取值都在刻度上：20/24/32、24/32/48、12/16/20 | 改 Tailwind 的 `--spacing`；第三档密度（Material 只往紧凑方向调） |
 | 新增 `Slider`、`SwatchPicker`、`Stat` / `StatGrid`、`Card` / `CardGrid`、`PageColumns` | 前三个在下游候选清单里已经够门槛（`downstream.md`：Slider 是 turnery 和 greenhouse，色块是 greenhouse 和另一个项目，Stat 是 ivan 和另一个项目），工作室和布局页正好要用。`Card`、`PageColumns` 把规范里已有的「卡片 = 细线 + 16 内边距」「侧栏 320」变成组件，免得各页手写 | 只写规范不出组件 |
 | SwatchPicker 选中用 `aria-checked` 写样式 | 每个色块外面包了 Tooltip，Radix 的 Tooltip 触发器会把自己的 `data-state` 写到色块上，盖掉 RadioGroup 的 `data-state=checked`（写示例时踩到） | 去掉色块的提示 |
+| `PageColumns` 按自己的宽度分栏（container query，≥ 896），不按窗口断点 | 调研的共识是 ≥ 1024 分栏、主栏 ≥ 480，但 AppShell 的侧栏占 240：窗口 1024 时主栏只剩 384。按容器宽度判断，侧栏展开、收起、工作台都对 | lg 断点（主栏会被挤到 384）；xl 断点（侧栏收起时白白单栏） |
 | 新增 `references/patterns/page-layouts.md`：12 种页面骨架，带数值；gallery「页面布局」有线框图和实际样子 | 调研里各家一致的部分：侧栏 296–320、两栏从 1024 起、看板列宽 272–350、空页最宽 ≈ 464、登录卡片 384–400、仪表盘指标 1 → 2 → 4 列。不一致的取 kit 刻度上的值 | 每种布局各出一个模板组件 |
 | 对象详情页只给「有自己的标签页、子列表或要能用链接打开」的对象 | 和「列表对象在抽屉里看、改、新建」不冲突：抽屉是默认，页面是例外 | 每个对象都有详情页 |
 | 字体换成带光学尺寸轴的 Inter（`opsz.css`） | 20px 以上的西文和数字自动用 Display 字形，标题和指标数字明显更精致；中文回落到苹方，不受影响。拉丁字符集多 24KB | 给标题加负字距（Linear、Geist 的做法，会挤压中文） |

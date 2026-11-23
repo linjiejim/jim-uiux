@@ -94,7 +94,7 @@ const wires: { key: string; name: string; use: string; spec: string; wire: React
     key: "detail",
     name: "对象详情页",
     use: "有标签页、子列表或要能分享链接的对象",
-    spec: "wide · 标签页 ≤ 6 · 侧栏 320（lg 起）",
+    spec: "wide · 标签页 ≤ 6 · 侧栏 320（内容区 ≥ 896）",
     wire: (
       <>
         <div className="flex items-center gap-1.5">
@@ -155,7 +155,7 @@ const wires: { key: string; name: string; use: string; spec: string; wire: React
     key: "aside",
     name: "主栏 + 侧栏",
     use: "内容，旁边是属性、相关、帮助",
-    spec: "wide · 侧栏 320 · 主栏 ≥ 480 · 吸顶",
+    spec: "wide · 侧栏 320 · 主栏 ≥ 544 · 吸顶",
     wire: (
       <>
         <Head />
@@ -364,7 +364,7 @@ export function LayoutsPage() {
             ["滚动", "概览、详情、设置整页滚动；分栏、编辑器、看板固定在视口高度，每栏自己滚"],
             ["吸顶", "页头不吸顶；表头、列表头、工具栏、宽屏侧栏吸顶"],
             ["主操作", "页头右侧，≤ 1 个；长表单的保存用底部 SaveBar"],
-            ["两栏", "lg（1024）起；以下一律单栏，不另做平板布局"],
+            ["两栏", "PageColumns 自己 ≥ 896 才分栏；整页分栏从 lg（1024）起；不另做平板布局"],
           ]}
         />
       </Example>
@@ -375,7 +375,7 @@ export function LayoutsPage() {
 
       <Example
         title="对象详情页"
-        note="PageHeader back + 元信息 + Tabs，正文是 PageColumns：侧栏 320（lg 起），以下落到主栏下面。只是改几个字段的列表对象用抽屉，不开页面。"
+        note="PageHeader back + 元信息 + Tabs，正文是 PageColumns：侧栏 320，内容区不到 896 时落到主栏下面。只是改几个字段的列表对象用抽屉，不开页面。"
         canvas="default"
       >
         <DetailDemo />

@@ -60,7 +60,8 @@ export function SwatchPicker<T extends string>({
               size === "sm" ? "size-5" : "size-6",
               // a hairline edge so white and near-canvas swatches still read as swatches
               "after:pointer-events-none after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--foreground)_14%,transparent)]",
-              "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-2.5",
+              // hit area: 44 on touch for both sizes
+              size === "sm" ? "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-3" : "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-2.5",
               // aria-checked, not data-state: the Tooltip trigger writes its own data-state onto the swatch
               "aria-checked:ring-2 aria-checked:ring-foreground aria-checked:ring-offset-2 aria-checked:ring-offset-background",
               "disabled:cursor-not-allowed disabled:opacity-50",

@@ -267,7 +267,7 @@
 
 见 `patterns/layout.md`。页面里面怎么排（概览、详情页、分栏、看板……）见 `patterns/page-layouts.md`。
 
-- `PageColumns`：主栏 + 320 的侧栏（lg 起），侧栏吸顶；lg 以下侧栏落到主栏下面。`asideLabel` 给侧栏起名字（读屏用）。
+- `PageColumns`：主栏 + 320 的侧栏，侧栏吸顶。分不分栏看它自己的宽度（container query），不看窗口：≥ 896 才分两栏，主栏至少留 544，侧栏、rail 占掉多少都一样；更窄时侧栏落到主栏下面。`asideLabel` 给侧栏起名字（读屏用）。
 
 ## 字符串
 
