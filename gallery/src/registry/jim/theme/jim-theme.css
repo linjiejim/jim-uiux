@@ -10,8 +10,12 @@
  *   --primary / --primary-foreground   one accent, default black
  *   data-radius="sharp|round"          radius scale, default 8px
  *   data-density="compact"             control and row heights
+ *   data-spacing="compact|relaxed"     layout whitespace: page edge, sections, fields, cards
  *   --font-sans / --font-display       typefaces
- *   presets/*.css                      a full neutral tint + accent swap
+ *   presets/*.css                      neutral tints (data-theme) and accents (data-accent)
+ *   data-contrast="more"               more contrast; also on by itself under prefers-contrast
+ * The gallery's theme studio (design.linjiejim.com/#/studio) tunes all of these at once and
+ * exports a skin file that passes the contrast guard.
  *
  * Categorical colours (--cat-*) are data, not a second accent: a colour the user
  * picked for a tag or project, or a chart series. See lib/categorical.ts.
@@ -105,6 +109,13 @@
   --nav-item-h: 30px;
   --icon-stroke: 1.75;
 
+  /* layout spacing (data-spacing): page edge, between sections, between fields, inside cards.
+     Phones keep a 16px page edge whatever the knob. */
+  --space-page: 24px;
+  --space-section: 32px;
+  --space-field: 16px;
+  --space-card: 16px;
+
   /* motion */
   --motion: 1; /* 0 under prefers-reduced-motion: transforms off, fades kept */
   --duration-fast: 120ms; /* hover, press */
@@ -190,6 +201,20 @@
   --nav-item-h: 28px;
 }
 
+/* spacing: how much air the layout has; density (above) is how tall controls and rows are */
+[data-spacing="compact"] {
+  --space-page: 20px;
+  --space-section: 24px;
+  --space-field: 12px;
+  --space-card: 12px;
+}
+[data-spacing="relaxed"] {
+  --space-page: 32px;
+  --space-section: 48px;
+  --space-field: 20px;
+  --space-card: 20px;
+}
+
 /* touch: every control reaches 44px, whatever the density */
 @media (pointer: coarse) {
   :root, [data-density] {
@@ -203,6 +228,32 @@
 
 @media (prefers-reduced-motion: reduce) {
   :root { --motion: 0; }
+}
+
+/*
+ * More contrast: <html data-contrast="more">, and automatically when the OS asks for it
+ * (macOS / iOS "Increase contrast", Windows contrast themes report prefers-contrast: more).
+ * Secondary text reaches 7:1, meta text 5.5:1, control edges 3:1. Derived from the skin's
+ * own foreground and canvas, so it works on any preset or project skin; !important because
+ * an accessibility preference outranks every skin, whatever its selectors.
+ */
+[data-contrast="more"] {
+  --muted-foreground: color-mix(in oklab, var(--foreground) 86%, var(--background)) !important;
+  --faint-foreground: color-mix(in oklab, var(--foreground) 76%, var(--background)) !important;
+  --border: color-mix(in oklab, var(--foreground) 26%, var(--background)) !important;
+  --input: color-mix(in oklab, var(--foreground) 56%, var(--background)) !important;
+  --accent: color-mix(in oklab, var(--foreground) 8%, transparent) !important;
+  --pressed: color-mix(in oklab, var(--foreground) 14%, transparent) !important;
+}
+@media (prefers-contrast: more) {
+  :root {
+    --muted-foreground: color-mix(in oklab, var(--foreground) 86%, var(--background)) !important;
+    --faint-foreground: color-mix(in oklab, var(--foreground) 76%, var(--background)) !important;
+    --border: color-mix(in oklab, var(--foreground) 26%, var(--background)) !important;
+    --input: color-mix(in oklab, var(--foreground) 56%, var(--background)) !important;
+    --accent: color-mix(in oklab, var(--foreground) 8%, transparent) !important;
+    --pressed: color-mix(in oklab, var(--foreground) 14%, transparent) !important;
+  }
 }
 
 /* ---------- Tailwind mapping ---------- */
@@ -338,7 +389,15 @@
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    /* the kit draws its own pressed states; the grey flash on tap is noise */
+    -webkit-tap-highlight-color: transparent;
+    /* quiet, theme-coloured scrollbars where the OS draws classic ones (Windows, Linux) */
+    scrollbar-color: color-mix(in oklab, var(--foreground) 22%, transparent) transparent;
   }
+
+  /* headings break into even lines; paragraphs avoid a lone last word */
+  h1, h2, h3, h4 { text-wrap: balance; }
+  p, li, dd, figcaption { text-wrap: pretty; }
 
   body {
     background: var(--background);
@@ -349,6 +408,10 @@
   }
 
   :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+  [data-contrast="more"] :focus-visible { outline-width: 3px; }
+  @media (prefers-contrast: more) {
+    :focus-visible { outline-width: 3px; }
+  }
 
   ::selection { background: color-mix(in oklab, var(--primary) 18%, transparent); }
 
