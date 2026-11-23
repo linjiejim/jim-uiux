@@ -1,0 +1,33 @@
+/*
+ * Preset: Sage — green-grey neutrals, ink accent. <html data-theme="sage">
+ * Pairs with the teal accent. Values from the theme studio (hue 160, chroma 12).
+ */
+[data-theme="sage"] {
+  --sunken: #f5f8f6;
+  --muted: #edf1ef;
+  --foreground: #151c18;
+  --muted-foreground: #595d5b;
+  --faint-foreground: #676d6a;
+  --border: #e6e9e7;
+  --input: #d0d6d2;
+  --inverse: #1c201e;
+  --inverse-foreground: #f3f6f4;
+  --primary: #151c18;
+}
+
+.dark[data-theme="sage"],
+[data-theme="sage"] .dark {
+  --background: #181a18;
+  --sunken: #1e211f;
+  --muted: #282b29;
+  --popover: #242624;
+  --foreground: #eaedeb;
+  --muted-foreground: #a3a7a5;
+  --faint-foreground: #8c908e;
+  --border: #2c2f2d;
+  --input: #3a3e3c;
+  --inverse: #eaedeb;
+  --inverse-foreground: #181a18;
+  --primary: #eaedeb;
+  --primary-foreground: #181a18;
+}

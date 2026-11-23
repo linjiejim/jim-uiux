@@ -27,10 +27,10 @@ things that float. The same intent always gets the same component.
 1. **Find out where you are.**
    - Project already has jim-uiux (look for `jim-theme.css`, `design-guard.config.json`, `docs/DESIGN.md`) → use its components; read `docs/DESIGN.md` for its knobs and exceptions.
    - Project has its own design system → its tokens and components win. Use this skill for the gaps: patterns, behaviour, copy, sizes it doesn't define. Don't import a second system. To adopt the kit's components later, keep its skin and bridge its tokens to the semantic names (`references/downstream.md`).
-   - New React project → install the kit (`references/adoption.md`), pick knobs, write `docs/DESIGN.md`.
+   - New React project → install the kit (`references/adoption.md`), pick knobs (or tune a skin in the gallery's theme studio, `/#/studio`, and take its CSS), write `docs/DESIGN.md`.
    - Not React (Vue/Nuxt, plain CSS) → take `jim-theme.css`, the guards and these docs; rebuild components to the same specs.
    - A project that newly installs the kit or aligns its own system to these rules gets one entry in this repo's `consumers.json` (fields: `references/downstream.md`), so later changes can find it.
-2. **Before building a screen**, name the pattern (list/CRUD, settings, form, detail…) and read its file in `references/patterns/`. Pick components from `references/components.md`. Don't ask Jim pixel questions; ask only about direction, ≤ 3 questions, each with a recommendation.
+2. **Before building a screen**, name the page layout (`references/patterns/page-layouts.md`: overview, list, detail page, split view, main + aside, wizard, empty/result, single card, editor, board, card grid) and the pattern (list/CRUD, settings, form…), and read their files in `references/patterns/`. Pick components from `references/components.md`. Don't ask Jim pixel questions; ask only about direction, ≤ 3 questions, each with a recommendation.
 3. **Build** with the kit's components and semantic tokens only.
 4. **Before handing over**, run `references/checklist.md`: the guards, light + dark, phone width, keyboard, all five data states. Screenshot what changed.
 
@@ -39,6 +39,7 @@ things that float. The same intent always gets the same component.
 - Semantic tokens only. No hex, `rgb()`, `bg-white`, `text-gray-*`, `text-[11px]` outside the theme. A new value → a new token, in the theme, with a gallery example.
 - One accent colour. Red only for danger/failure, yellow for "needs you". Colour is never the only signal.
 - Text ≥ 12px, from the type scale (`text-caption` … `text-hero`). Weights 400/500/600 only on the web; native titles follow the platform.
+- The four layout distances (page edge, between sections, between fields, cards) come from `--space-page` / `-section` / `-field` / `-card` (the kit's Page, Section, PageColumns, FieldGroup, Card and StatGrid use them), so the spacing knob reaches every page built from them.
 - Touch targets ≥ 44px on touch devices (the kit does this through `pointer: coarse`).
 - One primary button per region. Labels are verb + object (「新建项目」), never 「确定」「提交」.
 - Overlays come from the kit: Dialog / Drawer / ConfirmDialog / BottomSheet / Popover / DropdownMenu / ContextMenu. A right-click menu is only a shortcut: the same items sit in the ⋯ menu. Never `alert()`, `confirm()`, or a hand-written `fixed inset-0`.
@@ -53,7 +54,7 @@ things that float. The same intent always gets the same component.
 - Flat: cards are a 1px line, never a shadow; no card inside a card.
 - No subtitle sentence under page titles; explanations go behind ⓘ.
 - Tables: ≤ 6 default columns, numbers right-aligned with tabular figures, row click → detail drawer (edit in place there), no double-click edit, paginate 20/50/100.
-- Light and dark both work; appearance preference is system/light/dark and stored as the preference.
+- Light and dark both work; appearance preference is system/light/dark and stored as the preference. The OS "increase contrast" setting is honoured (the theme does it; don't fight it).
 
 A project may replace the whole skin (neutrals, accent, fonts, radius, shadows, motion, icons, brand) — `references/tokens.md`「换一整套皮肤」. The interaction rules above, one accent with its meaning, and the floors (contrast, 12px, 44px, colour never the only signal, reduced motion) stay; the look itself (black and white, flat 1px cards, 120–240ms motion, weights to 600) is the default skin's.
 
@@ -62,7 +63,7 @@ A project may replace the whole skin (neutrals, accent, fonts, radius, shadows, 
 | File | Read when |
 | --- | --- |
 | `references/principles.md` | Making any judgement call; explaining why |
-| `references/tokens.md` | Colours, categorical colours, type, in-app text size, spacing, radius, shadow, motion, knobs, presets, dark mode |
+| `references/tokens.md` | Colours, categorical colours, more contrast, type, in-app text size, spacing tokens, radius, shadow, motion, knobs, presets, the theme studio, dark mode |
 | `references/components.md` | Picking or using a component; its sizes and behaviour |
 | `references/patterns/overlays.md` | Dialog vs drawer vs sheet vs popover; inspector, command palette; sizes; closing; stacking; embedded pages |
 | `references/patterns/feedback.md` | Toast, undo vs confirm, errors, loading, the five data states, infinite scroll, upload queue |
@@ -75,6 +76,7 @@ A project may replace the whole skin (neutrals, accent, fonts, radius, shadows, 
 | `references/patterns/settings.md` | Settings and preferences pages |
 | `references/patterns/updates.md` | New version ready (restart / reload), "what's new" after an update, writing CHANGELOG.md, release notes in CI |
 | `references/patterns/layout.md` | App shell, workbench shell (rail, secondary column, inspector), page widths, responsive rules |
+| `references/patterns/page-layouts.md` | What goes inside a page: overview, detail page, list–detail split, main + aside, wizard, empty and result pages, single-card pages, editor, board, card grid; scroll and sticky rules |
 | `references/content.md` | Any visible text |
 | `references/adoption.md` | Installing into a project, knobs, guards, upgrading, non-React, native apps |
 | `references/downstream.md` | What the system owns vs a project's skin; the `consumers.json` list; pushing a change down; bringing a project's idea back |

@@ -31,11 +31,15 @@
    ```css
    @import "tailwindcss";
    @import "./styles/jim-theme.css";
-   /* 可选预设：@import "./styles/presets/warm.css"; */
+   /* 可选预设（npx shadcn add @jim/preset-slate @jim/preset-accents）：
+      @import "./styles/presets/slate.css";    <html data-theme="slate">
+      @import "./styles/presets/accents.css";  <html data-accent="blue"> */
+   /* 或者在主题工作室（https://design.linjiejim.com/#/studio）调好皮肤，导出后：
+      @import "./styles/<项目>-theme.css"; */
    ```
 
 5. 入口文件：
-   - `import "@fontsource-variable/inter"`。
+   - `import "@fontsource-variable/inter/opsz.css"`（带光学尺寸轴：大字和数字自动用 Display 字形；只要字重轴时写 `import "@fontsource-variable/inter"`）。
    - 外面包一层 `<LucideProvider strokeWidth={1.75}>`、`<TooltipProvider>`，并渲染 `<Toaster />`。
    - 把 `APPEARANCE_BOOT_SCRIPT` 内联到 `<head>`。
 6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。
@@ -53,10 +57,11 @@
 基于 jim-uiux <版本号>（见 https://github.com/linjiejim/jim-uiux）。本文只记录与默认值不同的地方。
 
 ## 旋钮
-- 皮肤：默认（自己的皮肤写文件位置，和默认不同的取向列在下面）
-- 强调色：默认黑色
+- 皮肤：默认（预设写 data-theme / data-accent；主题工作室导出的写文件位置和「再次打开」链接；自己的皮肤写文件位置，和默认不同的取向列在下面）
+- 强调色：默认墨（黑）
 - 圆角：默认 8
 - 密度：舒适
+- 留白：标准
 - 默认外观：跟随系统
 
 ## 状态词表

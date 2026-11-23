@@ -18,8 +18,12 @@ const kinds = {
 const descriptions = {
   theme: "Tokens: values, semantic names, Tailwind mapping, motion, base styles",
   "preset-warm": "Preset: Notion-like warm greys",
+  "preset-slate": "Preset: cool blue-grey neutrals (pairs with blue, indigo)",
+  "preset-sage": "Preset: green-grey neutrals (pairs with teal)",
+  "preset-mauve": "Preset: violet-grey neutrals (pairs with violet, pink)",
+  "preset-accents": "Accent presets: <html data-accent=\"blue|indigo|violet|pink|teal\">",
   utils: "cn() with tailwind-merge taught the semantic type scale",
-  guards: "Vitest guards: no raw colours, type floor, no native dialogs, contrast matrix",
+  guards: "Vitest guards: no raw colours, type floor, no native dialogs, contrast matrix (every preset, accent and more-contrast scope)",
   "release-notes-script": "scripts/release-notes.mjs: a CHANGELOG section for a release body or updater, drafted from Conventional Commits",
 }
 

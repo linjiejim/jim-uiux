@@ -6,6 +6,8 @@ import { Field, FieldGroup } from "@/registry/jim/ui/field"
 import { Input, Textarea } from "@/registry/jim/ui/input"
 import { RadioGroup } from "@/registry/jim/ui/radio-group"
 import { Select } from "@/registry/jim/ui/select"
+import { Slider } from "@/registry/jim/ui/slider"
+import { SwatchPicker, categoricalOptions } from "@/registry/jim/ui/swatch-picker"
 import { Switch } from "@/registry/jim/ui/switch"
 import { notify } from "@/registry/jim/ui/toast"
 import { DocPage, Example, Rules, Spec } from "../doc"
@@ -119,6 +121,13 @@ export function FormsPage() {
         </div>
       </Example>
 
+      <Example
+        title="滑杆与色块"
+        note="滑杆用于手感比精确数字更重要的数值，读数写在右边；色块从固定的一组颜色里选一个（标签、项目色用九种分类色，存名字）。方向键都能用。"
+      >
+        <SliderAndSwatches />
+      </Example>
+
       <Example title="规格" canvas="none">
         <Spec
           rows={[
@@ -127,6 +136,8 @@ export function FormsPage() {
             ["错误", "替换说明的位置，红色加图标，说清怎么改"],
             ["校验时机", "离开字段时校验；改正时立即清除错误；提交时全部校验"],
             ["选择控件", "2–4 项切换视图用 Segmented；≤ 8 项用 Select；更多用 Combobox"],
+            ["滑杆", "轨道 4、滑块 16（触屏 20，点击区 44）；读数在右，写单位；← → 一步，PageUp / PageDown 十步"],
+            ["色块", "24（sm 20），选中的加一圈环；一组只占一个 Tab 位，方向键移动；每个都有名字"],
             ["字段间距", "16；分组之间 32"],
             ["表单宽度", "单列，最宽 480（在 narrow 720 的页面里）"],
             ["提交", "按钮显示加载并禁用；成功后结果可见则不再提示"],
@@ -140,5 +151,24 @@ export function FormsPage() {
         />
       </Example>
     </DocPage>
+  )
+}
+
+function SliderAndSwatches() {
+  const [radius, setRadius] = React.useState(8)
+  const [volume, setVolume] = React.useState(40)
+  const [color, setColor] = React.useState("teal")
+  return (
+    <FieldGroup className="max-w-[400px]">
+      <Field label="提醒音量">
+        <Slider value={volume} onValueChange={setVolume} format={(v) => (v ? `${v}%` : "静音")} />
+      </Field>
+      <Field label="圆角" hint="拖动时只改界面；要存的值在 onValueCommit 里存。">
+        <Slider value={radius} onValueChange={setRadius} min={0} max={16} step={2} format={(v) => `${v}px`} />
+      </Field>
+      <Field label="项目颜色">
+        <SwatchPicker value={color} onValueChange={setColor} options={categoricalOptions()} />
+      </Field>
+    </FieldGroup>
   )
 }

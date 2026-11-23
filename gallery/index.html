@@ -4,8 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>jim-uiux</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script>
-      (function(){try{var p=localStorage.getItem("appearance");var d=p==="dark"||(p!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);var t=JSON.parse(localStorage.getItem("gallery:knobs")||"{}");for(var k in t){if(t[k])document.documentElement.setAttribute("data-"+k,t[k])}}catch(e){}})()
+      (function(){try{var h=document.documentElement,p=localStorage.getItem("appearance");var d=p==="dark"||(p!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);h.classList.toggle("dark",d);var c=localStorage.getItem("gallery:studio-css");if(c){var s=document.createElement("style");s.id="jim-studio";s.textContent=c;document.head.appendChild(s)}var t=JSON.parse(localStorage.getItem("gallery:studio")||"{}");if(t.density)h.setAttribute("data-density",t.density);if(t.spacing)h.setAttribute("data-spacing",t.spacing);if(localStorage.getItem("gallery:more-contrast")==="1")h.setAttribute("data-contrast","more")}catch(e){}})()
     </script>
   </head>
   <body>

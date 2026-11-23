@@ -1,3 +1,7 @@
 @import "tailwindcss";
 @import "./registry/jim/theme/jim-theme.css";
 @import "./registry/jim/theme/presets/warm.css";
+@import "./registry/jim/theme/presets/slate.css";
+@import "./registry/jim/theme/presets/sage.css";
+@import "./registry/jim/theme/presets/mauve.css";
+@import "./registry/jim/theme/presets/accents.css";

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "preset-slate",
+  "description": "Preset: cool blue-grey neutrals (pairs with blue, indigo)",
+  "files": [
+    {
+      "path": "src/registry/jim/theme/presets/slate.css",
+      "content": "/*\n * Preset: Slate — cool blue-grey neutrals, ink accent. <html data-theme=\"slate\">\n * Pairs with the blue and indigo accents. Values from the theme studio (hue 255, chroma 14).\n */\n[data-theme=\"slate\"] {\n  --sunken: #f5f7fa;\n  --muted: #edf0f4;\n  --foreground: #161a21;\n  --muted-foreground: #595c60;\n  --faint-foreground: #686b70;\n  --border: #e6e8eb;\n  --input: #d0d5db;\n  --inverse: #1c1f23;\n  --inverse-foreground: #f3f5f8;\n  --primary: #161a21;\n}\n\n.dark[data-theme=\"slate\"],\n[data-theme=\"slate\"] .dark {\n  --background: #18191b;\n  --sunken: #1e2023;\n  --muted: #282a2e;\n  --popover: #242527;\n  --foreground: #eaecef;\n  --muted-foreground: #a3a6ab;\n  --faint-foreground: #8c8f94;\n  --border: #2c2e31;\n  --input: #3a3d42;\n  --inverse: #eaecef;\n  --inverse-foreground: #18191b;\n  --primary: #eaecef;\n  --primary-foreground: #18191b;\n}\n",
+      "type": "registry:file",
+      "target": "src/styles/presets/slate.css"
+    }
+  ],
+  "type": "registry:file"
+}

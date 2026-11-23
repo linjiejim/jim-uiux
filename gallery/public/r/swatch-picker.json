@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "swatch-picker",
+  "description": "Pick one colour from a fixed set: a tag or project colour (the nine categorical colours,",
+  "dependencies": [
+    "radix-ui@^1.8.1"
+  ],
+  "registryDependencies": [
+    "@jim/categorical",
+    "@jim/field",
+    "@jim/strings",
+    "@jim/tooltip",
+    "@jim/utils"
+  ],
+  "files": [
+    {
+      "path": "src/registry/jim/ui/swatch-picker.tsx",
+      "content": "\"use client\"\n\nimport { RadioGroup as RadioPrimitive } from \"radix-ui\"\nimport { cn } from \"@/lib/utils\"\nimport { CATEGORICAL, catVar, type Categorical } from \"@/registry/jim/lib/categorical\"\nimport { s } from \"@/registry/jim/lib/strings\"\nimport { useFieldControl } from \"@/registry/jim/ui/field\"\nimport { Tooltip } from \"@/registry/jim/ui/tooltip\"\n\n/**\n * Pick one colour from a fixed set: a tag or project colour (the nine categorical colours,\n * stored by name — `categoricalOptions()`), a theme preset. One tab stop for the row; arrow\n * keys move and choose. The chosen swatch gets a ring, so the choice never rests on colour\n * alone, and every swatch names itself (tooltip, screen reader). For user data there is no\n * free colour input: store the name.\n */\nexport function SwatchPicker<T extends string>({\n  options,\n  value,\n  defaultValue,\n  onValueChange,\n  size = \"md\",\n  disabled,\n  className,\n  \"aria-label\": ariaLabel,\n}: {\n  /** `color` is any CSS colour expression: `catVar(\"blue\")`, `var(--primary)`. */\n  options: { value: T; label: string; color: string; disabled?: boolean }[]\n  value?: T\n  defaultValue?: T\n  onValueChange?: (v: T) => void\n  size?: \"sm\" | \"md\"\n  disabled?: boolean\n  className?: string\n  \"aria-label\"?: string\n}) {\n  const field = useFieldControl()\n  return (\n    <RadioPrimitive.Root\n      value={value}\n      defaultValue={defaultValue}\n      onValueChange={(v) => onValueChange?.(v as T)}\n      disabled={disabled}\n      orientation=\"horizontal\"\n      aria-label={ariaLabel}\n      aria-labelledby={!ariaLabel && field.id ? `${field.id}-label` : undefined}\n      aria-describedby={field[\"aria-describedby\"]}\n      aria-invalid={field[\"aria-invalid\"]}\n      aria-required={field[\"aria-required\"]}\n      data-slot=\"swatch-picker\"\n      className={cn(\"flex flex-wrap items-center\", size === \"sm\" ? \"gap-2\" : \"gap-2.5\", \"pointer-coarse:gap-3\", className)}\n    >\n      {options.map((o) => (\n        <Tooltip key={o.value} content={o.label}>\n          <RadioPrimitive.Item\n            value={o.value}\n            disabled={o.disabled}\n            aria-label={o.label}\n            style={{ background: o.color }}\n            className={cn(\n              \"relative shrink-0 rounded-full transition-shadow duration-(--duration-fast)\",\n              size === \"sm\" ? \"size-5\" : \"size-6\",\n              // a hairline edge so white and near-canvas swatches still read as swatches\n              \"after:pointer-events-none after:absolute after:inset-0 after:rounded-full after:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--foreground)_14%,transparent)]\",\n              // hit area: 44 on touch for both sizes\n              size === \"sm\" ? \"before:absolute before:-inset-1.5 pointer-coarse:before:-inset-3\" : \"before:absolute before:-inset-1.5 pointer-coarse:before:-inset-2.5\",\n              // aria-checked, not data-state: the Tooltip trigger writes its own data-state onto the swatch\n              \"aria-checked:ring-2 aria-checked:ring-foreground aria-checked:ring-offset-2 aria-checked:ring-offset-background\",\n              \"disabled:cursor-not-allowed disabled:opacity-50\",\n            )}\n          />\n        </Tooltip>\n      ))}\n    </RadioPrimitive.Root>\n  )\n}\n\n/** The nine categorical colours as SwatchPicker options, named from `strings.ts` (`colorName`). */\nexport function categoricalOptions(labels: Partial<Record<Categorical, string>> = s().colorName) {\n  return CATEGORICAL.map((name) => ({ value: name, label: labels[name] ?? name, color: catVar(name) }))\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "type": "registry:ui"
+}

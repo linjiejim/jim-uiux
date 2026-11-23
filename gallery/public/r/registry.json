@@ -34,6 +34,54 @@
       ]
     },
     {
+      "name": "preset-accents",
+      "type": "registry:file",
+      "description": "Accent presets: <html data-accent=\"blue|indigo|violet|pink|teal\">",
+      "files": [
+        {
+          "path": "src/registry/jim/theme/presets/accents.css",
+          "type": "registry:file",
+          "target": "src/styles/presets/accents.css"
+        }
+      ]
+    },
+    {
+      "name": "preset-mauve",
+      "type": "registry:file",
+      "description": "Preset: violet-grey neutrals (pairs with violet, pink)",
+      "files": [
+        {
+          "path": "src/registry/jim/theme/presets/mauve.css",
+          "type": "registry:file",
+          "target": "src/styles/presets/mauve.css"
+        }
+      ]
+    },
+    {
+      "name": "preset-sage",
+      "type": "registry:file",
+      "description": "Preset: green-grey neutrals (pairs with teal)",
+      "files": [
+        {
+          "path": "src/registry/jim/theme/presets/sage.css",
+          "type": "registry:file",
+          "target": "src/styles/presets/sage.css"
+        }
+      ]
+    },
+    {
+      "name": "preset-slate",
+      "type": "registry:file",
+      "description": "Preset: cool blue-grey neutrals (pairs with blue, indigo)",
+      "files": [
+        {
+          "path": "src/registry/jim/theme/presets/slate.css",
+          "type": "registry:file",
+          "target": "src/styles/presets/slate.css"
+        }
+      ]
+    },
+    {
       "name": "preset-warm",
       "type": "registry:file",
       "description": "Preset: Notion-like warm greys",
@@ -136,6 +184,20 @@
       "files": [
         {
           "path": "src/registry/jim/ui/callout.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "description": "A group that needs its own boundary: a chart on a dashboard, an item in a card grid,",
+      "registryDependencies": [
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/card.tsx",
           "type": "registry:ui"
         }
       ]
@@ -622,6 +684,24 @@
       ]
     },
     {
+      "name": "slider",
+      "type": "registry:ui",
+      "description": "A number in a range where the feel matters more than the exact digit: a radius, a volume,",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/field",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/slider.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "spinner",
       "type": "registry:ui",
       "description": "Short waits only (a button, a field). Content loading uses Skeleton. */",
@@ -634,6 +714,21 @@
       "files": [
         {
           "path": "src/registry/jim/ui/spinner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stat",
+      "type": "registry:ui",
+      "description": "A number that matters on its own (a dashboard KPI): the label, ⓘ for how it is counted, the",
+      "registryDependencies": [
+        "@jim/info",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/stat.tsx",
           "type": "registry:ui"
         }
       ]
@@ -653,6 +748,27 @@
       "files": [
         {
           "path": "src/registry/jim/ui/state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "swatch-picker",
+      "type": "registry:ui",
+      "description": "Pick one colour from a fixed set: a tag or project colour (the nine categorical colours,",
+      "dependencies": [
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/categorical",
+        "@jim/field",
+        "@jim/strings",
+        "@jim/tooltip",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/swatch-picker.tsx",
           "type": "registry:ui"
         }
       ]
@@ -828,13 +944,18 @@
     {
       "name": "guards",
       "type": "registry:file",
-      "description": "Vitest guards: no raw colours, type floor, no native dialogs, contrast matrix",
+      "description": "Vitest guards: no raw colours, type floor, no native dialogs, contrast matrix (every preset, accent and more-contrast scope)",
       "devDependencies": [
         "vitest@^5.0.5",
         "culori@^4.0.2",
         "@types/culori@^4.0.1"
       ],
       "files": [
+        {
+          "path": "src/registry/jim/guards/contrast-lib.ts",
+          "type": "registry:file",
+          "target": "tests/design/contrast-lib.ts"
+        },
         {
           "path": "src/registry/jim/guards/contrast.test.ts",
           "type": "registry:file",
@@ -867,7 +988,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.7.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.8.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -876,6 +997,7 @@
         "@jim/bottom-sheet",
         "@jim/button",
         "@jim/callout",
+        "@jim/card",
         "@jim/checkbox",
         "@jim/combobox",
         "@jim/command-palette",
@@ -902,8 +1024,11 @@
         "@jim/select",
         "@jim/settings",
         "@jim/skeleton",
+        "@jim/slider",
         "@jim/spinner",
+        "@jim/stat",
         "@jim/state",
+        "@jim/swatch-picker",
         "@jim/switch",
         "@jim/tabs",
         "@jim/toast",

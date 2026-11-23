@@ -82,6 +82,8 @@ const zh = {
   },
   newVersionReady: "新版本已发布，刷新后生效",
   reload: "刷新页面",
+  /** Names of the nine categorical colours, for swatches and screen readers. */
+  colorName: { gray: "灰", red: "红", orange: "橙", amber: "琥珀", green: "绿", teal: "青", blue: "蓝", purple: "紫", pink: "粉" },
 }
 
 export type Strings = typeof zh

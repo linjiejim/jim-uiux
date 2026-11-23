@@ -1,12 +1,14 @@
+<img src="gallery/public/favicon.svg" width="56" alt="">
+
 # jim-uiux
 
 一套小而有主见的 React UI/UX 设计系统：Notion 式的简洁，默认黑白，用几个旋钮换主题。三样东西放在同一个仓库里，免得互相脱节：
 
 - **Agent 技能**（`SKILL.md` + `references/`）：已经定好的默认值，包括 token、弹框和抽屉尺寸、表格行为、反馈、文案规范。agent 做界面时不用再纠结小事。
 - **shadcn registry**（`@jim/*`）：按这些规范做的 Radix + Tailwind v4 组件，地址 `https://design.linjiejim.com/r/{name}.json`。
-- **活的 gallery**：**https://design.linjiejim.com** ，跑的是真组件，主题旋钮可以实时切换。
+- **活的 gallery**：**https://design.linjiejim.com** ，跑的是真组件，主题旋钮可以实时切换；[主题工作室](https://design.linjiejim.com/#/studio)里调中性色、强调色、对比度、圆角、密度和留白，逐条校验对比度，导出皮肤 CSS。
 
-另有一组 vitest 守卫：项目里出现裸色值、小于 12px 的字、原生弹框、emoji 图标，或任一主题的 WCAG 对比度不达标，测试就会失败。
+另有一组 vitest 守卫：项目里出现裸色值、小于 12px 的字、原生弹框、emoji 图标，或任一主题（每个预设组合、浅色深色、增强对比度）的 WCAG 对比度不达标，测试就会失败。
 
 [English →](README.md)
 
@@ -58,6 +60,20 @@ pnpm consumers        # 下游项目和这里差在哪（需要 gh）
 ```
 
 push 到 `main` 会把 gallery 和 registry 发布到 GitHub Pages，`/version.json` 写着线上是哪个版本。怎么改默认值，见 [`SKILL.md`](SKILL.md) 的「Changing the system」。
+
+### PR 里的截图和录屏
+
+```bash
+node scripts/pr-assets.mjs 14 light.png dark.png demo.mp4   # 14 是 PR 号；还没开 PR 就写 draft
+```
+
+脚本把文件提交到本仓库的 `refs/pr-assets/pr-14`，在标准输出打印一段 markdown，直接贴进 PR 描述：链接钉在提交 SHA 上；装了 `ffmpeg` 的话视频会转成 GIF 内嵌。
+
+- 这个 ref 不在 `refs/heads` 下，`git clone`、`git fetch` 默认都不拉，仓库不会因为截图变大。
+- **传上去就永久公开**：截图里不能有真实用户的数据、密钥、本机路径。
+- Claude 云端会话只能推 `refs/heads/*`：脚本被拒后改推临时分支 `pr-assets-inbox/<PR号>-<随机>`，[PR assets inbox](.github/workflows/pr-assets-inbox.yml) 工作流把素材搬进 `refs/pr-assets/pr-<PR号>` 再删掉分支。
+- 想看一个 PR 传过哪些文件：`git fetch origin refs/pr-assets/pr-14 && git ls-tree -r --name-only FETCH_HEAD`。
+- 脚本和 excalidesk 的是同一份，改了两边一起同步。
 
 ## 许可
 

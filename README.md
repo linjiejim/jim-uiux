@@ -1,3 +1,5 @@
+<img src="gallery/public/favicon.svg" width="56" alt="">
+
 # jim-uiux
 
 A small, opinionated UI/UX design system for React apps — Notion-like minimal,
@@ -10,10 +12,14 @@ things that stay in one repo so they can't drift apart:
 - **A shadcn registry** (`@jim/*`): Radix + Tailwind v4 components built to those
   specs, served from `https://design.linjiejim.com/r/{name}.json`.
 - **A living gallery** at **https://design.linjiejim.com** that runs the real
-  components, with the theme knobs live.
+  components, with the theme knobs live, and a
+  [theme studio](https://design.linjiejim.com/#/studio): tune neutrals, accent,
+  contrast, radius, density and spacing on the real components, see every
+  contrast check pass, and export the skin as CSS.
 
 Plus vitest guards that fail a project's build on raw colours, text under 12px,
-native dialogs, emoji icons and WCAG contrast misses in every theme.
+native dialogs, emoji icons and WCAG contrast misses in every theme (each preset
+combination, light and dark, and the OS "increase contrast" mode).
 
 [中文说明 →](README.zh-CN.md)
 
@@ -74,6 +80,22 @@ Push to `main` deploys the gallery and registry to GitHub Pages;
 system" in [`SKILL.md`](SKILL.md).
 
 The docs are written in Chinese; component APIs and code are in English.
+
+### Screenshots in pull requests
+
+```bash
+node scripts/pr-assets.mjs 14 light.png dark.png demo.mp4   # 14 is the PR number; before opening it, use draft
+```
+
+The script commits the files to `refs/pr-assets/pr-14` in this repository and
+prints markdown to paste into the PR description (links pinned to the commit
+SHA; videos become GIFs if `ffmpeg` is installed). The ref is outside
+`refs/heads`, so `git clone` never downloads the images. Uploads are public for
+good: no real user data, keys or local paths. Where that push is refused
+(Claude cloud sessions only allow `refs/heads/*`), the script pushes a
+`pr-assets-inbox/…` branch instead and the
+[PR assets inbox](.github/workflows/pr-assets-inbox.yml) workflow moves it over.
+Same script as excalidesk's; keep the two in sync.
 
 ## License
 

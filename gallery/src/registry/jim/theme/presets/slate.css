@@ -1,0 +1,33 @@
+/*
+ * Preset: Slate — cool blue-grey neutrals, ink accent. <html data-theme="slate">
+ * Pairs with the blue and indigo accents. Values from the theme studio (hue 255, chroma 14).
+ */
+[data-theme="slate"] {
+  --sunken: #f5f7fa;
+  --muted: #edf0f4;
+  --foreground: #161a21;
+  --muted-foreground: #595c60;
+  --faint-foreground: #686b70;
+  --border: #e6e8eb;
+  --input: #d0d5db;
+  --inverse: #1c1f23;
+  --inverse-foreground: #f3f5f8;
+  --primary: #161a21;
+}
+
+.dark[data-theme="slate"],
+[data-theme="slate"] .dark {
+  --background: #18191b;
+  --sunken: #1e2023;
+  --muted: #282a2e;
+  --popover: #242527;
+  --foreground: #eaecef;
+  --muted-foreground: #a3a6ab;
+  --faint-foreground: #8c8f94;
+  --border: #2c2e31;
+  --input: #3a3d42;
+  --inverse: #eaecef;
+  --inverse-foreground: #18191b;
+  --primary: #eaecef;
+  --primary-foreground: #18191b;
+}

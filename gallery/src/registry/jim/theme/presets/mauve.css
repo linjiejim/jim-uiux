@@ -1,0 +1,33 @@
+/*
+ * Preset: Mauve — violet-grey neutrals, ink accent. <html data-theme="mauve">
+ * Pairs with the violet and pink accents. Values from the theme studio (hue 305, chroma 12).
+ */
+[data-theme="mauve"] {
+  --sunken: #f8f6f9;
+  --muted: #f1eff3;
+  --foreground: #1b191f;
+  --muted-foreground: #5d5b5f;
+  --faint-foreground: #6c6a6f;
+  --border: #e9e7ea;
+  --input: #d5d3d9;
+  --inverse: #201e22;
+  --inverse-foreground: #f6f4f7;
+  --primary: #1b191f;
+}
+
+.dark[data-theme="mauve"],
+[data-theme="mauve"] .dark {
+  --background: #19191a;
+  --sunken: #212022;
+  --muted: #2b292d;
+  --popover: #252526;
+  --foreground: #edebee;
+  --muted-foreground: #a7a5a9;
+  --faint-foreground: #908e92;
+  --border: #2f2d30;
+  --input: #3e3c40;
+  --inverse: #edebee;
+  --inverse-foreground: #19191a;
+  --primary: #edebee;
+  --primary-foreground: #19191a;
+}
