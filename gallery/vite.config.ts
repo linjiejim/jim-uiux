@@ -27,7 +27,12 @@ const versionFile = (): Plugin => ({
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), versionFile()],
-  define: { __JIM_UIUX_VERSION__: JSON.stringify(version) },
+  define: {
+    __JIM_UIUX_VERSION__: JSON.stringify(version),
+    __JIM_UIUX_COMMIT__: JSON.stringify(commit()),
+    // the release notes the gallery shows, from the repo root (outside Vite's root)
+    __JIM_UIUX_CHANGELOG__: JSON.stringify(fs.readFileSync(path.resolve(import.meta.dirname, "../CHANGELOG.md"), "utf8")),
+  },
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } },
   server: { port: 5188 },
 })

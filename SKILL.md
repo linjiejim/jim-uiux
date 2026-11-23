@@ -46,6 +46,7 @@ things that float. The same intent always gets the same component.
 - User-chosen colours (tags, project colours, chart series) come from the nine categorical pairs, stored by name; they are data, never a second accent.
 - Embedded pages (iframes) ask the host to draw confirms and toasts; one Esc closes one layer.
 - Reversible actions run at once and offer Undo; only irreversible ones ask first.
+- Updates are told, never imposed: a new version waits for a restart or reload the user chooses; after an update one toast says what's new. Release notes live in `CHANGELOG.md` only, written for the people using the app; CI copies them into releases and update manifests.
 - Errors stay where they happened, in plain words, with Retry. Never an auto-dismissing toast for an error, never an error code. Native apps may use the system Alert for a failed action.
 - Loading never shows "empty"; failure never looks like "empty". Skeletons are static, appear after 300ms, stay ≥ 600ms.
 - Motion 120–240ms, one ease-out curve, no bounce, no decoration; reduced motion keeps fades only.
@@ -72,6 +73,7 @@ A project may replace the whole skin (neutrals, accent, fonts, radius, shadows, 
 | `references/patterns/one-time-secret.md` | API keys and other values shown once |
 | `references/patterns/annotations.md` | Select text → comment → thread side panel |
 | `references/patterns/settings.md` | Settings and preferences pages |
+| `references/patterns/updates.md` | New version ready (restart / reload), "what's new" after an update, writing CHANGELOG.md, release notes in CI |
 | `references/patterns/layout.md` | App shell, workbench shell (rail, secondary column, inspector), page widths, responsive rules |
 | `references/content.md` | Any visible text |
 | `references/adoption.md` | Installing into a project, knobs, guards, upgrading, non-React, native apps |

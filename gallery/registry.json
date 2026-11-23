@@ -519,6 +519,26 @@
       ]
     },
     {
+      "name": "release-notes",
+      "type": "registry:ui",
+      "description": "Updates told to the people using the app: what's new after an update, and a reload prompt on the web.",
+      "registryDependencies": [
+        "@jim/button",
+        "@jim/callout",
+        "@jim/changelog",
+        "@jim/dialog",
+        "@jim/state",
+        "@jim/strings",
+        "@jim/toast"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/release-notes.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "resize-handle",
       "type": "registry:ui",
       "description": "The edge of a panel the user drags to resize it: a docked inspector, a side",
@@ -784,6 +804,17 @@
       ]
     },
     {
+      "name": "changelog",
+      "type": "registry:lib",
+      "description": "Release notes: a project's CHANGELOG.md read into versions, and the ones a person hasn't seen yet.",
+      "files": [
+        {
+          "path": "src/registry/jim/lib/changelog.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "strings",
       "type": "registry:lib",
       "description": "Default UI copy for the kit. Projects with i18n call configureStrings()",
@@ -822,9 +853,21 @@
       ]
     },
     {
+      "name": "release-notes-script",
+      "type": "registry:file",
+      "description": "scripts/release-notes.mjs: a CHANGELOG section for a release body or updater, drafted from Conventional Commits",
+      "files": [
+        {
+          "path": "src/registry/jim/scripts/release-notes.mjs",
+          "type": "registry:file",
+          "target": "~/scripts/release-notes.mjs"
+        }
+      ]
+    },
+    {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.6.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.7.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -853,6 +896,7 @@
         "@jim/popover",
         "@jim/progress",
         "@jim/radio-group",
+        "@jim/release-notes",
         "@jim/resize-handle",
         "@jim/segmented",
         "@jim/select",
@@ -870,6 +914,7 @@
         "@jim/use-guarded-open",
         "@jim/appearance",
         "@jim/categorical",
+        "@jim/changelog",
         "@jim/strings"
       ]
     }

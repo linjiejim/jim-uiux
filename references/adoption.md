@@ -40,7 +40,8 @@
    - 把 `APPEARANCE_BOOT_SCRIPT` 内联到 `<head>`。
 6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。
 7. 写 `docs/DESIGN.md`（模板见下文）。
-8. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（字段见 `downstream.md`）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。
+8. 应用会发版（桌面、移动端、按版本发的 web）：`npx shadcn add @jim/release-notes @jim/release-notes-script`，建 `CHANGELOG.md`，发布工作流从它取说明，根组件里接上「已更新」提示。每次 push 就部署的 web 至少接上 `useNewVersionPrompt`。做法见 `patterns/updates.md`。
+9. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（字段见 `downstream.md`）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。
 
 也可以只装需要的部分：`npx shadcn add @jim/theme @jim/button @jim/dialog`，registry 会自动带上依赖。
 
