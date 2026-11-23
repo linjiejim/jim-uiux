@@ -9,7 +9,8 @@ import { Info } from "@/registry/jim/ui/info"
  *   narrow 720   forms, settings, reading
  *   wide   1200  lists, dashboards
  *   full         tables that need every pixel, canvases
- * Content is left-aligned in the main area. "fill" makes the page exactly
+ * narrow and wide center in the main area (equal space both sides once the
+ * window is wider than the page), full fills it. "fill" makes the page exactly
  * the viewport tall so a table scrolls inside and the page doesn't.
  * The page edge is --space-page (24; data-spacing moves it), 16 on phones.
  * Which layout goes inside: references/patterns/page-layouts.md.
@@ -25,7 +26,7 @@ export function Page({
   return (
     <main
       className={cn(
-        "w-full px-(--space-page) pb-10 pt-(--space-page) max-sm:px-4 max-sm:pt-4",
+        "mx-auto w-full px-(--space-page) pb-10 pt-(--space-page) max-sm:px-4 max-sm:pt-4",
         widths[width],
         fill && "flex h-full min-h-0 flex-col pb-0",
         className,

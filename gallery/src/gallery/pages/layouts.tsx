@@ -179,7 +179,7 @@ const wires: { key: string; name: string; use: string; spec: string; wire: React
     use: "设置与偏好",
     spec: "narrow · 标签在左、控件在右 · 区块 40",
     wire: (
-      <div className="flex w-3/4 flex-1 flex-col gap-1.5">
+      <div className="mx-auto flex w-3/4 flex-1 flex-col gap-1.5">
         <Head action={false} />
         {[0, 1].map((g) => (
           <div key={g} className="flex flex-col">

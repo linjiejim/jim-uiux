@@ -180,6 +180,7 @@ jim-uiux 自己从 1.7.0 起，每个版本合进 main 并部署后自动发一�
 | 字体换成带光学尺寸轴的 Inter（`opsz.css`） | 20px 以上的西文和数字自动用 Display 字形，标题和指标数字明显更精致；中文回落到苹方，不受影响。拉丁字符集多 24KB | 给标题加负字距（Linear、Geist 的做法，会挤压中文） |
 | base 层加：标题 `text-wrap: balance`、段落 `pretty`、去掉触屏的点击高亮 | 都是零成本的细节，不影响已有的写法 | 在 `html` 上设 `scrollbar-color`（评审时发现：它会继承，Chrome 121 起元素上有它就忽略 `::-webkit-scrollbar`，下游自己画的滚动条会悄悄失效） |
 | gallery 的旋钮弹层和工作室共用一份状态（`studio/store.ts`），旧的 `gallery:knobs` 自动迁移 | 两个入口各存一份会互相打架 | 弹层保留 data-theme / data-radius 属性 |
+| `Page` 的 `narrow` / `wide` 在主区域里居中（`mx-auto`），`full` 照旧占满 | 2026-11-24 Jim 拍板：窄页靠左时右边空出一大块，既不满宽也不居中，看着别扭；窗口越宽越明显。Linear、GitHub 的单栏设置页都居中 | 左对齐（1.7.0 及以前，没有记录理由） |
 
 ## 待定（等 Jim 拍板）
 

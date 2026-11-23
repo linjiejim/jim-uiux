@@ -13,8 +13,9 @@
 - 守卫：对比度规则抽成 `guards/contrast-lib.ts`（工作室用同一份）；现在检查每个中性色预设 × 每个强调色预设 × 浅色 / 深色 × 增强对比度。缺了某个 token 也算失败。
 - 细节：字体改用带光学尺寸轴的 Inter（`@fontsource-variable/inter/opsz.css`），大字和数字更精致，中文不受影响；标题 `text-wrap: balance`、段落 `pretty`；触屏不再有灰色点击高亮。
 - 修复：`PageHeader` 的操作多时，手机上标题不再被挤得看不见（操作换到下一行）。
-- gallery：左下角「主题与旋钮」和工作室共用一份设置（旧设置自动迁移），可以切中性色、强调色预设；表单页加滑杆和色块示例，颜色页加预设说明。gallery 有了 logo（小写 j，点是圆角方块）和 favicon。
-- 升级时注意：要光学尺寸，把入口的 `import "@fontsource-variable/inter"` 换成 `import "@fontsource-variable/inter/opsz.css"`（不换也能用）。重新装 `@jim/guards` 后，对比度测试会多出增强对比度一档；项目皮肤的正文色太浅时会在这里失败。
+- `Page` 的 `narrow` / `wide` 改成在主区域里居中（以前靠左，窗口宽时右边空出一大块）；`full` 不变。
+- gallery：左下角「主题与旋钮」和工作室共用一份设置（旧设置自动迁移），可以切中性色、强调色预设；表单页加滑杆和色块示例，颜色页加预设说明。gallery 有了 logo：文字标「jim-uiux」，连字符画成打开的开关；小写 j（点是圆角方块）做 favicon 和应用图标。
+- 升级时注意：要光学尺寸，把入口的 `import "@fontsource-variable/inter"` 换成 `import "@fontsource-variable/inter/opsz.css"`（不换也能用）。重新装 `@jim/guards` 后，对比度测试会多出增强对比度一档；项目皮肤的正文色太浅时会在这里失败。页面不再靠左：窄页、宽页在宽窗口里会居中，自己在 `Page` 外面套了 `mx-auto` 或左对齐假设的地方可以删掉。
 
 ## 1.7.0 · 2026-11-23
 
