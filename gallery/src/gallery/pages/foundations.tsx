@@ -146,6 +146,24 @@ export function ColorPage() {
         </div>
       </Example>
 
+      <Example
+        title="预设与增强对比度"
+        note={'中性色预设换整套灰（data-theme），强调色预设换唯一的强调色（data-accent），两者可以任意组合，守卫逐一检查。系统打开「增强对比度」时，次要文字、细线和控件边框自动加深（也可以用 data-contrast="more" 强制）。要细调，去主题工作室。'}
+        canvas="none"
+      >
+        <Spec
+          rows={[
+            ["中性色", "warm 暖灰（Notion）· slate 冷灰 · sage 灰绿 · mauve 灰紫；默认纯灰"],
+            ["强调色", "blue 蓝 · indigo 靛 · violet 紫 · pink 玫红 · teal 青；默认墨（= 正文色）。没有红、绿、黄：它们已经是危险、成功、需要处理"],
+            ["搭配", "蓝、靛配冷灰；紫、玫红配灰紫；青配灰绿"],
+            ["增强对比度", "次要文字 ≥ 7:1，元信息 ≥ 5.5:1，控件边框 ≥ 3:1，焦点环 3px"],
+          ]}
+        />
+        <Button asChild variant="secondary" size="sm" className="mt-3">
+          <a href="#/studio">打开主题工作室</a>
+        </Button>
+      </Example>
+
       <Example title="线" canvas="none">
         <div className="grid gap-3 sm:grid-cols-3">
           {lines.map(([v, label]) => (

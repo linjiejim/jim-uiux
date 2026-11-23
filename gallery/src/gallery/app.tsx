@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   BookOpen,
   Images,
+  LayoutTemplate,
   Moon,
   PanelsTopLeft,
   Component,
@@ -17,6 +18,7 @@ import {
   Type,
   Square,
   RefreshCw,
+  SwatchBook,
 } from "lucide-react"
 import { LucideProvider } from "lucide-react"
 import { setAppearance, resolveAppearance, getAppearance } from "@/registry/jim/lib/appearance"
@@ -38,12 +40,15 @@ import { SettingsPattern } from "./pages/settings-pattern"
 import { WorkbenchPattern } from "./pages/workbench"
 import { MediaGridPattern } from "./pages/media-grid"
 import { UpdatesPattern } from "./pages/updates"
+import { StudioPage } from "./pages/studio"
+import { LayoutsPage } from "./pages/layouts"
 import { kitReleases, RELEASES_URL } from "./changelog"
 
 type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean }
 
 const routes: Record<string, RouteDef> = {
   principles: { label: "原则", icon: <BookOpen />, page: PrinciplesPage, group: "" },
+  studio: { label: "主题工作室", icon: <SwatchBook />, page: StudioPage, group: "" },
   color: { label: "颜色", icon: <Palette />, page: ColorPage, group: "基础" },
   type: { label: "文字", icon: <Type />, page: TypePage, group: "基础" },
   shape: { label: "间距、圆角与层级", icon: <Square />, page: ShapePage, group: "基础" },
@@ -53,6 +58,7 @@ const routes: Record<string, RouteDef> = {
   overlays: { label: "弹层", icon: <Layers />, page: OverlaysPage, group: "组件" },
   feedback: { label: "反馈与状态", icon: <MessageSquare />, page: FeedbackPage, group: "组件" },
   data: { label: "数据展示", icon: <Component />, page: DataDisplayPage, group: "组件" },
+  layouts: { label: "页面布局", icon: <LayoutTemplate />, page: LayoutsPage, group: "模式" },
   crud: { label: "列表与 CRUD", icon: <Table2 />, page: CrudPattern, group: "模式", fill: true },
   filters: { label: "列表筛选", icon: <ListFilter />, page: CrudPattern, group: "模式", fill: true },
   settings: { label: "设置页", icon: <Settings />, page: SettingsPattern, group: "模式" },

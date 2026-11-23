@@ -1,3 +1,4 @@
+import { Button } from "@/registry/jim/ui/button"
 import { DocPage, Example, Spec } from "../doc"
 
 const principles = [
@@ -26,17 +27,26 @@ export function PrinciplesPage() {
         ))}
       </section>
 
-      <Example title="可以定制的，只有这些" note="其余的值（间距、字号、动效、状态色语义、交互模式）全部锁定。左下角「主题与旋钮」可以实时切换。" canvas="none">
+      <Example
+        title="可以定制的，只有这些"
+        note="其余的值（字号、动效、状态色语义、交互模式）全部锁定。左下角「主题与旋钮」切预设；「主题工作室」细调每一项，校验对比度并导出 CSS。"
+        canvas="none"
+      >
         <Spec
           rows={[
-            ["强调色", "--primary / --primary-foreground，默认黑色。整套界面只有这一个强调色。"],
-            ["中性色调", "预设：默认纯灰、暖灰（Notion 风）。"],
-            ["圆角", "data-radius：锐利 4 / 默认 8 / 圆润 12，整套比例一起缩放。"],
-            ["密度", "data-density：舒适 / 紧凑。触屏下控件始终 ≥ 44px。"],
-            ["字体", "--font-sans / --font-display。默认 Inter + 苹方。"],
+            ["强调色", "预设 data-accent：蓝、靛、紫、玫红、青；默认墨（黑）。整套界面只有这一个强调色。"],
+            ["中性色调", "预设 data-theme：暖灰（Notion 风）、冷灰、灰绿、灰紫；默认纯灰。"],
+            ["对比度", "主题工作室里的「层次」：柔和 ↔ 高，文字始终不低于门槛；系统「增强对比度」自动生效。"],
+            ["圆角", "data-radius：锐利 4 / 默认 8 / 圆润 12，整套比例一起缩放；工作室里 0–16 任选。"],
+            ["密度", "data-density：舒适 / 紧凑，管控件和行高。触屏下控件始终 ≥ 44px。"],
+            ["留白", "data-spacing：紧凑 / 标准 / 宽松，管页边距、区块、字段和卡片之间的距离。"],
+            ["字体", "--font-sans / --font-display。默认 Inter（含光学尺寸）+ 苹方。"],
             ["默认外观", "跟随系统 / 浅色 / 深色，存的是偏好本身。"],
           ]}
         />
+        <Button asChild variant="secondary" size="sm" className="mt-3">
+          <a href="#/studio">打开主题工作室</a>
+        </Button>
       </Example>
 
       <Example title="决策速查" canvas="none">
