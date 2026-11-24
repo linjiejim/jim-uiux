@@ -469,8 +469,8 @@ function BodyCell<T>({ cell, className, style }: { cell: Cell<T, unknown>; class
         className,
       )}
     >
-      {/* -mx-2 px-2: the same text box, but what sticks out of a cell's content (InlineRename's
-          box, a focus ring) has 8px before the truncation clips it */}
+      {/* -mx-2 px-2: the same text box, but what sticks out sideways from a cell's content
+          (InlineRename's box) has 8px before the truncation clips it */}
       <div className={cn(!meta?.wrap && "truncate", cell.column.id !== "__select" && "-mx-2 px-2")} title={typeof raw === "string" ? raw : undefined}>
         {flexRender(cell.column.columnDef.cell, cell.getContext())}
       </div>

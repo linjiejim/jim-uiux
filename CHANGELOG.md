@@ -6,7 +6,7 @@
 
 - 新 `CHANGELOG.en.md`：每一版的英文说明，和 `CHANGELOG.md` 逐条对应。gallery 英文模式下的更新提示、「更新内容」和设置里的列表都读它；GitHub Release 在中文后面接上英文。`patterns/updates.md` 写了两种语言的应用怎么按界面语言选一份。
 - `InlineRename` 的文字不再比表头和同列的文字往右 7px：框向两边伸出去，文字留在原位。`DataTable` 的单元格给伸出去的框留了地方。
-- 升级时注意：`InlineRename` 放在自己的 `truncate` 或 `overflow-hidden` 容器里时，给容器加 `-mx-2 px-2`，否则框的左边会被切掉；或者传 `className="mx-0 max-w-full"` 保持原来的位置。
+- 升级时注意：`InlineRename` 的文字左移 7px（跟在它后面的内容左移 14px），框往两边各伸出 7px。放在自己的 `truncate` 或 `overflow-hidden` 容器里、或者紧挨着图标（间距不到 8px）时，要给框留出地方：容器加 `-mx-2 px-2`，和图标的间距至少 `gap-2`，否则框会被切掉或压到图标。留不出来就传 `className="mx-0 max-w-full"`，保持原来的位置。
 
 ## 1.10.0 · 2026-11-24
 

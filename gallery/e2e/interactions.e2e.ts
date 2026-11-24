@@ -76,8 +76,9 @@ test("EN switches the whole gallery to English and back", async ({ page }) => {
 })
 
 /**
- * Where a rename's text starts, and whether its box (hover fill, focus ring, the input's border)
- * fits inside every ancestor that clips. `root` is the [data-slot=inline-rename] element.
+ * Where a rename's text starts, and whether its box (hover fill, the input's border) and any focus
+ * ring or halo drawn outside it fit inside every ancestor that clips. `root` is the
+ * [data-slot=inline-rename] element.
  */
 async function renameGeometry(root: Locator) {
   return root.evaluate((el) => {
@@ -91,6 +92,16 @@ async function renameGeometry(root: Locator) {
       range.selectNodeContents(box)
       textLeft = range.getBoundingClientRect().left
     }
+    // how far a focus outline or an outer box-shadow (the input's halo) reaches past the box
+    const own = getComputedStyle(box)
+    let out = own.outlineStyle === "none" ? 0 : Math.max(0, parseFloat(own.outlineWidth) + parseFloat(own.outlineOffset))
+    let shadows = own.boxShadow === "none" ? "" : own.boxShadow
+    for (let prev = ""; prev !== shadows; ) [prev, shadows] = [shadows, shadows.replace(/[a-z-]+\([^()]*\)/gi, "")]
+    for (const shadow of shadows.split(",")) {
+      if (!shadow.trim() || shadow.includes("inset")) continue
+      const [x = 0, y = 0, blur = 0, spread = 0] = (shadow.match(/-?[\d.]+px/g) ?? []).map(parseFloat)
+      out = Math.max(out, spread + blur + Math.max(Math.abs(x), Math.abs(y)))
+    }
     const r = box.getBoundingClientRect()
     const clippedBy: string[] = []
     for (let a = box.parentElement; a && a !== document.body; a = a.parentElement) {
@@ -99,7 +110,10 @@ async function renameGeometry(root: Locator) {
       const ar = a.getBoundingClientRect()
       const left = ar.left + parseFloat(cs.borderLeftWidth)
       const right = ar.right - parseFloat(cs.borderRightWidth)
-      if (r.left < left - 0.5 || r.right > right + 0.5) clippedBy.push(`${a.tagName.toLowerCase()}.${a.className}`)
+      const top = ar.top + parseFloat(cs.borderTopWidth)
+      const bottom = ar.bottom - parseFloat(cs.borderBottomWidth)
+      if (r.left - out < left - 0.5 || r.right + out > right + 0.5 || r.top - out < top - 0.5 || r.bottom + out > bottom + 0.5)
+        clippedBy.push(`${a.tagName.toLowerCase()}.${a.className}`)
     }
     return { textLeft, clippedBy }
   })
@@ -131,7 +145,10 @@ test("a renamable name lines up with the text around it, and its box isn't clipp
   const editing = await renameGeometry(table.locator("[data-slot=inline-rename]").first())
   expect(Math.abs(editing.textLeft - column)).toBeLessThanOrEqual(1)
   expect(editing.clippedBy).toEqual([])
+  // back on the text, with a keyboard focus ring
   await page.keyboard.press("Escape")
+  await expect(name.getByRole("button")).toBeFocused()
+  expect((await renameGeometry(name)).clippedBy).toEqual([])
 
   // a title: the name starts where the heading would
   const heading = page.locator("h3").filter({ has: page.locator("[data-slot=inline-rename]") })

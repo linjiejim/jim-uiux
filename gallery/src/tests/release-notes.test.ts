@@ -105,10 +105,15 @@ describe("parseChangelog", () => {
 
   // the gallery shows CHANGELOG.en.md in English: a release written only in Chinese fails here
   it("CHANGELOG.en.md matches CHANGELOG.md, version for version and item for item", () => {
-    const read = (file: string) => parseChangelog(fs.readFileSync(path.resolve(import.meta.dirname, "../../..", file), "utf8"))
+    const read = (file: string) => fs.readFileSync(path.resolve(import.meta.dirname, "../../..", file), "utf8")
+    const [zh, en] = [read("CHANGELOG.md"), read("CHANGELOG.en.md")]
     const shape = (releases: Release[]) =>
       releases.map((r) => ({ version: r.version, date: r.date, summary: !!r.summary, groups: r.groups.map((g) => [g.kind, g.items.length]) }))
-    expect(shape(read("CHANGELOG.en.md"))).toEqual(shape(read("CHANGELOG.md")))
+    expect(shape(parseChangelog(en))).toEqual(shape(parseChangelog(zh)))
+    // parseChangelog folds nested items into their parent: compare the outline too
+    const outline = (md: string) =>
+      md.split(/\r?\n/).flatMap((l) => (/^#{2,3} /.test(l) ? [l.replace(/^(#+ \S+).*/, "$1")] : /^\s+[-*] /.test(l) ? ["  -"] : /^[-*] /.test(l) ? ["-"] : []))
+    expect(outline(en)).toEqual(outline(zh))
   })
 })
 

@@ -6,7 +6,7 @@ English release notes, and `InlineRename` text that lines up with its column (se
 
 - New `CHANGELOG.en.md`: every release in English, matching `CHANGELOG.md` item for item. In English mode the gallery's update toast, “What's new” and the list in Settings read it; GitHub releases add the English after the Chinese. `patterns/updates.md` shows how an app in two languages picks one by its UI language.
 - `InlineRename` text no longer sits 7px to the right of the column header and the rest of the column: the box grows outward on both sides and the text stays put. `DataTable` cells leave room for the box.
-- Upgrading: if `InlineRename` sits inside your own `truncate` or `overflow-hidden` container, give that container `-mx-2 px-2`, or the left edge of the box gets cut off; or pass `className="mx-0 max-w-full"` to keep the old placement.
+- Upgrading: `InlineRename` text moves 7px left (whatever follows it, 14px), and its box sticks out 7px on each side. Inside your own `truncate` or `overflow-hidden` container, or right next to an icon (a gap under 8px), make room for the box: `-mx-2 px-2` on the container, at least `gap-2` to the icon; otherwise the box gets cut off or covers the icon. Where there's no room, pass `className="mx-0 max-w-full"` to keep the old placement.
 
 ## 1.10.0 · 2026-11-24
 

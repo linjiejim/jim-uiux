@@ -41,7 +41,9 @@ const box = "col-start-1 row-start-1 min-w-12 rounded-md border px-1.5"
 // The name's text lines up with the text around it; the box (padding + border) sticks out this far
 // on each side. A container that clips, like a `truncate` cell, leaves that much room (DataTable
 // does; your own: `-mx-2 px-2`). Pass `className="mx-0 max-w-full"` to keep the box inside instead.
+// Focus rings and the input's halo are drawn inside the box, so the box is all that needs room.
 const outset = "-mx-[calc(--spacing(1.5)+1px)] max-w-[calc(100%+2*(--spacing(1.5)+1px))]"
+const ringInside = "focus-visible:outline-offset-[calc(var(--focus-width)*-1)]"
 
 export function InlineRename({
   value,
@@ -199,7 +201,7 @@ export function InlineRename({
           ref={textRef as React.Ref<HTMLSpanElement>}
           tabIndex={-1}
           data-slot="inline-rename"
-          className={cn("inline-grid min-w-0 grid-cols-[minmax(0,auto)] align-middle", outset, className)}
+          className={cn("inline-grid min-w-0 grid-cols-[minmax(0,auto)] align-middle", outset, ringInside, className)}
         >
           <span className={cn(box, "truncate border-transparent")}>{text}</span>
         </span>
@@ -227,8 +229,7 @@ export function InlineRename({
           className={cn(
             box,
             "relative flex w-full cursor-text items-center border-transparent text-left hover:bg-accent",
-            // ring drawn inside: table cells clip what sticks out
-            "focus-visible:outline-offset-[calc(var(--focus-width)*-1)]",
+            ringInside,
             "after:absolute after:inset-x-0 pointer-coarse:after:-inset-y-2.5",
           )}
         >
@@ -290,7 +291,7 @@ export function InlineRename({
             className={cn(
               box,
               "w-full bg-background text-foreground outline-none placeholder:text-faint-foreground",
-              "border-input transition-[border-color,box-shadow] duration-(--duration-fast) focus:border-ring focus:ring-3 focus:ring-(color:--focus-halo)",
+              "border-input transition-[border-color,box-shadow] duration-(--duration-fast) focus:border-ring focus:ring-3 focus:ring-(color:--focus-halo) focus:ring-inset",
               "aria-invalid:border-destructive aria-invalid:focus:ring-destructive/15",
               pending && "text-muted-foreground",
             )}
