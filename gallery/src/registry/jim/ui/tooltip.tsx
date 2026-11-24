@@ -32,7 +32,7 @@ export function Tooltip({
           sideOffset={6}
           collisionPadding={8}
           className={cn(
-            "z-50 max-w-xs rounded-sm bg-inverse px-2 py-1 text-caption text-inverse-foreground",
+            "z-(--z-overlay) max-w-xs rounded-sm bg-inverse px-2 py-1 text-caption text-inverse-foreground",
             "data-[state=delayed-open]:animate-fade-in data-[state=instant-open]:animate-fade-in data-[state=closed]:animate-fade-out",
           )}
         >

@@ -58,10 +58,10 @@ export function ConfirmDialog({
   return (
     <AlertPrimitive.Root open={open} onOpenChange={(o) => !pending && onOpenChange(o)}>
       <AlertPrimitive.Portal>
-        <AlertPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
+        <AlertPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
         <AlertPrimitive.Content
           className={cn(
-            "fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 -translate-y-1/2",
+            "fixed left-1/2 top-1/2 z-(--z-overlay) w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 -translate-y-1/2",
             "rounded-xl bg-popover p-5 shadow-overlay",
             "data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out",
           )}

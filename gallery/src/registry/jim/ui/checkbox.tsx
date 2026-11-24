@@ -15,7 +15,7 @@ export function Checkbox({ className, ...props }: React.ComponentProps<typeof Ch
         "transition-colors duration-(--duration-fast) hover:border-faint-foreground",
         "data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         "data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "disabled:cursor-not-allowed disabled:opacity-(--disabled-opacity)",
         "after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
         className,
       )}

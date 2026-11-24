@@ -53,7 +53,7 @@ export function RadioGroup<T extends string>({
               className={cn(
                 "relative mt-[3px] grid size-4 shrink-0 place-items-center rounded-full border border-input bg-background",
                 "transition-colors duration-(--duration-fast) hover:border-faint-foreground",
-                "data-[state=checked]:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                "data-[state=checked]:border-primary disabled:cursor-not-allowed disabled:opacity-(--disabled-opacity)",
                 "after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
               )}
             >

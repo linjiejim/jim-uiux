@@ -58,7 +58,7 @@ export function Combobox({
           align="start"
           sideOffset={4}
           className={cn(
-            "z-50 w-(--radix-popover-trigger-width) min-w-56 overflow-hidden rounded-lg bg-popover shadow-popover",
+            "z-(--z-overlay) w-(--radix-popover-trigger-width) min-w-56 overflow-hidden rounded-lg bg-popover shadow-popover",
             "data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out",
           )}
         >

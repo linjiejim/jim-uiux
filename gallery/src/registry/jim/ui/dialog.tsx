@@ -72,11 +72,11 @@ export function DialogContent({
 }) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
+      <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
       <DialogPrimitive.Content
         data-fixed={(fixed && size in fixedHeights) || undefined}
         className={cn(
-          "fixed z-50 flex max-h-[85dvh] flex-col bg-popover shadow-overlay outline-none",
+          "fixed z-(--z-overlay) flex max-h-[85dvh] flex-col bg-popover shadow-overlay outline-none",
           // desktop: centered card
           "sm:left-1/2 sm:top-1/2 sm:w-[calc(100vw-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl",
           "sm:data-[state=open]:animate-pop-in sm:data-[state=closed]:animate-pop-out",

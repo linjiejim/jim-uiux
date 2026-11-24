@@ -96,7 +96,7 @@ export function DrawerContent({
   }
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
+      <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
       <DialogPrimitive.Content
         // Details are read first: focus the panel, not the first icon button (which would pop its
         // tooltip). A field marked autoFocus (creating, editing) keeps its focus.
@@ -106,7 +106,7 @@ export function DrawerContent({
           if (!panel.contains(document.activeElement)) panel.focus()
         }}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex h-dvh w-full max-w-full flex-col bg-popover shadow-overlay outline-none",
+          "fixed inset-y-0 right-0 z-(--z-overlay) flex h-dvh w-full max-w-full flex-col bg-popover shadow-overlay outline-none",
           "data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right",
           widths[size],
           className,
@@ -221,7 +221,7 @@ function DockContent({
         "flex flex-col outline-none sm:w-(--inspector-w)",
         docked
           ? "relative h-full shrink-0 border-l bg-background"
-          : "fixed inset-y-0 right-0 z-40 h-dvh w-full max-w-full bg-popover shadow-overlay data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right",
+          : "fixed inset-y-0 right-0 z-(--z-float) h-dvh w-full max-w-full bg-popover shadow-overlay data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right",
         className,
       )}
       {...props}

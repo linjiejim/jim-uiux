@@ -66,7 +66,7 @@ export function SwatchPicker<T extends string>({
               size === "sm" ? "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-3" : "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-2.5",
               // aria-checked, not data-state: the Tooltip trigger writes its own data-state onto the swatch
               "aria-checked:ring-2 aria-checked:ring-foreground aria-checked:ring-offset-2 aria-checked:ring-offset-background",
-              "disabled:cursor-not-allowed disabled:opacity-50",
+              "disabled:cursor-not-allowed disabled:opacity-(--disabled-opacity)",
             )}
           />
         </Tooltip>

@@ -8,7 +8,7 @@ export const controlClass = cn(
   "w-full min-w-0 rounded-md border border-input bg-background text-body text-foreground",
   "placeholder:text-faint-foreground",
   "transition-[border-color,box-shadow] duration-(--duration-fast)",
-  "outline-none focus-visible:outline-none focus:border-ring focus:ring-3 focus:ring-ring/15",
+  "outline-none focus-visible:outline-none focus:border-ring focus:ring-3 focus:ring-(color:--focus-halo)",
   "aria-invalid:border-destructive aria-invalid:focus:ring-destructive/15",
   "disabled:cursor-not-allowed disabled:bg-sunken disabled:text-faint-foreground",
 )

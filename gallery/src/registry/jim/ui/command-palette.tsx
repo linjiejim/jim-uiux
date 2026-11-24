@@ -42,7 +42,7 @@ export function CommandPalette({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           data-slot="scrim"
-          className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out"
+          className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out"
         />
         <DialogPrimitive.Content
           aria-describedby={undefined}
@@ -61,7 +61,7 @@ export function CommandPalette({
             if (unclaimed && target?.isConnected) target.focus()
           }}
           className={cn(
-            "fixed z-50 flex flex-col overflow-hidden rounded-xl bg-popover shadow-overlay outline-none",
+            "fixed z-(--z-overlay) flex flex-col overflow-hidden rounded-xl bg-popover shadow-overlay outline-none",
             "data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out",
             "sm:left-1/2 sm:top-[120px] sm:h-[min(480px,calc(100dvh-160px))] sm:w-[min(640px,calc(100vw-2rem))] sm:-translate-x-1/2",
             "max-sm:inset-x-3 max-sm:top-[max(12px,env(safe-area-inset-top))] max-sm:h-[min(480px,60dvh)]",

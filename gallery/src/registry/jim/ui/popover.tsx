@@ -23,7 +23,7 @@ export function PopoverContent({ className, align = "start", sideOffset = 4, ...
         sideOffset={sideOffset}
         collisionPadding={8}
         className={cn(
-          "z-50 w-72 rounded-lg bg-popover p-3 text-body shadow-popover outline-none",
+          "z-(--z-overlay) w-72 rounded-lg bg-popover p-3 text-body shadow-popover outline-none",
           "data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out",
           className,
         )}

@@ -74,7 +74,7 @@ export function SelectContent({ className, children, ...props }: React.Component
         position="popper"
         sideOffset={4}
         className={cn(
-          "z-50 max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg bg-popover shadow-popover",
+          "z-(--z-overlay) max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg bg-popover shadow-popover",
           "data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out",
           className,
         )}

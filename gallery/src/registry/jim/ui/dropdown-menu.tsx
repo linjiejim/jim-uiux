@@ -20,7 +20,7 @@ export const DropdownMenuSub = MenuPrimitive.Sub
 
 export const menuClass = {
   content: cn(
-    "z-50 min-w-44 max-w-72 overflow-hidden rounded-lg bg-popover p-1 shadow-popover outline-none",
+    "z-(--z-overlay) min-w-44 max-w-72 overflow-hidden rounded-lg bg-popover p-1 shadow-popover outline-none",
     "data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out",
   ),
   item: cn(

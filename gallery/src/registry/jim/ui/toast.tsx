@@ -72,6 +72,8 @@ export function Toaster(props: React.ComponentProps<typeof Sonner>) {
         close: <X />,
       }}
       {...props}
+      // above every overlay, but on the kit's layer scale instead of sonner's 999999999
+      style={{ zIndex: "var(--z-toast)", ...props.style }}
     />
   )
 }

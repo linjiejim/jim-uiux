@@ -44,8 +44,9 @@ export function SettingsSection({
       </section>
     )
   }
+  // a bit more air than a page Section (40 at standard), and it follows data-spacing
   return (
-    <section className={cn("mt-10 first:mt-0", className)}>
+    <section className={cn("mt-[calc(var(--space-section)*1.25)] first:mt-0", className)}>
       <h2 className="mb-1 text-heading font-semibold">{title}</h2>
       <div className="divide-y">{children}</div>
     </section>
@@ -101,7 +102,7 @@ export function SaveBar({
       role="region"
       aria-label={s().unsaved}
       className={cn(
-        "sticky bottom-4 z-10 mt-6 flex items-center gap-3 rounded-lg bg-popover px-4 py-2.5 shadow-overlay animate-drop-in",
+        "sticky bottom-4 z-(--z-sticky) mt-6 flex items-center gap-3 rounded-lg bg-popover px-4 py-2.5 shadow-overlay animate-drop-in",
         "max-sm:bottom-[max(1rem,env(safe-area-inset-bottom))]",
         className,
       )}
