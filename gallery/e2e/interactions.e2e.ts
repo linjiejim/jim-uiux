@@ -140,3 +140,19 @@ test("a renamable name lines up with the text around it, and its box isn't clipp
   expect(Math.abs(title.textLeft - edge)).toBeLessThanOrEqual(1)
   expect(title.clippedBy).toEqual([])
 })
+
+test("release notes follow the gallery's language", async ({ page }) => {
+  const share = (text: string) => (text.match(/[㐀-鿿]/g)?.length ?? 0) / text.length
+  await open(page, "updates", { name: "english", lang: "en" })
+  await page.getByRole("button", { name: "See what's new" }).click()
+  const dialog = page.getByRole("dialog", { name: "What's new" })
+  await expect(dialog).toContainText("1.10.1")
+  // a few UI names stay quoted in Chinese where they are the point (banned button labels)
+  expect(share(await dialog.innerText())).toBeLessThan(0.01)
+
+  await open(page, "updates")
+  await page.getByRole("button", { name: "查看更新内容" }).click()
+  const zh = page.getByRole("dialog", { name: "更新内容" })
+  await expect(zh).toContainText("1.10.1")
+  expect(share(await zh.innerText())).toBeGreaterThan(0.2)
+})

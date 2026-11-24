@@ -58,7 +58,7 @@
 - 不写给开发者看的东西：提交号、PR 号、模块名、组件名、接口、重构、依赖升级、测试、CI。这些留在提交记录里。
 - 修复写现在的样子（「窗口回到原来的位置」），不写「修复了窗口位置错乱的问题」。
 - 文案规则同 `content.md`：不用感叹号，不写「全新」「重磅」「优化了体验」。
-- 两种语言的应用：`CHANGELOG.md` 用 README 的语言，另一种写在 `CHANGELOG.<语言>.md`（和 `README.zh-CN.md` 一样），版本和分组一一对应。
+- 两种语言的应用：`CHANGELOG.md` 用主要语言（一般就是 README 的语言；jim-uiux 是中文），另一种写在 `CHANGELOG.<语言>.md`（`CHANGELOG.en.md`、`CHANGELOG.zh-CN.md`），版本、摘要和条目一一对应。加一条测试比较两份的版本和条数，只写了一种语言的发布会在 CI 里失败（jim-uiux 的在 `tests/release-notes.test.ts`）。
 - 给开发者用的库（jim-uiux 自己）可以不分组，直接列；但「升级时注意」照样要写。
 - 已经发布的那一节不再改。写错了，在下一版里说。
 
@@ -108,6 +108,15 @@ export function WhatsNew({ version }: { version: string | null }) {
   const notes = useReleaseNotes({ version, releases })
   return <ReleaseNotesDialog {...notes.dialog} moreHref="https://github.com/<owner>/<repo>/releases" />
 }
+```
+
+两种语言：两份都打进包里，按界面语言选一份（语言在加载时定下，和 `configureStrings` 一样）：
+
+```tsx
+import zh from "../CHANGELOG.md?raw"
+import en from "../CHANGELOG.en.md?raw"
+
+const releases = parseChangelog(locale.startsWith("zh") ? zh : en)
 ```
 
 在根组件里渲染一次，挨着 `<Toaster />`。设置里的「查看更新内容」调 `notes.openAll()`。版本号：Tauri 用 `getVersion()`，Electron 用 `app.getVersion()`，web 在构建时注入（`define: { __APP_VERSION__: … }`）。
