@@ -61,7 +61,8 @@ export function Button({ className, variant, size, asChild, loading, disabled, c
     >
       {loading && !asChild ? (
         <>
-          <span className="invisible inline-flex items-center gap-1.5">{children}</span>
+          {/* opacity, not visibility: the label keeps the width and stays the button's name */}
+          <span className="inline-flex items-center gap-1.5 opacity-0">{children}</span>
           <span className="absolute inset-0 grid place-items-center">
             <Spinner />
           </span>
