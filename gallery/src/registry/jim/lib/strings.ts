@@ -1,9 +1,11 @@
 /**
- * Default UI copy for the kit. Projects with i18n call configureStrings()
- * once at boot with their translations; components read through s().
+ * UI copy for the kit, Chinese by default. English ships too: configureStrings(en). Projects with
+ * other languages pass their own; components read through s(), and lib/format.ts reads `locale`.
  * Keep copy short: verbs on buttons, no "确定" / "提交".
  */
-const zh = {
+export const zh = {
+  /** BCP 47 tag for Intl (dates, numbers): lib/format.ts */
+  locale: "zh-CN",
   close: "关闭",
   cancel: "取消",
   retry: "重试",
@@ -17,6 +19,17 @@ const zh = {
   selectPlaceholder: "请选择",
   searchPlaceholder: "搜索",
   noOptions: "没有匹配的选项",
+  /** Combobox multiple: a chip's ✕, async search, the create item. */
+  removeItem: (label: string) => `移除「${label}」`,
+  searching: "搜索中",
+  searchFailed: "搜索失败",
+  createOption: (query: string) => `创建「${query}」`,
+  createFailed: "创建失败",
+  /** InlineRename */
+  renameHint: "按 Enter 重命名",
+  nameRequired: "请输入名称",
+  renameFailed: "重命名失败，请重试",
+  saving: "保存中",
   emptyTitle: "还没有内容",
   noMatchTitle: "没有符合条件的结果",
   noMatchAction: "清除筛选",
@@ -63,6 +76,7 @@ const zh = {
   uploadAdded: "已添加",
   uploadExists: "已存在",
   uploadFailed: "失败",
+  uploadFailedWith: (reason: string) => `失败：${reason}`,
   collapse: "收起",
   expand: "展开",
   notifications: "通知",
@@ -82,6 +96,11 @@ const zh = {
     const [y, m, d] = iso.split("-").map(Number)
     return y === new Date().getFullYear() ? `${m}月${d}日` : `${y}年${m}月${d}日`
   },
+  /** Relative time, feeds only (lib/format.ts formatRelative). */
+  justNow: "刚刚",
+  minutesAgo: (n: number) => `${n} 分钟前`,
+  hoursAgo: (n: number) => `${n} 小时前`,
+  yesterdayAt: (time: string) => `昨天 ${time}`,
   newVersionReady: "新版本已发布，刷新后生效",
   reload: "刷新页面",
   /** Names of the nine categorical colours, for swatches and screen readers. */
@@ -89,6 +108,107 @@ const zh = {
 }
 
 export type Strings = typeof zh
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+/** English copy: configureStrings(en). Sentence case, verbs on buttons, no "OK" / "Submit". */
+export const en: Strings = {
+  locale: "en-US",
+  close: "Close",
+  cancel: "Cancel",
+  retry: "Retry",
+  undo: "Undo",
+  required: "Required",
+  moreInfo: "More info",
+  discardTitle: "Discard unsaved changes?",
+  discardBody: "Your changes won't be kept.",
+  discardConfirm: "Discard changes",
+  discardKeep: "Keep editing",
+  selectPlaceholder: "Select",
+  searchPlaceholder: "Search",
+  noOptions: "No matching options",
+  removeItem: (label) => `Remove “${label}”`,
+  searching: "Searching",
+  searchFailed: "Couldn't search",
+  createOption: (query) => `Create “${query}”`,
+  createFailed: "Couldn't create",
+  renameHint: "Press Enter to rename",
+  nameRequired: "Enter a name",
+  renameFailed: "Couldn't rename. Try again.",
+  saving: "Saving",
+  emptyTitle: "Nothing here yet",
+  noMatchTitle: "No results match",
+  noMatchAction: "Clear filters",
+  noPermissionTitle: "You don't have access",
+  noPermissionBody: "Ask an admin if you need it.",
+  errorTitle: "Couldn't load",
+  errorBody: "Check your connection and try again.",
+  selectedCount: (n) => `${n} selected`,
+  clearSelection: "Clear selection",
+  selectPage: "Select all on this page",
+  selectRow: (title) => `Select “${title}”`,
+  totalCount: (n) => `${n} ${n === 1 ? "item" : "items"}`,
+  pageOf: (p, total) => `${p} / ${total}`,
+  perPage: (n) => `${n} / page`,
+  prevPage: "Previous page",
+  nextPage: "Next page",
+  rowActions: "More actions",
+  all: "All",
+  yes: "Yes",
+  no: "No",
+  clear: "Clear",
+  unsaved: "Unsaved changes",
+  save: "Save",
+  discard: "Discard",
+  saved: "Saved",
+  openMenu: "Open menu",
+  collapseSidebar: "Collapse sidebar",
+  expandSidebar: "Expand sidebar",
+  back: "Back",
+  resizePanel: "Resize",
+  filters: "Filters",
+  andMore: (n) => ` and ${n} more`,
+  commandPlaceholder: "Search or type a command",
+  commandEmpty: "No results",
+  commandNavigate: "Select",
+  commandRun: "Open",
+  uploadTitle: "Uploads",
+  uploadProgress: (done, total) => `Uploading · ${done}/${total}`,
+  uploadSummary: (added, exists, failed) =>
+    [added && `${added} added`, exists && `${exists} already there`, failed && `${failed} failed`].filter(Boolean).join(", "),
+  uploadWaiting: "Waiting",
+  uploadUploading: "Uploading",
+  uploadPercent: (p) => `Uploading ${p}%`,
+  uploadAdded: "Added",
+  uploadExists: "Already there",
+  uploadFailed: "Failed",
+  uploadFailedWith: (reason) => `Failed: ${reason}`,
+  collapse: "Collapse",
+  expand: "Expand",
+  notifications: "Notifications",
+  copy: "Copy",
+  copied: "Copied",
+  copyFailed: "Couldn't copy",
+  previousItem: "Previous",
+  nextItem: "Next",
+  itemPosition: (i, n) => `${i} / ${n}`,
+  whatsNew: "What's new",
+  seeWhatsNew: "See what's new",
+  updatedTo: (version) => `Updated to ${version}`,
+  allReleaseNotes: "All release notes",
+  releaseNotesEmpty: "No release notes yet",
+  releaseDate: (iso) => {
+    const [y, m, d] = iso.split("-").map(Number)
+    return y === new Date().getFullYear() ? `${months[m - 1]} ${d}` : `${months[m - 1]} ${d}, ${y}`
+  },
+  justNow: "just now",
+  minutesAgo: (n) => `${n} min ago`,
+  hoursAgo: (n) => `${n} hr ago`,
+  yesterdayAt: (time) => `yesterday ${time}`,
+  newVersionReady: "A new version is ready. Reload to use it.",
+  reload: "Reload",
+  colorName: { gray: "Gray", red: "Red", orange: "Orange", amber: "Amber", green: "Green", teal: "Teal", blue: "Blue", purple: "Purple", pink: "Pink" },
+}
 let current: Strings = zh
 
 export function configureStrings(partial: Partial<Strings>) {
