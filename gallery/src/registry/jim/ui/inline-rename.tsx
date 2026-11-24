@@ -38,6 +38,10 @@ export function saveError(e: unknown) {
 }
 
 const box = "col-start-1 row-start-1 min-w-12 rounded-md border px-1.5"
+// The name's text lines up with the text around it; the box (padding + border) sticks out this far
+// on each side. A container that clips, like a `truncate` cell, leaves that much room (DataTable
+// does; your own: `-mx-2 px-2`). Pass `className="mx-0 max-w-full"` to keep the box inside instead.
+const outset = "-mx-[calc(--spacing(1.5)+1px)] max-w-[calc(100%+2*(--spacing(1.5)+1px))]"
 
 export function InlineRename({
   value,
@@ -195,13 +199,13 @@ export function InlineRename({
           ref={textRef as React.Ref<HTMLSpanElement>}
           tabIndex={-1}
           data-slot="inline-rename"
-          className={cn("inline-grid min-w-0 max-w-full grid-cols-[minmax(0,auto)] align-middle", className)}
+          className={cn("inline-grid min-w-0 grid-cols-[minmax(0,auto)] align-middle", outset, className)}
         >
           <span className={cn(box, "truncate border-transparent")}>{text}</span>
         </span>
       )
     return (
-      <span data-slot="inline-rename" className={cn("inline-grid min-w-0 max-w-full grid-cols-[minmax(0,auto)] align-middle", className)}>
+      <span data-slot="inline-rename" className={cn("inline-grid min-w-0 grid-cols-[minmax(0,auto)] align-middle", outset, className)}>
         <button
           ref={textRef as React.Ref<HTMLButtonElement>}
           type="button"
@@ -242,7 +246,7 @@ export function InlineRename({
       <PopoverPrimitive.Anchor asChild>
         <span
           data-slot="inline-rename"
-          className={cn("relative inline-grid min-w-0 max-w-full grid-cols-[minmax(0,auto)] align-middle", className)}
+          className={cn("relative inline-grid min-w-0 grid-cols-[minmax(0,auto)] align-middle", outset, className)}
           // the row under it doesn't see clicks or presses meant for the input
           onClick={(e) => e.stopPropagation()}
           onDoubleClick={(e) => e.stopPropagation()}
