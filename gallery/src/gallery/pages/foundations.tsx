@@ -3,6 +3,7 @@ import { wcagContrast, parse } from "culori"
 import { cn } from "@/lib/utils"
 import { CATEGORICAL, catClass } from "@/registry/jim/lib/categorical"
 import { Button } from "@/registry/jim/ui/button"
+import { Switch } from "@/registry/jim/ui/switch"
 import { DocPage, Example, Rules, Spec } from "../doc"
 
 /* ---------- live token reading ---------- */
@@ -320,37 +321,182 @@ export function ShapePage() {
 
 /* ---------- motion ---------- */
 
+/** Keeps a demo surface mounted while its exit animation plays (what Radix Presence does). */
+function usePresence(open: boolean) {
+  const [mounted, setMounted] = React.useState(open)
+  React.useEffect(() => {
+    if (open) setMounted(true)
+  }, [open])
+  const onAnimationEnd = (e: React.AnimationEvent) => {
+    if (!open && e.target === e.currentTarget) setMounted(false)
+  }
+  return { show: open || mounted, state: open ? "open" : "closed", onAnimationEnd }
+}
+
+const SLOW = 5
+
+function MotionDemo() {
+  const [open, setOpen] = React.useState(true)
+  const [slow, setSlow] = React.useState(false)
+  const [reduced, setReduced] = React.useState(false)
+  const dialog = usePresence(open)
+  const menu = usePresence(open)
+  const drawer = usePresence(open)
+  const sheet = usePresence(open)
+  // Same tokens the components use, scoped to this demo: slower, or with movement turned off.
+  const vars = {
+    ...(slow && {
+      "--duration-fast": `${120 * SLOW}ms`,
+      "--duration-base": `${200 * SLOW}ms`,
+      "--duration-slow": `${240 * SLOW}ms`,
+      "--duration-exit": `${160 * SLOW}ms`,
+    }),
+    ...(reduced && { "--motion": 0 }),
+  } as React.CSSProperties
+  const frame = "relative h-44 overflow-hidden rounded-lg border bg-background"
+  const caption = "mt-1.5 text-caption text-muted-foreground"
+  return (
+    <div className="flex flex-col gap-4" style={vars}>
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <Button variant="primary" onClick={() => setOpen((o) => !o)}>
+          {open ? "全部关闭" : "全部打开"}
+        </Button>
+        <label className="flex items-center gap-2 text-small">
+          <Switch checked={slow} onCheckedChange={setSlow} />
+          慢放 ×{SLOW}
+        </label>
+        <label className="flex items-center gap-2 text-small">
+          <Switch checked={reduced} onCheckedChange={setReduced} />
+          按「减少动效」播放
+        </label>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <figure>
+          <div className={frame}>
+            {dialog.show && (
+              <>
+                <div data-state={dialog.state} className="absolute inset-0 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
+                <div
+                  data-state={dialog.state}
+                  onAnimationEnd={dialog.onAnimationEnd}
+                  className="absolute inset-x-6 top-1/2 -mt-10 h-20 rounded-lg bg-popover p-3 text-small shadow-overlay data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out"
+                >
+                  弹框
+                </div>
+              </>
+            )}
+          </div>
+          <figcaption className={caption}>弹框：缩放 97% + 淡入，200 / 160ms；遮罩只淡入</figcaption>
+        </figure>
+        <figure>
+          <div className={cn(frame, "p-3")}>
+            <div className="inline-flex h-(--control-sm) items-center rounded-md border px-2.5 text-small">菜单</div>
+            {menu.show && (
+              <div
+                data-state={menu.state}
+                onAnimationEnd={menu.onAnimationEnd}
+                className="mt-1 w-36 rounded-lg bg-popover p-1 text-small shadow-popover data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out"
+              >
+                {["重命名", "复制链接", "删除"].map((t) => (
+                  <div key={t} className="rounded-sm px-2 py-1.5">
+                    {t}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <figcaption className={caption}>菜单：下移 4px + 淡入，120ms；关闭只淡出</figcaption>
+        </figure>
+        <figure>
+          <div className={frame}>
+            {drawer.show && (
+              <div
+                data-state={drawer.state}
+                onAnimationEnd={drawer.onAnimationEnd}
+                className="absolute inset-y-0 right-0 w-3/5 border-l bg-popover p-3 text-small shadow-overlay data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right"
+              >
+                抽屉
+              </div>
+            )}
+          </div>
+          <figcaption className={caption}>抽屉：从右滑入 240ms（ease-drawer），退出 160ms</figcaption>
+        </figure>
+        <figure>
+          <div className={frame}>
+            {sheet.show && (
+              <div
+                data-state={sheet.state}
+                onAnimationEnd={sheet.onAnimationEnd}
+                className="absolute inset-x-0 bottom-0 h-3/5 rounded-t-2xl bg-popover p-3 text-small shadow-overlay data-[state=open]:animate-slide-in-up data-[state=closed]:animate-slide-out-down"
+              >
+                底部弹层
+              </div>
+            )}
+          </div>
+          <figcaption className={caption}>底部弹层：从下滑入 240ms，退出 160ms</figcaption>
+        </figure>
+      </div>
+    </div>
+  )
+}
+
+function CurveDemo() {
+  const [end, setEnd] = React.useState(false)
+  const rows: [string, string, string][] = [
+    ["linear", "ease-linear", "匀速：不用，显得机械"],
+    ["ease-out", "ease-out", "进入：一开始就快，慢慢停下"],
+    ["ease-in", "ease-in", "退出：慢慢起步，快速离开"],
+    ["ease-drawer", "ease-drawer", "抽屉、底部弹层：更长的减速尾巴"],
+  ]
+  return (
+    <div className="flex flex-col gap-3">
+      <div>
+        <Button onClick={() => setEnd((e) => !e)}>播放</Button>
+      </div>
+      {rows.map(([name, ease, note]) => (
+        <div key={name} className="grid items-center gap-x-4 gap-y-1 sm:grid-cols-[7rem_minmax(0,1fr)_14rem]">
+          <code className="text-small">{name}</code>
+          <div className="relative h-4 rounded-full bg-muted">
+            <span
+              className={cn("absolute top-0 size-4 rounded-full bg-foreground transition-[left] duration-1000 motion-reduce:transition-none", ease)}
+              style={{ left: end ? "calc(100% - 1rem)" : 0 }}
+            />
+          </div>
+          <span className="text-small text-muted-foreground">{note}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function MotionPage() {
-  const [shown, setShown] = React.useState(true)
   return (
     <DocPage title="动效" lead="动效只解释状态变化：从哪来、到哪去、发生了什么。不装饰，不循环（进行中的转圈除外）。">
       <Example title="时长与曲线" canvas="none">
         <Spec
           rows={[
-            ["fast 120ms", "悬停、按下、开关"],
-            ["base 200ms", "菜单、弹框、Toast 进入"],
+            ["fast 120ms", "悬停、按下、开关；菜单、选择器的进出"],
+            ["base 200ms", "弹框进入"],
             ["slow 240ms", "抽屉、底部弹层进入"],
-            ["exit 160ms", "所有退出，比进入快"],
+            ["exit 160ms", "弹框、抽屉、底部弹层退出，比进入快"],
             ["ease-out", "cubic-bezier(.22, 1, .36, 1)：进入。不用弹跳曲线"],
+            ["ease-in", "cubic-bezier(.4, 0, 1, 1)：退出"],
             ["ease-drawer", "cubic-bezier(.32, .72, 0, 1)：抽屉、底部弹层"],
             ["按下", "触屏 scale .97；桌面用按下态填充色"],
-            ["减少动效", "位移和缩放归零，只保留淡入淡出"],
+            ["减少动效", "系统打开「减少动效」时，位移和缩放归零，只保留淡入淡出"],
+            ["默认过渡", "没写时长和曲线的 transition 默认 fast + ease-out"],
           ]}
         />
       </Example>
-      <Example title="演示" canvas="sunken">
-        <div className="flex flex-col items-start gap-4">
-          <Button onClick={() => setShown((s) => !s)}>{shown ? "收起" : "展开"}</Button>
-          <div className="flex h-24 items-center gap-4">
-            {shown && (
-              <>
-                <div className="h-20 w-36 animate-pop-in rounded-lg bg-popover p-3 text-small shadow-popover">pop-in · 弹框</div>
-                <div className="h-20 w-36 animate-drop-in rounded-lg bg-popover p-3 text-small shadow-popover">drop-in · 菜单</div>
-                <div className="h-20 w-36 animate-fade-in rounded-lg bg-popover p-3 text-small shadow-popover">fade-in · 遮罩</div>
-              </>
-            )}
-          </div>
-        </div>
+      <Example
+        title="演示"
+        note="和组件用的是同一组 token。正常速度下的位移很小，是故意的：只交代方向，不吸引注意。打开「慢放」看清楚每一种，打开「减少动效」看系统设置下的样子。"
+        canvas="sunken"
+      >
+        <MotionDemo />
+      </Example>
+      <Example title="曲线" note="放慢到 1 秒，方便看出差别。" canvas="sunken">
+        <CurveDemo />
       </Example>
       <Example title="用法" canvas="none">
         <Rules
