@@ -11,8 +11,14 @@ import { cn } from "@/lib/utils"
 export const Tabs = TabsPrimitive.Root
 export const TabsContent = TabsPrimitive.Content
 
-export function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
-  return <TabsPrimitive.List className={cn("flex gap-5 overflow-x-auto border-b", className)} {...props} />
+export function TabsList({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
+  return (
+    <TabsPrimitive.List className={cn("flex border-b", className)} {...props}>
+      {/* The scroller clips both axes, so it pads 6px above and below (pulled back by the
+          negative margin): focus rings and the active underline aren't cut off. */}
+      <div className="-my-1.5 flex min-w-0 flex-1 gap-5 overflow-x-auto py-1.5">{children}</div>
+    </TabsPrimitive.List>
+  )
 }
 
 export function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {

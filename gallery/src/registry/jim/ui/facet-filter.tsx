@@ -64,6 +64,8 @@ export function FacetFilter({
   const overflow = facets.length <= max ? [] : facets.slice(max - 1)
   const set = (key: string, next: string[] | undefined) => onValueChange({ ...value, [key]: next && next.length ? next : undefined })
   const hiddenSet = overflow.filter((f) => isSet(value, f.key))
+  // a cleared overflow facet's chip leaves the bar: focus goes to 「筛选」
+  const moreRef = React.useRef<HTMLButtonElement>(null)
 
   return (
     <>
@@ -74,6 +76,7 @@ export function FacetFilter({
         <Popover>
           <PopoverTrigger asChild>
             <button
+              ref={moreRef}
               type="button"
               className={cn(
                 "inline-flex h-(--control-sm) items-center gap-1.5 rounded-md border px-2.5 text-small hover:bg-accent [&_svg]:size-3.5",
@@ -98,7 +101,15 @@ export function FacetFilter({
         </Popover>
       )}
       {hiddenSet.map((f) => (
-        <FacetChip key={f.key} facet={f} values={value[f.key] ?? []} onChange={(v) => set(f.key, v)} />
+        <FacetChip
+          key={f.key}
+          facet={f}
+          values={value[f.key] ?? []}
+          onChange={(v) => {
+            set(f.key, v)
+            if (!v?.length) moreRef.current?.focus()
+          }}
+        />
       ))}
     </>
   )
@@ -107,6 +118,7 @@ export function FacetFilter({
 /** One facet as a chip. Unset: "类型 ⌄" (dashed). Set: "类型：图片 ✕". */
 export function FacetChip({ facet, values, onChange }: { facet: Facet; values: string[]; onChange: (next: string[] | undefined) => void }) {
   const [open, setOpen] = React.useState(false)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
   const active = values.length > 0
   return (
     <div
@@ -118,6 +130,7 @@ export function FacetChip({ facet, values, onChange }: { facet: Facet; values: s
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
+            ref={triggerRef}
             type="button"
             className={cn(
               "inline-flex h-full min-w-0 items-center gap-1 rounded-md px-2.5 hover:bg-accent",
@@ -136,8 +149,13 @@ export function FacetChip({ facet, values, onChange }: { facet: Facet; values: s
         <button
           type="button"
           aria-label={`${s().clear} ${facet.label}`}
-          onClick={() => onChange(undefined)}
-          className="mr-1 grid size-5 shrink-0 place-items-center rounded-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+          onClick={() => {
+            // ✕ unmounts itself: focus goes back to the chip (before onChange, which may move it on)
+            triggerRef.current?.focus()
+            onChange(undefined)
+          }}
+          // hit area 44 on touch
+          className="relative mr-1 grid size-5 shrink-0 place-items-center rounded-sm text-muted-foreground hover:bg-accent hover:text-foreground after:absolute pointer-coarse:after:-inset-3"
         >
           <X className="size-3.5" />
         </button>

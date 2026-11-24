@@ -26,6 +26,8 @@ const zh = {
   errorBody: "请检查网络后重试。",
   selectedCount: (n: number) => `已选 ${n} 项`,
   clearSelection: "取消选择",
+  selectPage: "全选本页",
+  selectRow: (title: string) => `选择「${title}」`,
   totalCount: (n: number) => `共 ${n} 条`,
   pageOf: (p: number, total: number) => `${p} / ${total}`,
   perPage: (n: number) => `${n} 条/页`,

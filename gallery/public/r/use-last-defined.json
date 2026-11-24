@@ -1,0 +1,13 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-last-defined",
+  "description": "Keeps an overlay's content on screen while it animates out: returns `value`, or the last value",
+  "files": [
+    {
+      "path": "src/registry/jim/hooks/use-last-defined.ts",
+      "content": "\"use client\"\n\n/**\n * Keeps an overlay's content on screen while it animates out: returns `value`, or the last value\n * that wasn't null / undefined. `open={!!item}` closes the drawer; render the content from\n * `useLastDefined(item)`, so it doesn't go blank (or unmount) before the exit animation ends.\n */\n\nimport { useRef } from \"react\"\n\nexport function useLastDefined<T>(value: T | null | undefined): T | null | undefined {\n  const last = useRef(value)\n  if (value != null) last.current = value\n  return value ?? last.current\n}\n",
+      "type": "registry:hook"
+    }
+  ],
+  "type": "registry:hook"
+}

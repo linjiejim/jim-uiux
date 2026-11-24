@@ -131,7 +131,7 @@ export function ResizeHandle({
         e.stopPropagation()
       }}
       className={cn(
-        "absolute z-10 touch-none outline-none",
+        "absolute z-(--z-sticky) touch-none outline-none",
         vertical ? "inset-y-0 w-2 cursor-col-resize" : "inset-x-0 h-2 cursor-row-resize",
         { left: "-left-1", right: "-right-1", top: "-top-1", bottom: "-bottom-1" }[side],
         "after:absolute after:transition-colors after:duration-(--duration-fast)",

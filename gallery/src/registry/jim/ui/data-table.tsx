@@ -14,6 +14,7 @@ import {
   type RowData,
   type RowSelectionState,
   type SortingState,
+  type Table,
 } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -87,6 +88,11 @@ export type DataTableProps<T> = {
   pagination?: { pageIndex: number; pageSize: number; total: number; onChange: (p: PaginationState) => void }
   pageSizeKey?: string
   pageSizes?: number[]
+  /**
+   * Change it when the question changes (search, filters): back to page 1, selection cleared.
+   * Header sorting does this on its own; edits and deletions keep the page. E.g. `[q, status].join("|")`.
+   */
+  resetKey?: string | number
 
   renderMobileRow?: (row: T) => React.ReactNode
   className?: string
@@ -95,10 +101,19 @@ export type DataTableProps<T> = {
 const hideClass = { sm: "max-sm:hidden", md: "max-md:hidden", lg: "max-lg:hidden", xl: "max-xl:hidden" }
 const SELECT_W = "2.5rem"
 
-function readPageSize(key: string | undefined, sizes: number[]) {
-  if (!key || typeof localStorage === "undefined") return sizes[0]
+/** The remembered page size, or undefined when none (or not one of `sizes`). */
+function storedPageSize(key: string | undefined, sizes: number[]) {
+  if (!key || typeof localStorage === "undefined") return undefined
   const v = Number(localStorage.getItem(`table:${key}:pageSize`))
-  return sizes.includes(v) ? v : sizes[0]
+  return sizes.includes(v) ? v : undefined
+}
+
+/** A row's name for screen readers: its title column (as on phones), else the id. */
+function rowLabel<T>(row: Row<T>, table: Table<T>) {
+  const cols = table.getAllLeafColumns().filter((c) => c.id !== "__select" && c.columnDef.meta?.mobile !== "hidden")
+  const col = cols.find((c) => c.columnDef.meta?.mobile === "title") ?? cols[0]
+  const v = col ? row.getValue(col.id) : undefined
+  return typeof v === "string" || typeof v === "number" ? String(v) : row.id
 }
 
 export function DataTable<T>({
@@ -121,6 +136,7 @@ export function DataTable<T>({
   pagination: serverPage,
   pageSizeKey,
   pageSizes = [20, 50, 100],
+  resetKey,
   renderMobileRow,
   className,
   ...aria
@@ -128,10 +144,18 @@ export function DataTable<T>({
   const [innerSort, setInnerSort] = React.useState<SortingState>([])
   const [clientPage, setClientPage] = React.useState<PaginationState>(() => ({
     pageIndex: 0,
-    pageSize: readPageSize(pageSizeKey, pageSizes),
+    pageSize: storedPageSize(pageSizeKey, pageSizes) ?? pageSizes[0],
   }))
   const sorting = sortingProp?.value ?? innerSort
   const page = serverPage ? { pageIndex: serverPage.pageIndex, pageSize: serverPage.pageSize } : clientPage
+
+  // A new question (sort, resetKey): back to page 1, nothing selected.
+  const resetView = () => {
+    if (serverPage) {
+      if (page.pageIndex !== 0) serverPage.onChange({ pageIndex: 0, pageSize: page.pageSize })
+    } else setClientPage((p) => (p.pageIndex === 0 ? p : { ...p, pageIndex: 0 }))
+    if (selection && Object.keys(selection.value).length > 0) selection.onChange({})
+  }
 
   const columns = React.useMemo<ColumnDef<T, any>[]>(() => {
     if (!selection) return columnsProp
@@ -141,13 +165,13 @@ export function DataTable<T>({
       meta: { width: SELECT_W, mobile: "hidden" },
       header: ({ table }) => (
         <Checkbox
-          aria-label={s().selectedCount(0)}
+          aria-label={s().selectPage}
           checked={table.getIsAllPageRowsSelected() ? true : table.getIsSomePageRowsSelected() ? "indeterminate" : false}
           onCheckedChange={(v) => table.toggleAllPageRowsSelected(!!v)}
         />
       ),
-      cell: ({ row }) => (
-        <Checkbox aria-label={String(row.id)} checked={row.getIsSelected()} onCheckedChange={(v) => row.toggleSelected(!!v)} />
+      cell: ({ row, table }) => (
+        <Checkbox aria-label={s().selectRow(rowLabel(row, table))} checked={row.getIsSelected()} onCheckedChange={(v) => row.toggleSelected(!!v)} />
       ),
     }
     return [select, ...columnsProp]
@@ -164,6 +188,7 @@ export function DataTable<T>({
       const next = typeof u === "function" ? u(sorting) : u
       if (sortingProp) sortingProp.onChange(next)
       else setInnerSort(next)
+      resetView()
     },
     manualSorting: sortingProp?.manual,
     manualPagination: !!serverPage,
@@ -176,13 +201,20 @@ export function DataTable<T>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: sortingProp?.manual ? undefined : getSortedRowModel(),
     getPaginationRowModel: serverPage ? undefined : getPaginationRowModel(),
-    autoResetPageIndex: !serverPage,
+    // New `data` (an edit, an inline filter) keeps the page; sort and resetKey go back to 1.
+    autoResetPageIndex: false,
   })
 
   const setPageSize = (n: number) => {
     if (pageSizeKey) localStorage.setItem(`table:${pageSizeKey}:pageSize`, String(n))
     table.setPagination({ pageIndex: 0, pageSize: n })
   }
+
+  // Server pagination owns its page state: hand it the remembered size once.
+  React.useEffect(() => {
+    const n = serverPage && storedPageSize(pageSizeKey, pageSizes)
+    if (serverPage && n && n !== serverPage.pageSize) serverPage.onChange({ pageIndex: 0, pageSize: n })
+  }, [pageSizeKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const rows = table.getRowModel().rows
   const total = serverPage?.total ?? data.length
@@ -192,6 +224,15 @@ export function DataTable<T>({
   React.useEffect(() => {
     if (!loading && page.pageIndex > 0 && page.pageIndex >= pageCount) table.setPageIndex(pageCount - 1)
   }, [loading, page.pageIndex, pageCount, table])
+
+  // resetKey changed. Declared after the clamp so its page 1 wins in the same commit.
+  const seenKey = React.useRef(resetKey)
+  React.useEffect(() => {
+    if (Object.is(seenKey.current, resetKey)) return
+    seenKey.current = resetKey
+    resetView()
+  }, [resetKey]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const selectedRows = selection ? table.getSelectedRowModel().rows.map((r) => r.original) : []
   const showSkeleton = useDelayedFlag(!!loading && data.length === 0)
   const refetching = useDelayedFlag(!!loading && data.length > 0)
@@ -214,6 +255,8 @@ export function DataTable<T>({
   const clickable = !!onRowClick
   const onRowActivate = (e: React.MouseEvent | React.KeyboardEvent, row: Row<T>) => {
     if (!onRowClick) return
+    // React bubbles events from portals (menus, dialogs opened in a row) through the row; ignore them.
+    if (!e.currentTarget.contains(e.target as Node)) return
     const el = e.target as HTMLElement
     if (el.closest("button, a, input, label, [role=checkbox], [role=menuitem]")) return
     onRowClick(row.original)
@@ -363,7 +406,7 @@ export function DataTable<T>({
                 )}
               >
                 {selection && (
-                  <Checkbox aria-label={String(row.id)} checked={row.getIsSelected()} onCheckedChange={(v) => row.toggleSelected(!!v)} />
+                  <Checkbox aria-label={s().selectRow(rowLabel(row, table))} checked={row.getIsSelected()} onCheckedChange={(v) => row.toggleSelected(!!v)} />
                 )}
                 <div className="min-w-0 flex-1">{renderMobileRow ? renderMobileRow(row.original) : <DefaultMobileRow row={row} />}</div>
                 {rowActions && <div className="flex shrink-0 items-center">{rowActions(row.original)}</div>}

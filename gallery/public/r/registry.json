@@ -205,12 +205,13 @@
     {
       "name": "checkbox",
       "type": "registry:ui",
-      "description": "16px box, 44px hit area on touch. Multi-choice and row selection. */",
+      "description": "16px box, 44px hit area on touch. Multi-choice and row selection.",
       "dependencies": [
         "lucide-react@^1.66.0",
         "radix-ui@^1.8.1"
       ],
       "registryDependencies": [
+        "@jim/field",
         "@jim/utils"
       ],
       "files": [
@@ -273,7 +274,9 @@
       "registryDependencies": [
         "@jim/button",
         "@jim/callout",
+        "@jim/spinner",
         "@jim/strings",
+        "@jim/use-return-focus",
         "@jim/utils"
       ],
       "files": [
@@ -359,6 +362,7 @@
         "@jim/confirm-dialog",
         "@jim/strings",
         "@jim/use-guarded-open",
+        "@jim/use-return-focus",
         "@jim/utils"
       ],
       "files": [
@@ -384,6 +388,7 @@
         "@jim/resize-handle",
         "@jim/strings",
         "@jim/use-guarded-open",
+        "@jim/use-return-focus",
         "@jim/utils"
       ],
       "files": [
@@ -781,6 +786,7 @@
         "radix-ui@^1.8.1"
       ],
       "registryDependencies": [
+        "@jim/field",
         "@jim/utils"
       ],
       "files": [
@@ -829,7 +835,7 @@
     {
       "name": "tooltip",
       "type": "registry:ui",
-      "description": "Put one at the app root; Tooltip below also works without it. */",
+      "description": "Put one at the app root so tooltips share one delay (moving between icon buttons shows the",
       "dependencies": [
         "radix-ui@^1.8.1"
       ],
@@ -893,6 +899,28 @@
       "files": [
         {
           "path": "src/registry/jim/hooks/use-guarded-open.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-last-defined",
+      "type": "registry:hook",
+      "description": "Keeps an overlay's content on screen while it animates out: returns `value`, or the last value",
+      "files": [
+        {
+          "path": "src/registry/jim/hooks/use-last-defined.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-return-focus",
+      "type": "registry:hook",
+      "description": "Focus return for overlays opened from code (a row's Enter, a menu item, useConfirm): closing gives focus back.",
+      "files": [
+        {
+          "path": "src/registry/jim/hooks/use-return-focus.ts",
           "type": "registry:hook"
         }
       ]
@@ -988,7 +1016,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.8.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.9.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -1037,6 +1065,8 @@
         "@jim/use-debounced-value",
         "@jim/use-delayed-flag",
         "@jim/use-guarded-open",
+        "@jim/use-last-defined",
+        "@jim/use-return-focus",
         "@jim/appearance",
         "@jim/categorical",
         "@jim/changelog",

@@ -4,9 +4,19 @@ import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
 
-/** Put one at the app root; Tooltip below also works without it. */
+// Radix throws when a Tooltip has no provider above it; this lets Tooltip bring its own.
+const HasProvider = React.createContext(false)
+
+/**
+ * Put one at the app root so tooltips share one delay (moving between icon buttons shows the
+ * next one at once). A Tooltip outside it still works: it brings its own provider.
+ */
 export function TooltipProvider({ delayDuration = 500, ...props }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
-  return <TooltipPrimitive.Provider delayDuration={delayDuration} skipDelayDuration={300} {...props} />
+  return (
+    <HasProvider.Provider value>
+      <TooltipPrimitive.Provider delayDuration={delayDuration} skipDelayDuration={300} {...props} />
+    </HasProvider.Provider>
+  )
 }
 
 /**
@@ -23,7 +33,8 @@ export function Tooltip({
   children: React.ReactNode
   side?: "top" | "right" | "bottom" | "left"
 }) {
-  return (
+  const hasProvider = React.useContext(HasProvider)
+  const tip = (
     <TooltipPrimitive.Root {...props}>
       <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
       <TooltipPrimitive.Portal>
@@ -32,7 +43,7 @@ export function Tooltip({
           sideOffset={6}
           collisionPadding={8}
           className={cn(
-            "z-50 max-w-xs rounded-sm bg-inverse px-2 py-1 text-caption text-inverse-foreground",
+            "z-(--z-overlay) max-w-xs rounded-sm bg-inverse px-2 py-1 text-caption text-inverse-foreground",
             "data-[state=delayed-open]:animate-fade-in data-[state=instant-open]:animate-fade-in data-[state=closed]:animate-fade-out",
           )}
         >
@@ -41,4 +52,5 @@ export function Tooltip({
       </TooltipPrimitive.Portal>
     </TooltipPrimitive.Root>
   )
+  return hasProvider ? tip : <TooltipProvider>{tip}</TooltipProvider>
 }

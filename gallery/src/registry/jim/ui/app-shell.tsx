@@ -75,10 +75,10 @@ export function AppShell({
 
       <DialogPrimitive.Root open={mobileOpen} onOpenChange={setMobileOpen}>
         <DialogPrimitive.Portal>
-          <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out md:hidden" />
+          <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out md:hidden" />
           <DialogPrimitive.Content
             className={cn(
-              "fixed inset-y-0 left-0 z-50 flex w-[min(80vw,300px)] flex-col bg-sunken shadow-overlay outline-none md:hidden",
+              "fixed inset-y-0 left-0 z-(--z-overlay) flex w-[min(80vw,300px)] flex-col bg-sunken shadow-overlay outline-none md:hidden",
               "data-[state=open]:animate-slide-in-left data-[state=closed]:animate-fade-out",
             )}
           >

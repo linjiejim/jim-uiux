@@ -18,11 +18,21 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popov
  *   - filters live in the URL so a filtered view can be shared and restored
  */
 export function FilterBar({ className, children, onClear, active }: { className?: string; children: React.ReactNode; onClear?: () => void; active?: boolean }) {
+  const ref = React.useRef<HTMLDivElement>(null)
   return (
-    <div role="search" className={cn("mb-3 flex shrink-0 flex-wrap items-center gap-2", className)}>
+    <div ref={ref} role="search" className={cn("mb-3 flex shrink-0 flex-wrap items-center gap-2", className)}>
       {children}
       {active && onClear && (
-        <Button variant="ghost" size="sm" onClick={onClear} className="text-muted-foreground">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            // 清除 unmounts itself: keep focus in the bar
+            ref.current?.querySelector<HTMLElement>("input, button")?.focus()
+            onClear()
+          }}
+          className="text-muted-foreground"
+        >
           {s().clear}
         </Button>
       )}
@@ -42,10 +52,12 @@ export function SearchInput({
   placeholder?: string
   className?: string
 }) {
+  const inputRef = React.useRef<HTMLInputElement>(null)
   return (
     <div className={cn("relative w-60 max-sm:w-full", className)}>
       <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-faint-foreground" />
       <input
+        ref={inputRef}
         type="search"
         value={value}
         placeholder={placeholder}
@@ -58,8 +70,12 @@ export function SearchInput({
         <button
           type="button"
           aria-label={s().clear}
-          onClick={() => onValueChange("")}
-          className="absolute right-1.5 top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-sm text-faint-foreground hover:text-foreground"
+          onClick={() => {
+            onValueChange("")
+            inputRef.current?.focus()
+          }}
+          // hit area 44 on touch
+          className="absolute right-1.5 top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-sm text-faint-foreground hover:text-foreground after:absolute pointer-coarse:after:-inset-3"
         >
           <X className="size-3.5" />
         </button>
@@ -84,6 +100,7 @@ export function FilterSelect({
   options: { value: string; label: string }[]
 }) {
   const [open, setOpen] = React.useState(false)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
   const current = options.find((o) => o.value === value)
   return (
     <div
@@ -95,6 +112,7 @@ export function FilterSelect({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button
+            ref={triggerRef}
             type="button"
             className={cn(
               "inline-flex h-full items-center gap-1 rounded-md px-2.5 hover:bg-accent",
@@ -105,7 +123,7 @@ export function FilterSelect({
             {current ? <span>：{current.label}</span> : <ChevronDown className="size-3.5" />}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="w-52 p-1">
+        <PopoverContent className="max-h-80 w-56 overflow-y-auto p-1">
           <ul role="listbox" aria-label={label}>
             {options.map((o) => (
               <li key={o.value}>
@@ -131,8 +149,13 @@ export function FilterSelect({
         <button
           type="button"
           aria-label={`${s().clear} ${label}`}
-          onClick={() => onValueChange(undefined)}
-          className="mr-1 grid size-5 place-items-center rounded-sm text-muted-foreground hover:bg-accent hover:text-foreground"
+          onClick={() => {
+            // ✕ unmounts itself: focus goes back to the chip
+            triggerRef.current?.focus()
+            onValueChange(undefined)
+          }}
+          // hit area 44 on touch
+          className="relative mr-1 grid size-5 place-items-center rounded-sm text-muted-foreground hover:bg-accent hover:text-foreground after:absolute pointer-coarse:after:-inset-3"
         >
           <X className="size-3.5" />
         </button>

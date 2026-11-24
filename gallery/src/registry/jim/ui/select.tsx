@@ -14,31 +14,37 @@ export type Option = { value: string; label: React.ReactNode; disabled?: boolean
  * Up to ~8 options. More than that, or options the user would rather type,
  * use Combobox. 2–4 options that change a view use Segmented instead.
  */
-export function Select({
-  options,
-  value,
-  onValueChange,
-  placeholder = s().selectPlaceholder,
-  disabled,
-  className,
-  id,
-  "aria-label": ariaLabel,
-  "aria-labelledby": ariaLabelledBy,
-  ...props
-}: {
-  options: Option[]
-  value?: string
-  onValueChange?: (v: string) => void
-  placeholder?: string
-  disabled?: boolean
-  className?: string
-  id?: string
-  "aria-label"?: string
-  "aria-labelledby"?: string
-} & Omit<React.ComponentProps<typeof SelectPrimitive.Root>, "children">) {
+export function Select(
+  allProps: {
+    options: Option[]
+    /** Controlled. `undefined` here means "nothing picked" and shows the placeholder. */
+    value?: string
+    onValueChange?: (v: string) => void
+    placeholder?: string
+    disabled?: boolean
+    className?: string
+    id?: string
+    "aria-label"?: string
+    "aria-labelledby"?: string
+  } & Omit<React.ComponentProps<typeof SelectPrimitive.Root>, "children">,
+) {
+  const {
+    options,
+    value,
+    onValueChange,
+    placeholder = s().selectPlaceholder,
+    disabled,
+    className,
+    id,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledBy,
+    ...props
+  } = allProps
   const field = useFieldControl()
+  // Controlled whenever `value` is passed, even as undefined; "" shows the placeholder.
+  const controlled = "value" in allProps ? { value: value ?? "" } : {}
   return (
-    <SelectPrimitive.Root value={value} onValueChange={onValueChange} disabled={disabled} {...props}>
+    <SelectPrimitive.Root {...controlled} onValueChange={onValueChange} disabled={disabled} {...props}>
       <SelectPrimitive.Trigger
         {...field}
         id={id ?? field.id}
@@ -73,8 +79,9 @@ export function SelectContent({ className, children, ...props }: React.Component
       <SelectPrimitive.Content
         position="popper"
         sideOffset={4}
+        collisionPadding={8}
         className={cn(
-          "z-50 max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg bg-popover shadow-popover",
+          "z-(--z-overlay) max-h-(--radix-select-content-available-height) min-w-(--radix-select-trigger-width) overflow-hidden rounded-lg bg-popover shadow-popover",
           "data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out",
           className,
         )}

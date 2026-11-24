@@ -20,6 +20,7 @@
 | `sunken` | 侧栏、表头、代码块 | #f7f7f7 | #202020 |
 | `muted` | 分段控件的轨道、骨架、中性标签 | #f0f0f0 | #2a2a2a |
 | `popover` | 菜单、弹框、抽屉 | #ffffff | #252525 |
+| `card` | 卡片、表格容器；默认等于 `background` | #ffffff | #191919 |
 | `inverse` / `inverse-foreground` | Tooltip | #1f1f1f / #f5f5f5 | 浅色反过来 |
 | `accent` | 悬停填充（半透明） | 黑 4.5% | 白 5.5% |
 | `pressed` | 按下、当前导航项 | 黑 8% | 白 10% |
@@ -30,6 +31,7 @@
 | `border` | 细线、卡片、分割线 | #e8e8e8 | #2e2e2e |
 | `input` | 控件边框 | #d4d4d4 | #3d3d3d |
 | `primary` / `primary-foreground` | 唯一的强调色 | #1a1a1a / #fff | #ececec / #191919 |
+| `primary-hover` | 主按钮悬停 | | |
 | `ring` | 焦点环，默认等于 primary | | |
 | `destructive` | 危险、失败 | #cf222e | #ff6b61 |
 | `success` | 成功、在线 | #1a7f37 | #4cc26b |
@@ -112,7 +114,7 @@
 - 正文、卡片、列表跟这个倍数；系统导航栏、标签栏、菜单和系统表单只跟系统设置。
 - 12px 下限针对标准档；用户自己选更小的档位是用户的选择。
 - 布局要经得起 1.35 倍：不固定文字容器的高度，长文本换行或截断。
-- 本 kit 的 web 组件没有内置这个倍数；需要时在项目里把 `--text-*` 乘上同一个倍数。
+- 本 kit 的 web 组件没有内置这个倍数；需要时在项目里把 `--text-*`（字号和 `--line-height` 一起）乘上同一个倍数。取值放在 `:root`，覆盖之后所有 `text-*` 类都会跟着变。
 
 ## 间距
 
@@ -150,6 +152,7 @@
 - `shadow-overlay`：弹框、抽屉、底部弹层、Toast。
 - 页面上的卡片只用 `border`，不加阴影。深色模式下阴影换成 1px 浅色描边。
 - 多层弹层叠在一起时，只有最底下那层有遮罩（主题里有一条 CSS 规则自动处理）。
+- 叠放顺序只有四层，用 `z-(--z-*)`，不写数字：`--z-sticky` 10（吸底的保存条、面板之间的拖拽把手；表格的吸顶表头和固定列只在表格内部叠放）< `--z-float` 40（停靠的 inspector、上传队列）< `--z-overlay` 50（菜单、弹框、抽屉、Tooltip）< `--z-toast` 60。弹层之间靠打开的先后叠放。
 
 ## 尺寸
 
@@ -160,22 +163,34 @@
 | `--row-head-h`（表头） | 36 | 32 | — |
 | `--nav-item-h`（导航项） | 30 | 28 | 40 |
 
-图标统一用 Lucide，描边 1.75（`--icon-stroke`）。尺寸：行内 14，按钮里 16，标题旁 20。
+图标统一用 Lucide，描边 1.75（`--icon-stroke`）。尺寸：徽章和勾选标记里 12，行内和筛选条 14，按钮和菜单里 16，空状态 24 / 32（`StateView`）。
+
+### 焦点与禁用
+
+| Token | 值 | 用途 |
+| --- | --- | --- |
+| `--focus-width` | 2px（增强对比度 3px） | 所有控件的焦点环 |
+| `--focus-offset` | 2px | 焦点环和控件之间的空隙 |
+| `--focus-halo` | `ring` 的 15%（增强对比度下是实色） | 文本框聚焦：边框变 `ring`，外面一圈光晕 |
+| `--disabled-opacity` | 0.5 | 开关、勾选、单选、滑杆、色块；按钮和输入框不降透明度，改成中性色 |
 
 ## 动效
 
 | Token | 值 | 用途 |
 | --- | --- | --- |
-| `--duration-fast` | 120ms | 悬停、按下、开关 |
-| `--duration-base` | 200ms | 菜单、弹框、Toast |
-| `--duration-slow` | 240ms | 抽屉、底部弹层 |
-| `--duration-exit` | 160ms | 所有退出 |
+| `--duration-fast` | 120ms | 悬停、按下、开关；菜单、选择器、Popover 的进出 |
+| `--duration-base` | 200ms | 弹框进入 |
+| `--duration-slow` | 240ms | 抽屉、底部弹层进入 |
+| `--duration-exit` | 160ms | 弹框、抽屉、底部弹层退出 |
 | `--ease-out` | cubic-bezier(.22, 1, .36, 1) | 进入 |
 | `--ease-in` | cubic-bezier(.4, 0, 1, 1) | 退出 |
 | `--ease-drawer` | cubic-bezier(.32, .72, 0, 1) | 抽屉、底部弹层 |
 
 - 动画类：`animate-fade-in/out`、`pop-in/out`（弹框）、`drop-in/out`（菜单）、`slide-in-right` / `slide-out-right`（抽屉）、`slide-in-up` / `slide-out-down`（底部弹层）、`slide-in-left`（手机上的侧栏）。
-- `--motion` 在「减少动态效果」下变为 0，此时所有位移和缩放的关键帧退化为淡入淡出。
+- 位移和缩放乘 `--motion`，它在「减少动态效果」下变为 0，于是每一种进出都只剩淡入淡出（`gallery/src/tests/motion.test.ts` 守着这条）。弹框、菜单正常时也淡入；抽屉、底部弹层正常时实心滑动，不变透明。
+- 退出动画停在终点（`forwards`）：面板卸载晚一帧也不会闪回。
+- 没写曲线和时长的 `transition-*` 默认就是 `--duration-fast` + `--ease-out`，不是 Tailwind 的 150ms。
+- 两处用第三方自己的时长：Toast（Sonner，进出约 400ms；减少动态效果下没有动画）和 `BottomSheet`（vaul 的拖拽物理，500ms）。
 - 按下缩放 .97 只在触屏上生效。
 
 ## 可调的旋钮

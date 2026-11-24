@@ -134,12 +134,13 @@ export function compareVersions(a: string, b: string): -1 | 0 | 1 {
 
 /**
  * The releases after `seen` up to and including `current`, newest first, that have something to
- * say. Nothing when `seen` is unknown (a first install has nothing to catch up on) or not older.
+ * say. Nothing when `seen` is unknown (a first install has nothing to catch up on) or not older,
+ * or when either isn't a version (a dev build's "dev", a commit hash): never throws.
  */
 export function unseenReleases(releases: Release[], seen: string | null | undefined, current: string): Release[] {
-  if (!seen || !SEMVER.test(seen) || compareVersions(current, seen) <= 0) return []
+  if (!seen || !SEMVER.test(seen) || !SEMVER.test(current) || compareVersions(current, seen) <= 0) return []
   return releases
-    .filter((r) => compareVersions(r.version, seen) > 0 && compareVersions(r.version, current) <= 0)
+    .filter((r) => SEMVER.test(r.version) && compareVersions(r.version, seen) > 0 && compareVersions(r.version, current) <= 0)
     .filter((r) => r.groups.length)
     .sort((a, b) => compareVersions(b.version, a.version))
 }

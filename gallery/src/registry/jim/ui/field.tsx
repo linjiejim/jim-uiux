@@ -80,19 +80,24 @@ export function Field({
           {info && <Info>{info}</Info>}
         </div>
         {children}
-        {note && (
-          <p
-            id={noteId}
-            aria-live={error ? "polite" : undefined}
-            className={cn(
-              "flex items-start gap-1 text-caption",
-              error ? "text-destructive" : "text-faint-foreground",
-            )}
-          >
-            {error && <CircleAlert className="mt-0.5 size-3.5" />}
+        {note && !error && (
+          <p id={noteId} className="flex items-start gap-1 text-caption text-faint-foreground">
             <span>{note}</span>
           </p>
         )}
+        {/* Always mounted so a new error is announced; sr-only (out of flow, no gap) while empty. */}
+        <p
+          id={error ? noteId : undefined}
+          aria-live="polite"
+          className={error ? "flex items-start gap-1 text-caption text-destructive" : "sr-only"}
+        >
+          {error && (
+            <>
+              <CircleAlert className="mt-0.5 size-3.5" />
+              <span>{error}</span>
+            </>
+          )}
+        </p>
       </div>
     </FieldContext.Provider>
   )

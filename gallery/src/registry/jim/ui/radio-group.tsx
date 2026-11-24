@@ -10,16 +10,9 @@ import { useFieldControl } from "@/registry/jim/ui/field"
  * (plans, visibility, frequency). More options → Select; switching a view →
  * Segmented. Vertical list; each option may carry one line of description.
  */
-export function RadioGroup<T extends string>({
-  options,
-  value,
-  defaultValue,
-  onValueChange,
-  disabled,
-  className,
-  "aria-label": ariaLabel,
-}: {
+export function RadioGroup<T extends string>(props: {
   options: { value: T; label: React.ReactNode; description?: React.ReactNode; disabled?: boolean }[]
+  /** Controlled. `undefined` here means "nothing picked". */
   value?: T
   defaultValue?: T
   onValueChange?: (v: T) => void
@@ -27,11 +20,13 @@ export function RadioGroup<T extends string>({
   className?: string
   "aria-label"?: string
 }) {
+  const { options, value, defaultValue, onValueChange, disabled, className, "aria-label": ariaLabel } = props
   const field = useFieldControl()
   const base = React.useId()
   return (
     <RadioPrimitive.Root
-      value={value}
+      // controlled whenever `value` is passed; null = none checked (undefined would go uncontrolled)
+      value={"value" in props ? (value ?? null) : undefined}
       defaultValue={defaultValue}
       onValueChange={(v) => onValueChange?.(v as T)}
       disabled={disabled}
@@ -53,7 +48,7 @@ export function RadioGroup<T extends string>({
               className={cn(
                 "relative mt-[3px] grid size-4 shrink-0 place-items-center rounded-full border border-input bg-background",
                 "transition-colors duration-(--duration-fast) hover:border-faint-foreground",
-                "data-[state=checked]:border-primary disabled:cursor-not-allowed disabled:opacity-50",
+                "data-[state=checked]:border-primary disabled:cursor-not-allowed disabled:opacity-(--disabled-opacity)",
                 "after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
               )}
             >

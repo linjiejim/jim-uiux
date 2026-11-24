@@ -178,7 +178,7 @@ export function UploadQueuePanel({ queue, className }: { queue: UploadQueue; cla
     <section
       aria-label={t.uploadTitle}
       className={cn(
-        "fixed bottom-4 right-4 z-40 flex max-h-[60vh] w-[360px] flex-col overflow-hidden rounded-lg bg-popover shadow-overlay",
+        "fixed bottom-4 right-4 z-(--z-float) flex max-h-[60vh] w-[360px] flex-col overflow-hidden rounded-lg bg-popover shadow-overlay",
         "max-sm:inset-x-3 max-sm:bottom-[max(12px,env(safe-area-inset-bottom))] max-sm:w-auto",
         "animate-slide-in-up",
         className,

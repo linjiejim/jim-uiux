@@ -9,6 +9,7 @@ import { useGuardedOpen } from "@/registry/jim/hooks/use-guarded-open"
 import { IconButton } from "@/registry/jim/ui/button"
 import { Kbd } from "@/registry/jim/ui/kbd"
 import { DiscardDialog } from "@/registry/jim/ui/confirm-dialog"
+import { useReturnFocus } from "@/registry/jim/hooks/use-return-focus"
 import { FieldControlProvider } from "@/registry/jim/ui/field"
 import { ResizeHandle } from "@/registry/jim/ui/resize-handle"
 
@@ -33,11 +34,21 @@ export const DOCK_MIN = 1440
 export const INSPECTOR_WIDTH = { min: 360, default: 400, max: 520 } as const
 
 type DrawerMode = "modal" | "dock"
-const ModeContext = React.createContext<DrawerMode>("modal")
+type DrawerCtx = {
+  mode: DrawerMode
+  dirty: boolean
+  focus: ReturnType<typeof useReturnFocus> | null
+  /** Leave the current item (paging): asks first when there are unsaved edits, like closing. */
+  leave: (go: () => void) => void
+}
+const DrawerContext = React.createContext<DrawerCtx>({ mode: "modal", dirty: false, focus: null, leave: (go) => go() })
+
+/** Marks drawer panels, so useListPaging can tell the drawer from a layer above it. */
+const DRAWER = '[data-slot="drawer-content"]'
 
 export function Drawer({
   mode = "modal",
-  dirty,
+  dirty = false,
   open,
   defaultOpen,
   onOpenChange,
@@ -45,6 +56,10 @@ export function Drawer({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root> & { dirty?: boolean; mode?: DrawerMode }) {
   const g = useGuardedOpen({ open, defaultOpen, onOpenChange, dirty })
+  const focus = useReturnFocus(g.open)
+  const [leaving, setLeaving] = React.useState<(() => void) | null>(null)
+  const leave = React.useCallback((go: () => void) => (dirty ? setLeaving(() => go) : go()), [dirty])
+  const ctx = React.useMemo(() => ({ mode, dirty, focus, leave }), [mode, dirty, focus, leave])
 
   React.useEffect(() => {
     if (!g.open) return
@@ -59,9 +74,20 @@ export function Drawer({
   return (
     <>
       <DialogPrimitive.Root open={g.open} onOpenChange={g.onOpenChange} modal={mode !== "dock"} {...props}>
-        <ModeContext.Provider value={mode}>{children}</ModeContext.Provider>
+        <DrawerContext.Provider value={ctx}>{children}</DrawerContext.Provider>
       </DialogPrimitive.Root>
-      <DiscardDialog open={g.discard.open} onKeep={g.discard.keep} onDiscard={g.discard.discard} />
+      <DiscardDialog
+        open={g.discard.open || leaving !== null}
+        onKeep={() => {
+          setLeaving(null)
+          g.discard.keep()
+        }}
+        onDiscard={() => {
+          if (!leaving) return g.discard.discard()
+          setLeaving(null)
+          leaving()
+        }}
+      />
     </>
   )
 }
@@ -80,33 +106,43 @@ export function DrawerContent({
   storageKey,
   className,
   children,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   size?: keyof typeof widths
   /** dock mode: remembers the width under this key (one per place). */
   storageKey?: string
 }) {
-  const mode = React.useContext(ModeContext)
+  const { mode, dirty, focus } = React.useContext(DrawerContext)
   if (mode === "dock") {
     return (
-      <DockContent storageKey={storageKey} className={className} {...props}>
+      <DockContent storageKey={storageKey} className={className} onOpenAutoFocus={onOpenAutoFocus} onCloseAutoFocus={onCloseAutoFocus} {...props}>
         {children}
       </DockContent>
     )
   }
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-50 bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
+      <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
       <DialogPrimitive.Content
+        data-slot="drawer-content"
+        data-dirty={dirty || undefined}
         // Details are read first: focus the panel, not the first icon button (which would pop its
         // tooltip). A field marked autoFocus (creating, editing) keeps its focus.
         onOpenAutoFocus={(e) => {
+          onOpenAutoFocus?.(e)
+          if (e.defaultPrevented) return
           e.preventDefault()
           const panel = e.currentTarget as HTMLElement
           if (!panel.contains(document.activeElement)) panel.focus()
         }}
+        onCloseAutoFocus={(e) => {
+          onCloseAutoFocus?.(e)
+          focus?.restore(e)
+        }}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex h-dvh w-full max-w-full flex-col bg-popover shadow-overlay outline-none",
+          "fixed inset-y-0 right-0 z-(--z-overlay) flex h-dvh w-full max-w-full flex-col bg-popover shadow-overlay outline-none",
           "data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right",
           widths[size],
           className,
@@ -188,16 +224,20 @@ function DockContent({
   className,
   children,
   onOpenAutoFocus,
+  onCloseAutoFocus,
   onInteractOutside,
   onFocusOutside,
   style,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & { storageKey?: string }) {
+  const { dirty, focus } = React.useContext(DrawerContext)
   const docked = useMinWidth(DOCK_MIN)
   const [width, setWidth, saveWidth] = useStoredWidth(storageKey)
 
   return (
     <DialogPrimitive.Content
+      data-slot="drawer-content"
+      data-dirty={dirty || undefined}
       data-mode="dock"
       data-docked={docked || undefined}
       // Docked, the inspector is part of the page: opening it leaves focus where it was (the row),
@@ -214,14 +254,20 @@ function DockContent({
       }}
       onFocusOutside={(e) => {
         onFocusOutside?.(e)
+        // Closing later gives focus back to where the user went in the page, not the first opener.
+        focus?.track(e.detail.originalEvent.target)
         if (docked) e.preventDefault()
+      }}
+      onCloseAutoFocus={(e) => {
+        onCloseAutoFocus?.(e)
+        focus?.restore(e)
       }}
       style={{ ...style, ["--inspector-w" as string]: `${width}px` }}
       className={cn(
         "flex flex-col outline-none sm:w-(--inspector-w)",
         docked
           ? "relative h-full shrink-0 border-l bg-background"
-          : "fixed inset-y-0 right-0 z-40 h-dvh w-full max-w-full bg-popover shadow-overlay data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right",
+          : "fixed inset-y-0 right-0 z-(--z-float) h-dvh w-full max-w-full bg-popover shadow-overlay data-[state=open]:animate-slide-in-right data-[state=closed]:animate-slide-out-right",
         className,
       )}
       {...props}
@@ -301,7 +347,8 @@ export function DetailList({ items, editing = false, className }: { items: Detai
           <React.Fragment key={i}>
             <dt className="flex min-h-(--control-md) items-center self-start text-muted-foreground">
               {live ? (
-                <label htmlFor={id}>
+                // id as in Field: RadioGroup, Slider, SwatchPicker are named via aria-labelledby
+                <label id={`${id}-label`} htmlFor={id}>
                   {it.label}
                   {it.required && (
                     <span className="ml-0.5 text-destructive" aria-hidden>
@@ -317,11 +364,14 @@ export function DetailList({ items, editing = false, className }: { items: Detai
               {live ? (
                 <FieldControlProvider id={id} invalid={!!it.error} required={it.required} describedBy={it.error ? `${id}-error` : undefined}>
                   {it.edit}
-                  {it.error && (
-                    <p id={`${id}-error`} aria-live="polite" className="mt-1 text-caption text-destructive">
-                      {it.error}
-                    </p>
-                  )}
+                  {/* always mounted so a new error is announced (same as Field); sr-only while empty */}
+                  <p
+                    id={it.error ? `${id}-error` : undefined}
+                    aria-live="polite"
+                    className={it.error ? "mt-1 text-caption text-destructive" : "sr-only"}
+                  >
+                    {it.error}
+                  </p>
                 </FieldControlProvider>
               ) : (
                 // 11px = an input's 1px border + 10px padding, so text doesn't jump when editing starts
@@ -335,10 +385,21 @@ export function DetailList({ items, editing = false, className }: { items: Detai
   )
 }
 
+/** Keys page only from the drawer (or the page beside a docked one), never past unsaved edits. */
+function pagingAllowed(target: HTMLElement | null) {
+  if (document.querySelector(`${DRAWER}[data-dirty]`)) return false
+  const layer = target?.closest('[role="dialog"], [role="alertdialog"]')
+  if (layer) return layer.matches(DRAWER)
+  // focus outside every layer (the page, or <body>): only when nothing is open above the drawer
+  return !document.querySelector(`[role="alertdialog"], [role="dialog"]:not(${DRAWER})`)
+}
+
 /**
  * List → detail drawer paging. While a drawer shows one item of a list, ↑ / ↓ (also ← / →, K / J)
  * step to the previous / next item without closing. Pass the list in on-screen order (a board:
- * column by column, top to bottom). Keys typed into a field, or with ⌘ / Ctrl / Alt, are left alone.
+ * column by column, top to bottom). Keys typed into a field, or with ⌘ / Ctrl / Alt, are left alone,
+ * and so are keys meant for a layer above the drawer (a Dialog, a ConfirmDialog). While the drawer
+ * holds unsaved edits (`dirty`) the keys don't page and DrawerPager's buttons ask first, like closing.
  *
  * While the drawer is open, paging follows the list as it was when the drawer opened, even if opening
  * an item reorders it (read items sort down or drop out); the new order applies once it closes.
@@ -378,8 +439,9 @@ export function useListPaging<T extends string>({
     if (!current) return
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented) return
-      const t = e.target as HTMLElement | null
+      const t = e.target instanceof HTMLElement ? e.target : null
       if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return
+      if (!pagingAllowed(t)) return
       if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === "j") {
         e.preventDefault()
         goNext()
@@ -404,8 +466,11 @@ export function DrawerPager({
   goPrev,
   goNext,
 }: Pick<ReturnType<typeof useListPaging>, "index" | "total" | "hasPrev" | "hasNext" | "goPrev" | "goNext">) {
+  const { leave } = React.useContext(DrawerContext)
   if (index < 0 || total < 2) return null
   const t = s()
+  // aria-disabled, not disabled: a button that disables itself under focus drops focus to <body>
+  const endClass = "text-muted-foreground aria-disabled:cursor-not-allowed aria-disabled:bg-transparent aria-disabled:text-faint-foreground"
   return (
     <span className="flex shrink-0 items-center gap-0.5">
       <span className="mr-1 text-caption text-faint-foreground tabular-nums">{t.itemPosition(index + 1, total)}</span>
@@ -417,9 +482,9 @@ export function DrawerPager({
           </>
         }
         size="icon-sm"
-        className="text-muted-foreground"
-        disabled={!hasPrev}
-        onClick={goPrev}
+        className={endClass}
+        aria-disabled={!hasPrev}
+        onClick={() => hasPrev && leave(goPrev)}
       >
         <ChevronUp />
       </IconButton>
@@ -431,9 +496,9 @@ export function DrawerPager({
           </>
         }
         size="icon-sm"
-        className="text-muted-foreground"
-        disabled={!hasNext}
-        onClick={goNext}
+        className={endClass}
+        aria-disabled={!hasNext}
+        onClick={() => hasNext && leave(goNext)}
       >
         <ChevronDown />
       </IconButton>

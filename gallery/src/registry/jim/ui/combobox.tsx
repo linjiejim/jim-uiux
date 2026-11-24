@@ -12,17 +12,9 @@ import { controlClass } from "@/registry/jim/ui/input"
 export type ComboOption = { value: string; label: string; hint?: string }
 
 /** Searchable single select. Use when there are more than ~8 options. */
-export function Combobox({
-  options,
-  value: valueProp,
-  defaultValue,
-  onValueChange,
-  placeholder = s().selectPlaceholder,
-  searchPlaceholder = s().searchPlaceholder,
-  disabled,
-  className,
-}: {
+export function Combobox(props: {
   options: ComboOption[]
+  /** Controlled. `undefined` here means "nothing picked" and shows the placeholder. */
   value?: string
   defaultValue?: string
   onValueChange?: (v: string) => void
@@ -31,9 +23,21 @@ export function Combobox({
   disabled?: boolean
   className?: string
 }) {
+  const {
+    options,
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    placeholder = s().selectPlaceholder,
+    searchPlaceholder = s().searchPlaceholder,
+    disabled,
+    className,
+  } = props
   const [open, setOpen] = React.useState(false)
   const [inner, setInner] = React.useState(defaultValue)
-  const value = valueProp !== undefined ? valueProp : inner
+  // Controlled whenever `value` is passed, even as undefined.
+  const controlled = "value" in props
+  const value = controlled ? valueProp : inner
   const field = useFieldControl()
   const current = options.find((o) => o.value === value)
   return (
@@ -57,8 +61,9 @@ export function Combobox({
         <PopoverPrimitive.Content
           align="start"
           sideOffset={4}
+          collisionPadding={8}
           className={cn(
-            "z-50 w-(--radix-popover-trigger-width) min-w-56 overflow-hidden rounded-lg bg-popover shadow-popover",
+            "z-(--z-overlay) w-(--radix-popover-trigger-width) min-w-56 overflow-hidden rounded-lg bg-popover shadow-popover",
             "data-[state=open]:animate-drop-in data-[state=closed]:animate-drop-out",
           )}
         >
@@ -70,14 +75,14 @@ export function Combobox({
                 className="h-(--control-md) w-full bg-transparent text-body outline-none placeholder:text-faint-foreground"
               />
             </div>
-            <Command.List className="max-h-72 overflow-y-auto p-1">
+            <Command.List className="max-h-80 overflow-y-auto p-1">
               <Command.Empty className="px-2 py-6 text-center text-body text-muted-foreground">{s().noOptions}</Command.Empty>
               {options.map((o) => (
                 <Command.Item
                   key={o.value}
                   value={`${o.label} ${o.hint ?? ""} ${o.value}`}
                   onSelect={() => {
-                    if (valueProp === undefined) setInner(o.value)
+                    if (!controlled) setInner(o.value)
                     onValueChange?.(o.value)
                     setOpen(false)
                   }}

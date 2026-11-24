@@ -14,18 +14,10 @@ import { Tooltip } from "@/registry/jim/ui/tooltip"
  * alone, and every swatch names itself (tooltip, screen reader). For user data there is no
  * free colour input: store the name.
  */
-export function SwatchPicker<T extends string>({
-  options,
-  value,
-  defaultValue,
-  onValueChange,
-  size = "md",
-  disabled,
-  className,
-  "aria-label": ariaLabel,
-}: {
+export function SwatchPicker<T extends string>(props: {
   /** `color` is any CSS colour expression: `catVar("blue")`, `var(--primary)`. */
   options: { value: T; label: string; color: string; disabled?: boolean }[]
+  /** Controlled. `undefined` here means "nothing picked". */
   value?: T
   defaultValue?: T
   onValueChange?: (v: T) => void
@@ -34,10 +26,12 @@ export function SwatchPicker<T extends string>({
   className?: string
   "aria-label"?: string
 }) {
+  const { options, value, defaultValue, onValueChange, size = "md", disabled, className, "aria-label": ariaLabel } = props
   const field = useFieldControl()
   return (
     <RadioPrimitive.Root
-      value={value}
+      // controlled whenever `value` is passed; null = none checked (undefined would go uncontrolled)
+      value={"value" in props ? (value ?? null) : undefined}
       defaultValue={defaultValue}
       onValueChange={(v) => onValueChange?.(v as T)}
       disabled={disabled}
@@ -66,7 +60,7 @@ export function SwatchPicker<T extends string>({
               size === "sm" ? "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-3" : "before:absolute before:-inset-1.5 pointer-coarse:before:-inset-2.5",
               // aria-checked, not data-state: the Tooltip trigger writes its own data-state onto the swatch
               "aria-checked:ring-2 aria-checked:ring-foreground aria-checked:ring-offset-2 aria-checked:ring-offset-background",
-              "disabled:cursor-not-allowed disabled:opacity-50",
+              "disabled:cursor-not-allowed disabled:opacity-(--disabled-opacity)",
             )}
           />
         </Tooltip>

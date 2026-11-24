@@ -4,18 +4,24 @@ import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "radix-ui"
 import { Check, Minus } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useFieldControl } from "@/registry/jim/ui/field"
 
-/** 16px box, 44px hit area on touch. Multi-choice and row selection. */
+/**
+ * 16px box, 44px hit area on touch. Multi-choice and row selection.
+ * Inside a Field the field label names it (the root is a <button>, so `id` + label[for] is enough).
+ */
 export function Checkbox({ className, ...props }: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+  const field = useFieldControl()
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
+      {...field}
       className={cn(
         "peer relative grid size-4 shrink-0 place-items-center rounded-xs border border-input bg-background",
         "transition-colors duration-(--duration-fast) hover:border-faint-foreground",
         "data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
         "data-[state=indeterminate]:border-primary data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-primary-foreground",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "disabled:cursor-not-allowed disabled:opacity-(--disabled-opacity)",
         "after:absolute after:-inset-2 pointer-coarse:after:-inset-3.5",
         className,
       )}

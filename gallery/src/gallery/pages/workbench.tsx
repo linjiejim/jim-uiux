@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useLastDefined } from "@/registry/jim/hooks/use-last-defined"
 import { CalendarDays, FileText, FolderKanban, Maximize2, MessageSquare, Pencil, Table2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/registry/jim/ui/badge"
@@ -26,9 +27,7 @@ export function WorkbenchPattern() {
   const inspector = useInspectorStack<string>()
   const [main, setMain] = React.useState<string | null>(null)
   const top = projects.find((p) => p.id === inspector.top)
-  const last = React.useRef(top)
-  if (top) last.current = top
-  const shown = top ?? last.current
+  const shown = useLastDefined(top) // keep the last object while the floating panel slides out
   const focused = projects.find((p) => p.id === main)
 
   return (

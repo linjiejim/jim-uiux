@@ -11,7 +11,8 @@
  *   data-radius="sharp|round"          radius scale, default 8px
  *   data-density="compact"             control and row heights
  *   data-spacing="compact|relaxed"     layout whitespace: page edge, sections, fields, cards
- *   --font-sans / --font-display       typefaces
+ *   --font-sans / --font-display       typefaces (headings use display)
+ *   --text-*                           type scale; a text-size setting multiplies these
  *   presets/*.css                      neutral tints (data-theme) and accents (data-accent)
  *   data-contrast="more"               more contrast; also on by itself under prefers-contrast
  * The gallery's theme studio (design.linjiejim.com/#/studio) tunes all of these at once and
@@ -35,7 +36,7 @@
   --muted: #f0f0f0; /* segmented track, skeleton, tag */
   --card: var(--background);
   --popover: #ffffff;
-  --inverse: #1f1f1f; /* toast */
+  --inverse: #1f1f1f; /* tooltip */
   --scrim: rgb(0 0 0 / 0.32);
 
   /* interaction fills, alpha so they work on any surface */
@@ -115,6 +116,45 @@
   --space-section: 32px;
   --space-field: 16px;
   --space-card: 16px;
+
+  --font-sans: "Inter Variable", Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* type: semantic sizes only; CJK line-height ≥ 1.4. Override any of these (or multiply them
+     for a text-size setting) and the matching text-* class follows. Headings use --font-display. */
+  --text-caption: 12px;
+  --text-caption--line-height: 18px;
+  --text-small: 13px;
+  --text-small--line-height: 20px;
+  --text-body: 14px;
+  --text-body--line-height: 22px;
+  --text-reading: 16px;
+  --text-reading--line-height: 26px;
+  --text-heading: 16px;
+  --text-heading--line-height: 24px;
+  --text-title: 18px;
+  --text-title--line-height: 26px;
+  --text-title-lg: 22px;
+  --text-title-lg--line-height: 32px;
+  --text-display: 28px;
+  --text-display--line-height: 40px;
+  --text-hero: 40px;
+  --text-hero--line-height: 52px;
+
+  /* layers: sticky bars and handles < floating panels (inspector, upload queue) < overlays < toasts.
+     Overlays stack among themselves by opening order. */
+  --z-sticky: 10;
+  --z-float: 40;
+  --z-overlay: 50;
+  --z-toast: 60;
+
+  /* focus and disabled: one ring for every control; more contrast thickens it */
+  --focus-width: 2px;
+  --focus-offset: 2px;
+  --focus-halo: color-mix(in oklab, var(--ring) 15%, transparent); /* text fields: border + halo */
+  --disabled-opacity: 0.5; /* toggles and sliders; buttons and fields turn neutral instead */
 
   /* motion */
   --motion: 1; /* 0 under prefers-reduced-motion: transforms off, fades kept */
@@ -215,7 +255,8 @@
   --space-card: 20px;
 }
 
-/* touch: every control reaches 44px, whatever the density */
+/* touch: controls and rows reach 44px whatever the density; small icon buttons stay 36 but
+   their hit area reaches 44 */
 @media (pointer: coarse) {
   :root, [data-density] {
     --control-sm: 36px;
@@ -244,6 +285,8 @@
   --input: color-mix(in oklab, var(--foreground) 56%, var(--background)) !important;
   --accent: color-mix(in oklab, var(--foreground) 8%, transparent) !important;
   --pressed: color-mix(in oklab, var(--foreground) 14%, transparent) !important;
+  --focus-width: 3px !important;
+  --focus-halo: var(--ring) !important;
 }
 @media (prefers-contrast: more) {
   :root {
@@ -253,6 +296,8 @@
     --input: color-mix(in oklab, var(--foreground) 56%, var(--background)) !important;
     --accent: color-mix(in oklab, var(--foreground) 8%, transparent) !important;
     --pressed: color-mix(in oklab, var(--foreground) 14%, transparent) !important;
+    --focus-width: 3px !important;
+    --focus-halo: var(--ring) !important;
   }
 }
 
@@ -320,65 +365,69 @@
   --shadow-popover: var(--shadow-popover);
   --shadow-overlay: var(--shadow-overlay);
 
-  --font-sans: "Inter Variable", Inter, -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
-  --font-display: var(--font-sans);
-  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
-
-  /* type: semantic sizes only; CJK line-height ≥ 1.4 */
-  --text-caption: 12px;
-  --text-caption--line-height: 18px;
-  --text-small: 13px;
-  --text-small--line-height: 20px;
-  --text-body: 14px;
-  --text-body--line-height: 22px;
-  --text-reading: 16px;
-  --text-reading--line-height: 26px;
-  --text-heading: 16px;
-  --text-heading--line-height: 24px;
-  --text-title: 18px;
-  --text-title--line-height: 26px;
-  --text-title-lg: 22px;
-  --text-title-lg--line-height: 32px;
-  --text-display: 28px;
-  --text-display--line-height: 40px;
-  --text-hero: 40px;
-  --text-hero--line-height: 52px;
+  /* type and fonts: values live in :root so a project's override reaches every class */
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+  --text-caption: var(--text-caption);
+  --text-caption--line-height: var(--text-caption--line-height);
+  --text-small: var(--text-small);
+  --text-small--line-height: var(--text-small--line-height);
+  --text-body: var(--text-body);
+  --text-body--line-height: var(--text-body--line-height);
+  --text-reading: var(--text-reading);
+  --text-reading--line-height: var(--text-reading--line-height);
+  --text-heading: var(--text-heading);
+  --text-heading--line-height: var(--text-heading--line-height);
+  --text-title: var(--text-title);
+  --text-title--line-height: var(--text-title--line-height);
+  --text-title-lg: var(--text-title-lg);
+  --text-title-lg--line-height: var(--text-title-lg--line-height);
+  --text-display: var(--text-display);
+  --text-display--line-height: var(--text-display--line-height);
+  --text-hero: var(--text-hero);
+  --text-hero--line-height: var(--text-hero--line-height);
 
   --ease-out: var(--ease-out);
   --ease-in: var(--ease-in);
+  /* bare transition-* utilities default to these, not Tailwind's 150ms / ease-in-out */
+  --default-transition-duration: var(--duration-fast);
+  --default-transition-timing-function: var(--ease-out);
   --ease-drawer: var(--ease-drawer);
 
   --animate-fade-in: jim-fade-in var(--duration-base) var(--ease-out);
-  --animate-fade-out: jim-fade-out var(--duration-exit) var(--ease-in);
+  --animate-fade-out: jim-fade-out var(--duration-exit) var(--ease-in) forwards;
   --animate-pop-in: jim-pop-in var(--duration-base) var(--ease-out);
-  --animate-pop-out: jim-pop-out var(--duration-exit) var(--ease-in);
+  --animate-pop-out: jim-pop-out var(--duration-exit) var(--ease-in) forwards;
   --animate-drop-in: jim-drop-in var(--duration-fast) var(--ease-out);
-  --animate-drop-out: jim-fade-out var(--duration-fast) var(--ease-in);
+  --animate-drop-out: jim-fade-out var(--duration-fast) var(--ease-in) forwards;
   --animate-slide-in-right: jim-slide-in-right var(--duration-slow) var(--ease-drawer);
-  --animate-slide-out-right: jim-slide-out-right var(--duration-exit) var(--ease-in);
+  --animate-slide-out-right: jim-slide-out-right var(--duration-exit) var(--ease-in) forwards;
   --animate-slide-in-left: jim-slide-in-left var(--duration-slow) var(--ease-drawer);
   --animate-slide-in-up: jim-slide-in-up var(--duration-slow) var(--ease-drawer);
-  --animate-slide-out-down: jim-slide-out-down var(--duration-exit) var(--ease-in);
+  --animate-slide-out-down: jim-slide-out-down var(--duration-exit) var(--ease-in) forwards;
 }
 
-/* Spatial keyframes scale with --motion; under reduced motion they become fades. */
+/* Movement (scale, translate) is multiplied by --motion, so under reduced motion every enter / exit
+ * is a plain fade. Pops and drops also fade normally; slides (drawer, sheet) stay solid while they
+ * move (opacity: var(--motion) is 1 normally, 0 under reduced motion). Exits hold their end state
+ * (forwards): a panel whose unmount lands a frame late doesn't flash back. */
 @keyframes jim-fade-in { from { opacity: 0; } }
 @keyframes jim-fade-out { to { opacity: 0; } }
 @keyframes jim-pop-in { from { opacity: 0; transform: scale(calc(1 - 0.03 * var(--motion))); } }
 @keyframes jim-pop-out { to { opacity: 0; transform: scale(calc(1 - 0.03 * var(--motion))); } }
 @keyframes jim-drop-in { from { opacity: 0; transform: translateY(calc(-4px * var(--motion))); } }
 @keyframes jim-slide-in-right {
-  from { opacity: calc(1 - var(--motion)); transform: translateX(calc(100% * var(--motion))); }
+  from { opacity: var(--motion); transform: translateX(calc(100% * var(--motion))); }
 }
 @keyframes jim-slide-out-right {
-  to { opacity: calc(1 - var(--motion)); transform: translateX(calc(100% * var(--motion))); }
+  to { opacity: var(--motion); transform: translateX(calc(100% * var(--motion))); }
 }
 @keyframes jim-slide-in-up {
-  from { opacity: calc(1 - var(--motion)); transform: translateY(calc(100% * var(--motion))); }
+  from { opacity: var(--motion); transform: translateY(calc(100% * var(--motion))); }
 }
 @keyframes jim-slide-out-down {
-  to { opacity: calc(1 - var(--motion)); transform: translateY(calc(100% * var(--motion))); }
+  to { opacity: var(--motion); transform: translateY(calc(100% * var(--motion))); }
 }
 
 /* ---------- base ---------- */
@@ -405,11 +454,9 @@
     line-height: var(--text-body--line-height);
   }
 
-  :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-  [data-contrast="more"] :focus-visible { outline-width: 3px; }
-  @media (prefers-contrast: more) {
-    :focus-visible { outline-width: 3px; }
-  }
+  :focus-visible { outline: var(--focus-width) solid var(--ring); outline-offset: var(--focus-offset); }
+
+  h1, h2, h3, h4 { font-family: var(--font-display); }
 
   ::selection { background: color-mix(in oklab, var(--primary) 18%, transparent); }
 
@@ -429,5 +476,5 @@
 }
 
 @keyframes jim-slide-in-left {
-  from { opacity: calc(1 - var(--motion)); transform: translateX(calc(-100% * var(--motion))); }
+  from { opacity: var(--motion); transform: translateX(calc(-100% * var(--motion))); }
 }
