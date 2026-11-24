@@ -469,7 +469,9 @@ function BodyCell<T>({ cell, className, style }: { cell: Cell<T, unknown>; class
         className,
       )}
     >
-      <div className={cn(!meta?.wrap && "truncate")} title={typeof raw === "string" ? raw : undefined}>
+      {/* -mx-2 px-2: the same text box, but what sticks out sideways from a cell's content
+          (InlineRename's box) has 8px before the truncation clips it */}
+      <div className={cn(!meta?.wrap && "truncate", cell.column.id !== "__select" && "-mx-2 px-2")} title={typeof raw === "string" ? raw : undefined}>
         {flexRender(cell.column.columnDef.cell, cell.getContext())}
       </div>
     </td>
@@ -483,7 +485,7 @@ function DefaultMobileRow<T>({ row }: { row: Row<T> }) {
   const meta = (marked.length ? marked : cells.filter((c) => c !== title).slice(0, 2)).filter(Boolean)
   return (
     <>
-      <div className="truncate text-body font-medium">{title && flexRender(title.column.columnDef.cell, title.getContext())}</div>
+      <div className="-mx-2 truncate px-2 text-body font-medium">{title && flexRender(title.column.columnDef.cell, title.getContext())}</div>
       {meta.length > 0 && (
         <div className="mt-0.5 flex items-center gap-2 truncate text-small text-muted-foreground">
           {meta.map((c, i) => (

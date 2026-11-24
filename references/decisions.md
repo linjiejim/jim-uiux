@@ -217,6 +217,9 @@ jim-uiux 自己从 1.7.0 起，每个版本合进 main 并部署后自动发一�
 | 对比度守卫按屏幕实际显示的 8 位 sRGB 计算 | axe 在 CRUD 页量到「已完成」徽章 4.48:1：精确的混色算出 4.503 过了，渲染成 8 位后是 4.49。守卫要和屏幕上的颜色一致 | 只在 gallery 里用 axe 查（项目皮肤不经过 axe） |
 | 浅色 `--success-subtle` 从 9% 降到 8% | 上一条修正后，成功色在自己的浅底上只有 4.49:1；8% 是 4.58，肉眼看不出差别 | 加深 `--success`（会让所有成功文字变暗） |
 | `Button` 加载中用 `opacity-0` 藏文字，不用 `invisible` | `visibility: hidden` 把文字从无障碍树里拿掉，加载中的按钮没有名字（axe 报 button-name） | 加 `aria-label`（和可见文字重复，翻译时容易漏） |
+| 英文更新记录放 `CHANGELOG.en.md`，`CHANGELOG.md` 仍是中文；gallery 按语言选一份，GitHub Release 在中文后面接英文（1.10.1） | 英文模式下「版本更新」原来还是中文。中文是写的人的语言，发布、检查、构建都读 `CHANGELOG.md`；规则改成「用主要语言」 | 照原规则对调：`CHANGELOG.md` 改英文、中文挪到 `CHANGELOG.zh-CN.md`（路径全要改，以后每次发版先写的是副本） |
+| 两份对齐靠单元测试：版本、日期、摘要、条数一一对应（1.10.1） | 只写了中文的发布在 CI 里就失败，不会等到英文用户看见 | `release-notes.mjs check` 只查版本在不在（查不出漏掉的条目） |
+| `InlineRename` 的文字和周围对齐，框向外伸 7px；`DataTable` 单元格内容区用 `-mx-2 px-2` 留出 8px（1.10.1） | 表格里名字比表头和同列的文字往右 7px。Finder、Figma 改名都是文字不动、框往外长 | 只加负 margin（被单元格的 `truncate` 切掉左边框和焦点环）；去掉内边距（光标贴着边框） |
 
 ## 待定（等 Jim 拍板）
 

@@ -47,7 +47,7 @@ things that float. The same intent always gets the same component.
 - User-chosen colours (tags, project colours, chart series) come from the nine categorical pairs, stored by name; they are data, never a second accent.
 - Embedded pages (iframes) ask the host to draw confirms and toasts; one Esc closes one layer.
 - Reversible actions run at once and offer Undo; only irreversible ones ask first.
-- Updates are told, never imposed: a new version waits for a restart or reload the user chooses; after an update one toast says what's new. Release notes live in `CHANGELOG.md` only, written for the people using the app; CI copies them into releases and update manifests.
+- Updates are told, never imposed: a new version waits for a restart or reload the user chooses; after an update one toast says what's new. Release notes live in the changelog only (`CHANGELOG.md`; a second language in `CHANGELOG.<lang>.md`, item for item), written for the people using the app; CI copies them into releases and update manifests.
 - Errors stay where they happened, in plain words, with Retry. Never an auto-dismissing toast for an error, never an error code. Native apps may use the system Alert for a failed action.
 - Loading never shows "empty"; failure never looks like "empty". Skeletons are static, appear after 300ms, stay ≥ 600ms.
 - Motion 120–240ms, one ease-out curve, no bounce, no decoration; reduced motion keeps fades only.
@@ -93,7 +93,7 @@ A project may replace the whole skin (neutrals, accent, fonts, radius, shadows, 
 
 The system evolves. Change a default in one place: theme → component → gallery
 example → the reference doc → `references/decisions.md` (why) →
-`CHANGELOG.md` (bump the version in `gallery/package.json`) →
+`CHANGELOG.md` and `CHANGELOG.en.md`, item for item (bump the version in `gallery/package.json`) →
 `pnpm --dir gallery registry:build` → `pnpm --dir gallery test` and `typecheck` →
 open a pull request (Jim reviews every change); merging to main runs
 `.github/workflows/deploy.yml`, which deploys the gallery and registry to

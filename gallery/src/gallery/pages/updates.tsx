@@ -91,7 +91,7 @@ export function UpdatesPattern() {
         title={t("提示", "Prompts")}
         note={t(
           "「更新后第一次打开」显示的是 jim-uiux 自己的 CHANGELOG。",
-          "“Open after updating” shows jim-uiux's own changelog, which is written in Chinese.",
+          "“Open after updating” shows jim-uiux's own changelog.",
         )}
         info={t(
           "等重启、等刷新的提示一直留着，同一件事只留一条；Web 不自动刷新，输入框里可能有没保存的内容。对话框列出上次看过之后的每一版，「注意」放在淡黄的提示框里。",

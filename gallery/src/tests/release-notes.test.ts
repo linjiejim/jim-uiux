@@ -2,7 +2,7 @@
 import fs from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
-import { compareVersions, parseChangelog, unseenReleases } from "@/registry/jim/lib/changelog"
+import { compareVersions, parseChangelog, unseenReleases, type Release } from "@/registry/jim/lib/changelog"
 import {
   findSection,
   groupCommits,
@@ -101,6 +101,19 @@ describe("parseChangelog", () => {
     expect(own.length).toBeGreaterThan(5)
     expect(own.every((r) => r.groups.length > 0)).toBe(true)
     expect(own.map((r) => r.version)).toEqual([...own.map((r) => r.version)].sort((a, b) => compareVersions(b, a)))
+  })
+
+  // the gallery shows CHANGELOG.en.md in English: a release written only in Chinese fails here
+  it("CHANGELOG.en.md matches CHANGELOG.md, version for version and item for item", () => {
+    const read = (file: string) => fs.readFileSync(path.resolve(import.meta.dirname, "../../..", file), "utf8")
+    const [zh, en] = [read("CHANGELOG.md"), read("CHANGELOG.en.md")]
+    const shape = (releases: Release[]) =>
+      releases.map((r) => ({ version: r.version, date: r.date, summary: !!r.summary, groups: r.groups.map((g) => [g.kind, g.items.length]) }))
+    expect(shape(parseChangelog(en))).toEqual(shape(parseChangelog(zh)))
+    // parseChangelog folds nested items into their parent: compare the outline too
+    const outline = (md: string) =>
+      md.split(/\r?\n/).flatMap((l) => (/^#{2,3} /.test(l) ? [l.replace(/^(#+ \S+).*/, "$1")] : /^\s+[-*] /.test(l) ? ["  -"] : /^[-*] /.test(l) ? ["-"] : []))
+    expect(outline(en)).toEqual(outline(zh))
   })
 })
 

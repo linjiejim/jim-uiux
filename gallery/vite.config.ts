@@ -30,8 +30,9 @@ export default defineConfig({
   define: {
     __JIM_UIUX_VERSION__: JSON.stringify(version),
     __JIM_UIUX_COMMIT__: JSON.stringify(commit()),
-    // the release notes the gallery shows, from the repo root (outside Vite's root)
+    // the release notes the gallery shows (Chinese, English), from the repo root (outside Vite's root)
     __JIM_UIUX_CHANGELOG__: JSON.stringify(fs.readFileSync(path.resolve(import.meta.dirname, "../CHANGELOG.md"), "utf8")),
+    __JIM_UIUX_CHANGELOG_EN__: JSON.stringify(fs.readFileSync(path.resolve(import.meta.dirname, "../CHANGELOG.en.md"), "utf8")),
   },
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } },
   server: { port: 5188 },

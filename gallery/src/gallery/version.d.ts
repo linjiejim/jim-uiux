@@ -4,3 +4,5 @@ declare const __JIM_UIUX_VERSION__: string
 declare const __JIM_UIUX_COMMIT__: string
 /** The repository's CHANGELOG.md, as text. */
 declare const __JIM_UIUX_CHANGELOG__: string
+/** CHANGELOG.en.md: the same releases in English. */
+declare const __JIM_UIUX_CHANGELOG_EN__: string
