@@ -28,6 +28,7 @@ export function Switch({ className, ...props }: React.ComponentProps<typeof Swit
         className={cn(
           "block size-4 rounded-full bg-background shadow-popover transition-transform duration-(--duration-fast) ease-out",
           "data-[state=checked]:translate-x-4 data-[state=checked]:bg-primary-foreground",
+          // design-allow: in dark mode --input is too faint for an off track; muted-foreground keeps it visible
           "dark:data-[state=unchecked]:bg-muted-foreground",
         )}
       />

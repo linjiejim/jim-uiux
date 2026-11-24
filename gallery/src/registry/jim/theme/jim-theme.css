@@ -68,7 +68,7 @@
   --warning: #8a5c00;
   --info: #0969da;
   --destructive-subtle: color-mix(in oklab, var(--destructive) 9%, var(--background));
-  --success-subtle: color-mix(in oklab, var(--success) 9%, var(--background));
+  --success-subtle: color-mix(in oklab, var(--success) 8%, var(--background)); /* 9% rendered at 4.49:1 */
   --warning-subtle: color-mix(in oklab, var(--warning) 11%, var(--background));
   --info-subtle: color-mix(in oklab, var(--info) 9%, var(--background));
 
