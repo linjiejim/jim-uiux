@@ -7,6 +7,7 @@ import { Button, IconButton } from "@/registry/jim/ui/button"
 import { DiscardDialog, useConfirm } from "@/registry/jim/ui/confirm-dialog"
 import { DataTable } from "@/registry/jim/ui/data-table"
 import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader } from "@/registry/jim/ui/drawer"
+import { useLastDefined } from "@/registry/jim/hooks/use-last-defined"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/registry/jim/ui/dropdown-menu"
 import { FilterBar, FilterBoolean, FilterSelect, SearchInput } from "@/registry/jim/ui/filter-bar"
 import { Input } from "@/registry/jim/ui/input"
@@ -285,8 +286,8 @@ type PanelState = { mode: "view" | "edit"; id: string } | { mode: "create" } | n
 const emptyForm = { name: "", owner: "林杰", status: "draft", budget: "" }
 
 function ProjectDrawer({
-  panel,
-  project,
+  panel: livePanel,
+  project: liveProject,
   onPanelChange,
   onDelete,
   onSaved,
@@ -297,6 +298,9 @@ function ProjectDrawer({
   onDelete: (p: Project) => void
   onSaved: (p: Project, isNew: boolean) => void
 }) {
+  // closing clears the selection; keep showing it until the drawer has slid out
+  const panel = useLastDefined(livePanel)
+  const project = useLastDefined(liveProject) ?? undefined
   const mode = panel?.mode
   const editing = mode === "edit" || mode === "create"
   const initial = React.useMemo(
@@ -347,7 +351,7 @@ function ProjectDrawer({
   const title = mode === "create" ? "新建项目" : project?.name
 
   return (
-    <Drawer open={!!panel && (mode === "create" || !!project)} onOpenChange={(o) => !o && close()} dirty={dirty && !saving}>
+    <Drawer open={!!livePanel && (livePanel.mode === "create" || !!liveProject)} onOpenChange={(o) => !o && close()} dirty={dirty && !saving}>
       {panel && (mode === "create" || project) && (
         <DrawerContent>
           <form className="contents" onSubmit={save} noValidate>

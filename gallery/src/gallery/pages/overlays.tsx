@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/registry/jim/ui/confirm-dialog"
 import { Dialog, DialogBody, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from "@/registry/jim/ui/dialog"
 import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerPager, DrawerTrigger, useListPaging } from "@/registry/jim/ui/drawer"
 import { cn } from "@/lib/utils"
+import { useLastDefined } from "@/registry/jim/hooks/use-last-defined"
 import { Field, FieldGroup } from "@/registry/jim/ui/field"
 import { Info } from "@/registry/jim/ui/info"
 import { Input, Textarea } from "@/registry/jim/ui/input"
@@ -577,7 +578,8 @@ function ListDetailDemo() {
   }, [])
   const items = [...INBOX].sort((a, b) => Number(read.has(a.id)) - Number(read.has(b.id)))
   const paging = useListPaging({ items: items.map((i) => i.id), current: open, onChange: show })
-  const cur = INBOX.find((i) => i.id === open)
+  // keep the last item while the drawer slides out
+  const cur = useLastDefined(INBOX.find((i) => i.id === open))
   return (
     <>
       <div className="w-full max-w-[560px] divide-y overflow-hidden rounded-lg border">

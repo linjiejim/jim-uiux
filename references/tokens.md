@@ -187,7 +187,8 @@
 | `--ease-drawer` | cubic-bezier(.32, .72, 0, 1) | 抽屉、底部弹层 |
 
 - 动画类：`animate-fade-in/out`、`pop-in/out`（弹框）、`drop-in/out`（菜单）、`slide-in-right` / `slide-out-right`（抽屉）、`slide-in-up` / `slide-out-down`（底部弹层）、`slide-in-left`（手机上的侧栏）。
-- 所有进出都淡入淡出；位移和缩放乘 `--motion`。`--motion` 在「减少动态效果」下变为 0，于是每一种都只剩淡入淡出（`gallery/src/tests/motion.test.ts` 守着这条）。
+- 位移和缩放乘 `--motion`，它在「减少动态效果」下变为 0，于是每一种进出都只剩淡入淡出（`gallery/src/tests/motion.test.ts` 守着这条）。弹框、菜单正常时也淡入；抽屉、底部弹层正常时实心滑动，不变透明。
+- 退出动画停在终点（`forwards`）：面板卸载晚一帧也不会闪回。
 - 没写曲线和时长的 `transition-*` 默认就是 `--duration-fast` + `--ease-out`，不是 Tailwind 的 150ms。
 - 两处用第三方自己的时长：Toast（Sonner，进出约 400ms；减少动态效果下没有动画）和 `BottomSheet`（vaul 的拖拽物理，500ms）。
 - 按下缩放 .97 只在触屏上生效。

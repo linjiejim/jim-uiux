@@ -904,6 +904,17 @@
       ]
     },
     {
+      "name": "use-last-defined",
+      "type": "registry:hook",
+      "description": "Keeps an overlay's content on screen while it animates out: returns `value`, or the last value",
+      "files": [
+        {
+          "path": "src/registry/jim/hooks/use-last-defined.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "use-return-focus",
       "type": "registry:hook",
       "description": "Focus return for overlays opened from code (a row's Enter, a menu item, useConfirm): closing gives focus back.",
@@ -1054,6 +1065,7 @@
         "@jim/use-debounced-value",
         "@jim/use-delayed-flag",
         "@jim/use-guarded-open",
+        "@jim/use-last-defined",
         "@jim/use-return-focus",
         "@jim/appearance",
         "@jim/categorical",

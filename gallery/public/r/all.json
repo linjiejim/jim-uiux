@@ -50,6 +50,7 @@
     "@jim/use-debounced-value",
     "@jim/use-delayed-flag",
     "@jim/use-guarded-open",
+    "@jim/use-last-defined",
     "@jim/use-return-focus",
     "@jim/appearance",
     "@jim/categorical",
