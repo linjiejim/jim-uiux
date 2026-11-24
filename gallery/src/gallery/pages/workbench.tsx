@@ -8,6 +8,7 @@ import { DetailList, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHead
 import { Input } from "@/registry/jim/ui/input"
 import { Tooltip } from "@/registry/jim/ui/tooltip"
 import { fmtDate, fmtMoney, projects, statusMeta, type Project } from "../data"
+import { t } from "../i18n"
 
 /*
  * A workbench shell in miniature: rail 72 · secondary column 264 · main · inspector.
@@ -15,12 +16,13 @@ import { fmtDate, fmtMoney, projects, statusMeta, type Project } from "../data"
  * the inspector still docks or floats by the viewport (≥ 1440 docks).
  */
 const places = [
-  { key: "chat", label: "对话", icon: <MessageSquare /> },
-  { key: "projects", label: "项目", icon: <FolderKanban /> },
-  { key: "docs", label: "文档", icon: <FileText /> },
-  { key: "tables", label: "表格", icon: <Table2 /> },
-  { key: "schedule", label: "日程", icon: <CalendarDays /> },
+  { key: "chat", label: t("对话", "Chat"), icon: <MessageSquare /> },
+  { key: "projects", label: t("项目", "Projects"), icon: <FolderKanban /> },
+  { key: "docs", label: t("文档", "Docs"), icon: <FileText /> },
+  { key: "tables", label: t("表格", "Tables"), icon: <Table2 /> },
+  { key: "schedule", label: t("日程", "Calendar"), icon: <CalendarDays /> },
 ]
+const groups = t(["全部项目", "我负责的", "本周更新", "已归档"], ["All projects", "Owned by me", "Updated this week", "Archived"])
 const rows = projects.slice(0, 14)
 
 export function WorkbenchPattern() {
@@ -34,7 +36,7 @@ export function WorkbenchPattern() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex h-full min-h-0">
         {/* rail 72 */}
-        <nav aria-label="地点" className="flex w-[72px] shrink-0 flex-col items-center gap-1 border-r bg-sunken py-3 max-[760px]:hidden">
+        <nav aria-label={t("地点", "Places")} className="flex w-[72px] shrink-0 flex-col items-center gap-1 border-r bg-sunken py-3 max-[760px]:hidden">
           {places.map((p) => (
             <Tooltip key={p.key} content={p.label} side="right">
               <button
@@ -53,10 +55,10 @@ export function WorkbenchPattern() {
         </nav>
 
         {/* secondary column 264, gone below 1100 */}
-        <aside aria-label="项目分组" className="flex w-[264px] shrink-0 flex-col border-r max-[1100px]:hidden">
-          <div className="flex h-[52px] shrink-0 items-center border-b px-4 text-heading font-semibold">项目</div>
+        <aside aria-label={t("项目分组", "Project groups")} className="flex w-[264px] shrink-0 flex-col border-r max-[1100px]:hidden">
+          <div className="flex h-[52px] shrink-0 items-center border-b px-4 text-heading font-semibold">{t("项目", "Projects")}</div>
           <ul className="flex flex-col gap-0.5 p-2">
-            {["全部项目", "我负责的", "本周更新", "已归档"].map((g, i) => (
+            {groups.map((g, i) => (
               <li key={g}>
                 <button
                   type="button"
@@ -75,10 +77,10 @@ export function WorkbenchPattern() {
         {/* main */}
         <section className="flex min-w-0 flex-1 flex-col">
           <header className="flex h-[52px] shrink-0 items-center gap-2 border-b px-5">
-            <h1 className="min-w-0 flex-1 truncate text-heading font-semibold">{focused ? focused.name : "全部项目"}</h1>
+            <h1 className="min-w-0 flex-1 truncate text-heading font-semibold">{focused ? focused.name : groups[0]}</h1>
             {focused && (
               <Button size="sm" variant="ghost" onClick={() => setMain(null)}>
-                返回列表
+                {t("返回列表", "Back to list")}
               </Button>
             )}
           </header>
@@ -154,15 +156,15 @@ function Inspector({
     <>
       <DrawerHeader
         title={name}
-        description={`${p.id} · 第 ${depth} 层`}
+        description={t(`${p.id} · 第 ${depth} 层`, `${p.id} · level ${depth}`)}
         onBack={depth > 1 ? onBack : undefined}
         actions={
           !editing && (
             <>
-              <IconButton label="编辑" size="icon-sm" onClick={() => setEditing(true)}>
+              <IconButton label={t("编辑", "Edit")} size="icon-sm" onClick={() => setEditing(true)}>
                 <Pencil />
               </IconButton>
-              <IconButton label="在主区打开" size="icon-sm" onClick={onPromote}>
+              <IconButton label={t("在主区打开", "Open in main area")} size="icon-sm" onClick={onPromote}>
                 <Maximize2 />
               </IconButton>
             </>
@@ -174,20 +176,20 @@ function Inspector({
           editing={editing}
           items={[
             {
-              label: "名称",
+              label: t("名称", "Name"),
               value: name,
               edit: <Input value={name} onChange={(e) => setName(e.target.value)} autoFocus />,
               required: true,
             },
-            { label: "状态", value: <Badge tone={statusMeta[p.status].tone}>{statusMeta[p.status].label}</Badge> },
-            { label: "负责人", value: p.owner },
-            { label: "预算", value: <span className="tabular">{fmtMoney(p.budget)}</span> },
-            { label: "更新", value: fmtDate(p.updatedAt) },
+            { label: t("状态", "Status"), value: <Badge tone={statusMeta[p.status].tone}>{statusMeta[p.status].label}</Badge> },
+            { label: t("负责人", "Owner"), value: p.owner },
+            { label: t("预算", "Budget"), value: <span className="tabular">{fmtMoney(p.budget)}</span> },
+            { label: t("更新", "Updated"), value: fmtDate(p.updatedAt) },
           ]}
         />
         {!editing && related.length > 0 && (
           <div className="mt-6">
-            <h3 className="mb-1 text-small font-medium text-muted-foreground">{p.owner} 的其他项目</h3>
+            <h3 className="mb-1 text-small font-medium text-muted-foreground">{t(`${p.owner} 的其他项目`, `More from ${p.owner}`)}</h3>
             <ul>
               {related.map((r) => (
                 <li key={r.id}>
@@ -212,10 +214,10 @@ function Inspector({
               setEditing(false)
             }}
           >
-            取消
+            {t("取消", "Cancel")}
           </Button>
           <Button variant="primary" disabled={!name.trim()} onClick={() => setEditing(false)}>
-            保存修改
+            {t("保存修改", "Save changes")}
           </Button>
         </DrawerFooter>
       )}
@@ -228,10 +230,10 @@ function ProjectFields({ p }: { p: Project }) {
     <DetailList
       className="max-w-[560px]"
       items={[
-        { label: "状态", value: <Badge tone={statusMeta[p.status].tone}>{statusMeta[p.status].label}</Badge> },
-        { label: "负责人", value: p.owner },
-        { label: "预算", value: <span className="tabular">{fmtMoney(p.budget)}</span> },
-        { label: "进度", value: <span className="tabular">{p.progress}%</span> },
+        { label: t("状态", "Status"), value: <Badge tone={statusMeta[p.status].tone}>{statusMeta[p.status].label}</Badge> },
+        { label: t("负责人", "Owner"), value: p.owner },
+        { label: t("预算", "Budget"), value: <span className="tabular">{fmtMoney(p.budget)}</span> },
+        { label: t("进度", "Progress"), value: <span className="tabular">{p.progress}%</span> },
       ]}
     />
   )
