@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.0 · 2026-11-24
+
+格式化工具、更严的守卫、英文文案、多选和原位改名；gallery 全站中英文、更精简，并加上渲染级测试（理由见 `references/decisions.md`「1.10.0」）。
+
+- 新 `lib/format.ts`：`formatDate`（今年「10月31日」，跨年带年份）、`formatRelative`（「刚刚」「3 分钟前」「昨天 09:00」，只用在动态流里）、`formatMoney`（「¥128,000」）、`formatNumber`、`formatPercent`、`formatBytes`、`formatTime`。语言跟着 `strings` 的 `locale`。
+- kit 自带英文文案：`configureStrings(en)`。`Strings` 新增 `locale` 和相对时间的几句话；上传失败的原因不再用全角冒号硬拼。
+- `Combobox` 新增 `multiple`：已选项是标签，放不下时收成「+N」；重新打开时已选项排在最前；支持异步搜索（加载中、没有结果、失败重试）和新建选项；Backspace 删掉最后一个。
+- 新组件 `InlineRename`：名字就在眼前时原位改名。回车或点开保存，Esc 取消（不会顺带关掉外面的抽屉或弹框）；中文输入法组字时的回车不保存；支持校验、异步保存和从菜单发起。`patterns/overlays.md` 写了什么时候用它、什么时候仍用弹框。
+- 守卫新增五条：比 600 更粗的字重、10 以上的 z-index 没用层级 token（`z-[1]`–`z-[9]` 留给组件内部）、写死的时长和曲线、`dark:` 颜色覆盖、「确定」「提交」「OK」这类按钮文案。
+- gallery：
+  - 全站中文 / 英文：侧栏底部的「EN / 中」切换，也可以用 `?lang=en`；样例数据、日期和数字一起换。
+  - 侧栏重排成四组、标签缩短；列表的表格和网格合成一项，用页头的切换进入。
+  - 每页先展示，背景、理由、源码路径收进标题旁的 ⓘ；文案大幅精简。
+  - 新加多选和原位改名的演示。
+- 修复（渲染级测试查出来的）：对比度守卫改按屏幕实际显示的 8 位颜色计算，浅色的 `--success-subtle` 因此从 9% 降到 8%（「已完成」徽章原来只有 4.49:1）；`Button` 加载中不再丢掉按钮名字（以前文字用 `invisible` 藏起来，读屏读不到）。
+- 渲染级测试：`pnpm e2e`（Playwright + axe）在每个页面 × 浅色 / 深色 / 手机 / 增强对比度下查无障碍问题，加焦点归还、翻页守卫、减少动效、语言切换的交互检查和几张截图；PR 上的 CI 会跑。`pnpm e2e:baselines` 在 Docker 里重做截图基线。
+- 升级时注意：重新装 `@jim/guards` 后，项目里的 `font-bold`、`z-50` 这类裸 z-index、`duration-300` 这类写死的时长、`dark:` 颜色覆盖、「确定」按钮会让守卫失败；改成 token，或者在那一行写 `design-allow: <原因>`。要英文界面的项目启动时调用 `configureStrings(en)`。
+
 ## 1.9.0 · 2026-11-24
 
 动效修好了，可配置的取值补成 token，组件的一批正确性问题修掉（理由见 `references/decisions.md`「1.9.0」）。默认外观不变。

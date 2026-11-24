@@ -12,6 +12,8 @@ import { Skeleton } from "@/registry/jim/ui/skeleton"
 import { StateView } from "@/registry/jim/ui/state"
 import { UploadQueuePanel, UploadRejected, useUploadQueue } from "@/registry/jim/ui/upload-queue"
 import { wait } from "../data"
+import { t } from "../i18n"
+import { ListViewSwitch } from "./crud"
 
 /* ---------- a fake media library ---------- */
 
@@ -26,19 +28,20 @@ type Asset = {
 }
 
 const tagList: { value: string; label: string; color: Categorical }[] = [
-  { value: "product", label: "产品图", color: "blue" },
-  { value: "lifestyle", label: "场景", color: "green" },
-  { value: "banner", label: "横幅", color: "orange" },
-  { value: "packaging", label: "包装", color: "purple" },
-  { value: "social", label: "社媒", color: "pink" },
-  { value: "draft", label: "草稿", color: "gray" },
+  { value: "product", label: t("产品图", "Product"), color: "blue" },
+  { value: "lifestyle", label: t("场景", "Lifestyle"), color: "green" },
+  { value: "banner", label: t("横幅", "Banner"), color: "orange" },
+  { value: "packaging", label: t("包装", "Packaging"), color: "purple" },
+  { value: "social", label: t("社媒", "Social"), color: "pink" },
+  { value: "draft", label: t("草稿", "Draft"), color: "gray" },
 ]
-const owners = ["林杰", "陈曦", "王蕾", "张弛"]
+const owners = t(["林杰", "陈曦", "王蕾", "张弛"], ["Jie Lin", "Xi Chen", "Lei Wang", "Chi Zhang"])
+const plants = t(["罗勒", "薄荷", "番茄", "生菜", "草莓", "辣椒"], ["basil", "mint", "tomato", "lettuce", "strawberry", "chili"])
 const orientations = ["landscape", "portrait", "square"] as const
 
 const library: Asset[] = Array.from({ length: 150 }, (_, i) => ({
   id: `A-${2001 + i}`,
-  name: `${["罗勒", "薄荷", "番茄", "生菜", "草莓", "辣椒"][i % 6]}-${String(i + 1).padStart(3, "0")}.${i % 7 === 0 ? "mp4" : "jpg"}`,
+  name: `${plants[i % 6]}-${String(i + 1).padStart(3, "0")}.${i % 7 === 0 ? "mp4" : "jpg"}`,
   kind: i % 7 === 0 ? "video" : "image",
   orientation: orientations[(i * 5) % 3],
   owner: owners[(i * 3) % owners.length],
@@ -49,26 +52,26 @@ const library: Asset[] = Array.from({ length: 150 }, (_, i) => ({
 const facets: Facet[] = [
   {
     key: "kind",
-    label: "类型",
+    label: t("类型", "Type"),
     kind: "single",
     options: [
-      { value: "image", label: "图片" },
-      { value: "video", label: "视频" },
+      { value: "image", label: t("图片", "Image") },
+      { value: "video", label: t("视频", "Video") },
     ],
   },
-  { key: "tag", label: "标签", kind: "multi", options: tagList.map(({ value, label }) => ({ value, label })) },
-  { key: "owner", label: "上传者", kind: "single", options: owners.map((o) => ({ value: o, label: o })) },
+  { key: "tag", label: t("标签", "Tag"), kind: "multi", options: tagList.map(({ value, label }) => ({ value, label })) },
+  { key: "owner", label: t("上传者", "Uploaded by"), kind: "single", options: owners.map((o) => ({ value: o, label: o })) },
   {
     key: "orientation",
-    label: "方向",
+    label: t("方向", "Orientation"),
     kind: "single",
     options: [
-      { value: "landscape", label: "横向" },
-      { value: "portrait", label: "竖向" },
-      { value: "square", label: "方形" },
+      { value: "landscape", label: t("横向", "Landscape") },
+      { value: "portrait", label: t("竖向", "Portrait") },
+      { value: "square", label: t("方形", "Square") },
     ],
   },
-  { key: "ai", label: "已识别", kind: "boolean" },
+  { key: "ai", label: t("已识别", "AI tagged"), kind: "boolean" },
 ]
 
 const PAGE = 24
@@ -78,7 +81,7 @@ async function fetchAssets(q: string, f: FacetValue, offset: number) {
   const has = (key: string, v: string) => !f[key]?.length || f[key]!.includes(v)
   const rows = library.filter(
     (a) =>
-      (!q || a.name.includes(q)) &&
+      (!q || a.name.toLowerCase().includes(q.toLowerCase())) &&
       has("kind", a.kind) &&
       has("owner", a.owner) &&
       has("orientation", a.orientation) &&
@@ -147,19 +150,23 @@ export function MediaGridPattern() {
   return (
     <Page width="full">
       <PageHeader
-        title="素材库"
-        info="分面筛选写进地址栏；媒体网格用无限滚动；上传在右下角排队。"
+        title={t("素材库", "Media library")}
+        info={t(
+          "筛选写进地址栏，可以分享；往下滚自动加载更多；上传在右下角排队。",
+          "Filters live in the URL, so a link keeps them. Scrolling loads more. Uploads queue in the bottom-right corner.",
+        )}
         actions={
           <>
-            <Button variant="primary" onClick={() => queue.add(fakeFiles())}>
+            <ListViewSwitch value="grid" />
+            <Button variant="primary" className="ml-2" onClick={() => queue.add(fakeFiles())}>
               <Upload />
-              上传素材
+              {t("上传素材", "Upload media")}
             </Button>
           </>
         }
       />
       <FilterBar active={filtered} onClear={() => (setQ(""), setFilters({}))}>
-        <SearchInput value={q} onValueChange={setQ} placeholder="搜索文件名" />
+        <SearchInput value={q} onValueChange={setQ} placeholder={t("搜索文件名", "Search file name")} />
         <FacetFilter facets={facets} value={filters} onValueChange={setFilters} />
       </FilterBar>
 
@@ -171,17 +178,17 @@ export function MediaGridPattern() {
         ) : (
           <StateView
             kind="empty"
-            title="还没有素材"
+            title={t("还没有素材", "No media yet")}
             action={
               <Button variant="primary" size="sm">
-                上传素材
+                {t("上传素材", "Upload media")}
               </Button>
             }
           />
         )
       ) : (
         <>
-          <p className="mb-3 h-5 text-small text-muted-foreground tabular">{state !== "loading" && `共 ${total} 个`}</p>
+          <p className="mb-3 h-5 text-small text-muted-foreground tabular">{state !== "loading" && t(`共 ${total} 个`, total === 1 ? "1 file" : `${total} files`)}</p>
           <ul className="grid grid-cols-[repeat(auto-fill,minmax(168px,1fr))] gap-4">
             {items.map((a) => (
               <Tile key={a.id} a={a} />
@@ -198,7 +205,7 @@ export function MediaGridPattern() {
           {state === "error" && items.length > 0 && (
             <div className="py-6 text-center">
               <Button size="sm" onClick={() => setState("idle")}>
-                加载失败，重试
+                {t("加载失败，重试", "Couldn't load. Retry")}
               </Button>
             </div>
           )}
@@ -237,17 +244,22 @@ function Tile({ a }: { a: Asset }) {
 
 let attempt = 0
 async function fakeUpload(file: File, report: (f: number) => void) {
-  if (file.size > 20 * 1024 * 1024) throw new UploadRejected("文件超过 20 MB")
+  if (file.size > 20 * 1024 * 1024) throw new UploadRejected(t("文件超过 20 MB", "File is over 20 MB"))
   const n = ++attempt
   for (let p = 0; p <= 1; p += 0.1 + Math.random() * 0.15) {
     report(p)
     await wait(180)
-    if (n % 6 === 4 && p > 0.5) throw new Error("网络中断")
+    if (n % 6 === 4 && p > 0.5) throw new Error(t("网络中断", "Connection lost"))
   }
-  return file.name.startsWith("罗勒-001") ? ("exists" as const) : ("added" as const)
+  return file.name === dupName ? ("exists" as const) : ("added" as const)
 }
 
+// the first one is already in the library
+const dupName = `${plants[0]}-001.jpg`
 function fakeFiles() {
-  const names = ["罗勒-001.jpg", "薄荷-新品.jpg", "番茄-横幅.png", "生菜-场景.jpg", "草莓-包装.jpg", "活动视频.mp4"]
+  const names = [
+    dupName,
+    ...t(["薄荷-新品.jpg", "番茄-横幅.png", "生菜-场景.jpg", "草莓-包装.jpg", "活动视频.mp4"], ["mint-new.jpg", "tomato-banner.png", "lettuce-scene.jpg", "strawberry-box.jpg", "launch-video.mp4"]),
+  ]
   return names.map((n, i) => new File([new Uint8Array(i === 5 ? 21 * 1024 * 1024 : 1024)], n))
 }

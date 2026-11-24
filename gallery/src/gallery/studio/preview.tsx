@@ -14,7 +14,9 @@ import { Segmented } from "@/registry/jim/ui/segmented"
 import { Slider } from "@/registry/jim/ui/slider"
 import { SwatchPicker, categoricalOptions } from "@/registry/jim/ui/swatch-picker"
 import { Switch } from "@/registry/jim/ui/switch"
+import { s } from "@/registry/jim/lib/strings"
 import { fmtMoney, projects, statusMeta } from "../data"
+import { t } from "../i18n"
 
 /*
  * The studio's preview: one screen that puts every token role next to its neighbours, so a
@@ -22,6 +24,7 @@ import { fmtMoney, projects, statusMeta } from "../data"
  * the floating layers (menu, toast, tooltip) are drawn in place, open, so they can be compared.
  */
 const rows = projects.slice(0, 5)
+const sample = projects[0].name
 
 export function StudioPreview() {
   const [view, setView] = React.useState("list")
@@ -32,39 +35,39 @@ export function StudioPreview() {
     <div className="flex flex-col gap-4">
       <AppFrame view={view} setView={setView} />
       <div className="grid gap-4 xl:grid-cols-2">
-        <Panel title="表单">
+        <Panel title={t("表单", "Form")}>
           <div className="flex flex-col gap-4">
-            <Field label="项目名称" hint="2–40 个字">
-              <Input defaultValue="官网改版" />
+            <Field label={t("项目名称", "Project name")} hint={t("2–40 个字", "2–40 characters")}>
+              <Input defaultValue={sample} />
             </Field>
-            <Field label="邮箱" error="邮箱格式不对">
+            <Field label={t("邮箱", "Email")} error={t("邮箱格式不对", "Enter a valid email")}>
               <Input defaultValue="jim@" />
             </Field>
-            <Field label="标签颜色">
+            <Field label={t("标签颜色", "Tag color")}>
               <SwatchPicker value={tag} onValueChange={setTag} options={categoricalOptions()} />
             </Field>
-            <Field label="提醒阈值">
+            <Field label={t("提醒阈值", "Alert threshold")}>
               <Slider value={level} onValueChange={setLevel} min={0} max={100} step={5} format={(v) => `${v}%`} />
             </Field>
             <div className="flex items-center justify-between gap-3">
               <label htmlFor="pv-notify" className="text-body">
-                有人提到我时通知
+                {t("有人提到我时通知", "Notify me when mentioned")}
               </label>
               <Switch id="pv-notify" checked={notify} onCheckedChange={setNotify} />
             </div>
             <label className="flex items-center gap-2 text-body">
               <Checkbox defaultChecked />
-              同时发到邮箱
+              {t("同时发到邮箱", "Also send by email")}
             </label>
             <div className="flex justify-end gap-2">
-              <Button variant="ghost">取消</Button>
-              <Button variant="primary">保存修改</Button>
+              <Button variant="ghost">{s().cancel}</Button>
+              <Button variant="primary">{t("保存修改", "Save changes")}</Button>
             </div>
           </div>
         </Panel>
 
         <div className="flex flex-col gap-4">
-          <Panel title="反馈">
+          <Panel title={t("反馈", "Feedback")}>
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap gap-1.5">
                 {Object.values(statusMeta).map((m) => (
@@ -72,25 +75,25 @@ export function StudioPreview() {
                     {m.label}
                   </Badge>
                 ))}
-                <Badge tone="outline">外部</Badge>
+                <Badge tone="outline">{t("外部", "External")}</Badge>
               </div>
-              <Callout tone="info">新成员加入后会收到一封邀请邮件。</Callout>
-              <Callout tone="warning">密钥只显示这一次，请现在复制。</Callout>
-              <Callout tone="danger">删除失败：网络中断，请重试。</Callout>
+              <Callout tone="info">{t("新成员加入后会收到一封邀请邮件。", "New members get an invite by email.")}</Callout>
+              <Callout tone="warning">{t("密钥只显示这一次，请现在复制。", "This key is shown only once. Copy it now.")}</Callout>
+              <Callout tone="danger">{t("删除失败：网络中断，请重试。", "Couldn't delete: connection lost. Try again.")}</Callout>
               <div className="flex items-center gap-3">
-                <Progress value={312} max={1204} aria-label="导出进度" className="flex-1" />
+                <Progress value={312} max={1204} aria-label={t("导出进度", "Export progress")} className="flex-1" />
                 <span className="tabular text-small text-muted-foreground">312 / 1,204</span>
               </div>
             </div>
           </Panel>
 
-          <Panel title="浮层" sunken>
+          <Panel title={t("浮层", "Overlays")} sunken>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-lg bg-popover p-1 shadow-popover">
                 {[
-                  ["重命名", "R"],
-                  ["复制链接", "⌘C"],
-                  ["移到…", ""],
+                  [t("重命名", "Rename"), "R"],
+                  [t("复制链接", "Copy link"), "⌘C"],
+                  [t("移到…", "Move to…"), ""],
                 ].map(([label, key], i) => (
                   <div
                     key={label}
@@ -101,17 +104,17 @@ export function StudioPreview() {
                   </div>
                 ))}
                 <div className="my-1 h-px bg-border" />
-                <div className="flex h-(--control-md) items-center rounded-sm px-2 text-body text-destructive">删除项目</div>
+                <div className="flex h-(--control-md) items-center rounded-sm px-2 text-body text-destructive">{t("删除项目", "Delete project")}</div>
               </div>
               <div className="flex flex-col gap-3">
                 <div className="flex items-start gap-2 rounded-lg bg-popover p-3 text-small shadow-overlay">
                   <span className="mt-0.5 size-2 shrink-0 rounded-full bg-success" />
-                  <span className="flex-1">已归档「官网改版」</span>
+                  <span className="flex-1">{t(`已归档「${sample}」`, `Archived “${sample}”`)}</span>
                   <button type="button" className="font-medium text-foreground underline-offset-4 hover:underline">
-                    撤销
+                    {s().undo}
                   </button>
                 </div>
-                <span className="self-start rounded-sm bg-inverse px-2 py-1 text-caption text-inverse-foreground">导出为 CSV</span>
+                <span className="self-start rounded-sm bg-inverse px-2 py-1 text-caption text-inverse-foreground">{t("导出为 CSV", "Export as CSV")}</span>
                 <div className="flex flex-wrap gap-1.5">
                   {CHART_SERIES.slice(0, 5).map((c) => (
                     <span key={c} className={cn("rounded-xs px-1.5 text-small font-medium", catClass(c).fill, catClass(c).fg)}>
@@ -143,13 +146,13 @@ function AppFrame({ view, setView }: { view: string; setView: (v: string) => voi
   return (
     <div className="flex h-[400px] overflow-hidden rounded-lg border bg-background max-sm:h-auto">
       <aside className="flex w-48 shrink-0 flex-col gap-px border-r bg-sunken p-2 max-md:hidden">
-        <div className="mb-2 flex h-8 items-center px-2 text-body font-semibold">苗圃</div>
+        <div className="mb-2 flex h-8 items-center px-2 text-body font-semibold">{t("苗圃", "Nursery")}</div>
         {[
-          [<Home key="i" />, "首页", false],
-          [<Inbox key="i" />, "收件箱", false],
-          [<Folder key="i" />, "项目", true],
-          [<Bell key="i" />, "通知", false],
-          [<Settings key="i" />, "设置", false],
+          [<Home key="i" />, t("首页", "Home"), false],
+          [<Inbox key="i" />, t("收件箱", "Inbox"), false],
+          [<Folder key="i" />, t("项目", "Projects"), true],
+          [<Bell key="i" />, s().notifications, false],
+          [<Settings key="i" />, t("设置", "Settings"), false],
         ].map(([icon, label, active]) => (
           <div
             key={label as string}
@@ -162,50 +165,51 @@ function AppFrame({ view, setView }: { view: string; setView: (v: string) => voi
             {label}
           </div>
         ))}
-        <div className="mt-auto px-2 text-caption text-faint-foreground">v2.4 · 已同步</div>
+        <div className="mt-auto px-2 text-caption text-faint-foreground">v2.4 · {t("已同步", "Synced")}</div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex items-center gap-2 px-5 pb-3 pt-4">
-          <h2 className="flex-1 truncate text-title font-semibold">项目</h2>
-          <IconButton label="更多操作" size="icon-sm">
+          <h2 className="flex-1 truncate text-title font-semibold">{t("项目", "Projects")}</h2>
+          <IconButton label={s().rowActions} size="icon-sm">
             <MoreHorizontal />
           </IconButton>
           <Button variant="primary" size="sm">
             <Plus />
-            新建项目
+            {t("新建项目", "New project")}
           </Button>
         </div>
         <div className="flex flex-wrap items-center gap-2 px-5 pb-3">
           <div className="relative w-52 max-sm:w-full">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-faint-foreground" />
-            <Input placeholder="搜索名称或编号" className="h-(--control-sm) pl-8 text-small" />
+            <Input placeholder={t("搜索名称或编号", "Search name or ID")} className="h-(--control-sm) pl-8 text-small" />
           </div>
           <span className="inline-flex h-(--control-sm) items-center gap-1 rounded-md bg-selected px-2.5 text-small font-medium">
-            状态：进行中 <ChevronDown className="size-3.5 text-faint-foreground" />
+            {t("状态：", "Status: ")}
+            {statusMeta.active.label} <ChevronDown className="size-3.5 text-faint-foreground" />
           </span>
           <span className="inline-flex h-(--control-sm) items-center gap-1 rounded-md border border-dashed border-input px-2.5 text-small text-muted-foreground">
-            负责人 <ChevronDown className="size-3.5" />
+            {t("负责人", "Owner")} <ChevronDown className="size-3.5" />
           </span>
           <Segmented
             size="sm"
             className="ml-auto max-sm:ml-0"
-            aria-label="视图"
+            aria-label={t("视图", "View")}
             value={view}
             onValueChange={setView}
             options={[
-              { value: "list", label: "列表" },
-              { value: "board", label: "看板" },
+              { value: "list", label: t("列表", "List") },
+              { value: "board", label: t("看板", "Board") },
             ]}
           />
         </div>
-        <div className="min-h-0 flex-1 overflow-auto border-t">
+        <div className="min-h-0 flex-1 overflow-auto border-t" tabIndex={0} role="region" aria-label={t("项目列表", "Projects")}>
           <table className="w-full text-body">
             <thead className="sticky top-0 bg-background">
               <tr className="h-(--row-head-h) border-b text-left text-small font-medium text-muted-foreground">
-                <th className="px-5 font-medium">名称</th>
-                <th className="px-3 font-medium max-sm:hidden">状态</th>
-                <th className="px-3 font-medium max-md:hidden">负责人</th>
-                <th className="px-5 text-right font-medium">预算</th>
+                <th className="px-5 font-medium">{t("名称", "Name")}</th>
+                <th className="px-3 font-medium max-sm:hidden">{t("状态", "Status")}</th>
+                <th className="px-3 font-medium max-md:hidden">{t("负责人", "Owner")}</th>
+                <th className="px-5 text-right font-medium">{t("预算", "Budget")}</th>
               </tr>
             </thead>
             <tbody>
@@ -228,7 +232,7 @@ function AppFrame({ view, setView }: { view: string; setView: (v: string) => voi
             </tbody>
           </table>
           <div className="flex items-center justify-between px-5 py-2.5 text-small text-faint-foreground">
-            <span>共 57 条</span>
+            <span>{s().totalCount(projects.length)}</span>
             <span className="tabular">1 / 3</span>
           </div>
         </div>

@@ -1,7 +1,7 @@
 {
   "name": "jim-uiux-gallery",
   "private": true,
-  "version": "1.9.0",
+  "version": "1.10.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,9 @@
     "registry:build": "node scripts/gen-registry.mjs && shadcn build",
     "typecheck": "tsc -b",
     "consumers": "node scripts/consumers.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "e2e:baselines": "./scripts/e2e-baselines.sh"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",
@@ -26,6 +28,8 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/culori": "^4.0.1",
     "@types/node": "^26.6.6",

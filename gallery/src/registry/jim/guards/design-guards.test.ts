@@ -1,10 +1,10 @@
 /**
- * Design guards: values come from the theme, overlays from the kit.
- * Fix the code, or add `design-allow: <reason>` on the line.
+ * Design guards: values come from the theme, overlays from the kit, copy says what it does.
+ * Fix the code, or add `design-allow: <reason>` on the line (or the line above).
  */
 import { describe, expect, it } from "vitest"
 import path from "node:path"
-import { isCommentLine, loadConfig, report, scan, sourceFiles } from "./guard-lib"
+import { isCommentLine, loadConfig, report, rules, scan, scanRules, sourceFiles } from "./guard-lib"
 
 const cfg = loadConfig()
 const files = sourceFiles(cfg)
@@ -48,6 +48,31 @@ describe("design guards", () => {
     const handRolled = scan(outsideKit, /\bfixed\s+inset-0\b/)
     const hits = [...native, ...winNative, ...handRolled]
     expect(hits, `Use Dialog / Drawer / ConfirmDialog / notify from the kit:\n${report(hits)}`).toEqual([])
+  })
+
+  it("keeps weights at 600 or lighter", () => {
+    const hits = scanRules(files, rules.weight)
+    expect(hits, `Heavier than font-semibold — the type scale stops at 600:\n${report(hits)}`).toEqual([])
+  })
+
+  it("stacks on the layer tokens", () => {
+    const hits = scanRules(files, rules.layer)
+    expect(hits, `z-index 10+ — use z-(--z-sticky | --z-float | --z-overlay | --z-toast); z-[1]–z-[9] for order inside one component:\n${report(hits)}`).toEqual([])
+  })
+
+  it("takes durations and curves from the motion tokens", () => {
+    const hits = scanRules(files, rules.motion)
+    expect(hits, `Literal duration or curve — use duration-(--duration-*) and ease-out / ease-in / ease-drawer:\n${report(hits)}`).toEqual([])
+  })
+
+  it("adds no dark: colour overrides", () => {
+    const hits = scanRules(files, rules.darkColour)
+    expect(hits, `dark: colour override — the semantic tokens already change in dark mode:\n${report(hits)}`).toEqual([])
+  })
+
+  it("labels buttons with what they do", () => {
+    const hits = scanRules(files, rules.vagueLabel)
+    expect(hits, `Vague button label — use verb + object (「删除项目」「保存修改」):\n${report(hits)}`).toEqual([])
   })
 
   it("uses no emoji as icons", () => {

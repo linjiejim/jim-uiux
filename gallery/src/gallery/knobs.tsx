@@ -4,6 +4,7 @@ import { Button } from "@/registry/jim/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/registry/jim/ui/popover"
 import { Segmented } from "@/registry/jim/ui/segmented"
 import { SwatchPicker } from "@/registry/jim/ui/swatch-picker"
+import { t } from "./i18n"
 import { ACCENT_LABELS, NEUTRAL_LABELS } from "./studio/meta"
 import { ACCENT_PRESETS, NEUTRAL_PRESETS, resetStudio, setStudio, useStudio } from "./studio/store"
 import { accentSwatch, neutralSwatch } from "./studio/swatches"
@@ -23,29 +24,29 @@ export function ThemeKnobs() {
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground">
           <Palette />
-          主题与旋钮
-          {!isDefault(state) && <span aria-label="已自定义" className="ml-auto size-1.5 rounded-full bg-primary" />}
+          {t("主题与旋钮", "Theme")}
+          {!isDefault(state) && <span aria-label={t("已自定义", "Customized")} className="ml-auto size-1.5 rounded-full bg-primary" />}
         </Button>
       </PopoverTrigger>
       <PopoverContent side="top" className="w-80">
         <div className="flex flex-col gap-4">
-          <Knob label="外观">
+          <Knob label={t("外观", "Appearance")}>
             <Segmented<Appearance>
               size="sm"
-              aria-label="外观"
+              aria-label={t("外观", "Appearance")}
               value={preference}
               onValueChange={setAppearance}
               options={[
-                { value: "system", label: "跟随系统" },
-                { value: "light", label: "浅色" },
-                { value: "dark", label: "深色" },
+                { value: "system", label: t("跟随系统", "System") },
+                { value: "light", label: t("浅色", "Light") },
+                { value: "dark", label: t("深色", "Dark") },
               ]}
             />
           </Knob>
-          <Knob label="中性色">
+          <Knob label={t("中性色", "Neutral")}>
             <SwatchPicker
               size="sm"
-              aria-label="中性色"
+              aria-label={t("中性色", "Neutral")}
               value={state.neutral || "gray"}
               onValueChange={(v) => setStudio({ neutral: v === "gray" ? "" : v })}
               options={[
@@ -57,10 +58,10 @@ export function ThemeKnobs() {
               ]}
             />
           </Knob>
-          <Knob label="强调色">
+          <Knob label={t("强调色", "Accent")}>
             <SwatchPicker
               size="sm"
-              aria-label="强调色"
+              aria-label={t("强调色", "Accent")}
               value={state.accent || "ink"}
               onValueChange={(v) => setStudio({ accent: v === "ink" ? "" : v })}
               options={[
@@ -72,15 +73,15 @@ export function ThemeKnobs() {
               ]}
             />
           </Knob>
-          <Knob label="密度">
+          <Knob label={t("密度", "Density")}>
             <Segmented
               size="sm"
-              aria-label="密度"
+              aria-label={t("密度", "Density")}
               value={state.density || "comfortable"}
               onValueChange={(v) => setStudio({ density: v === "compact" ? "compact" : "" })}
               options={[
-                { value: "comfortable", label: "舒适" },
-                { value: "compact", label: "紧凑" },
+                { value: "comfortable", label: t("舒适", "Comfortable") },
+                { value: "compact", label: t("紧凑", "Compact") },
               ]}
             />
           </Knob>
@@ -88,11 +89,11 @@ export function ThemeKnobs() {
             <Button asChild variant="secondary" size="sm">
               <a href="#/studio">
                 <SwatchBook />
-                主题工作室
+                {t("主题工作室", "Theme studio")}
               </a>
             </Button>
             <Button variant="ghost" size="sm" className="ml-auto" onClick={resetStudio} disabled={isDefault(state)}>
-              恢复默认
+              {t("恢复默认", "Reset")}
             </Button>
           </div>
         </div>

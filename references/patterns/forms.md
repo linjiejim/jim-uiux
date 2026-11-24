@@ -39,5 +39,6 @@
 | ≤ 8 | Select |
 | > 8，或者需要搜索 | Combobox |
 | 是 / 否，立即生效 | Switch |
-| 是 / 否，点保存才生效；多选 | Checkbox |
+| 是 / 否，点保存才生效；≤ 6 个选项里多选 | Checkbox |
+| 多选，选项多、要搜索或能新建（标签、成员、项目） | Combobox `multiple` |
 | 筛选里的布尔值 | FilterBoolean（全部 / 是 / 否） |

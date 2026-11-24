@@ -18,8 +18,10 @@ things that stay in one repo so they can't drift apart:
   contrast check pass, and export the skin as CSS.
 
 Plus vitest guards that fail a project's build on raw colours, text under 12px,
-native dialogs, emoji icons and WCAG contrast misses in every theme (each preset
-combination, light and dark, and the OS "increase contrast" mode).
+weights above 600, native dialogs, emoji icons, hard-coded z-index / durations /
+curves, `dark:` colour overrides, vague button labels ("OK", "Submit") and WCAG
+contrast misses in every theme (each preset combination, light and dark, and the
+OS "increase contrast" mode).
 
 [中文说明 →](README.zh-CN.md)
 
@@ -71,6 +73,8 @@ cd gallery
 pnpm install
 pnpm dev              # http://localhost:5188, also serves /r/{name}.json
 pnpm test             # the guards, run on the gallery itself
+pnpm e2e              # axe on every page × light / dark / phone / more contrast, interactions, screenshots
+pnpm e2e:baselines    # remake the screenshot baselines in Docker (the image CI uses)
 pnpm registry:build   # regenerate registry.json and public/r/*.json
 pnpm consumers        # how downstream projects differ from here (needs gh)
 ```

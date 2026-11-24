@@ -42,7 +42,7 @@
    - `import "@fontsource-variable/inter/opsz.css"`（带光学尺寸轴：大字和数字自动用 Display 字形；只要字重轴时写 `import "@fontsource-variable/inter"`）。
    - 外面包一层 `<LucideProvider strokeWidth={1.75}>`、`<TooltipProvider>`，并渲染 `<Toaster />`。
    - 把 `APPEARANCE_BOOT_SCRIPT` 内联到 `<head>`。
-6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。
+6. 守卫：在项目根目录放 `design-guard.config.json`（字段见 `guards/guard-lib.ts`），然后跑 `npx vitest run tests/design`。把它加进 CI 或本地的检查流程。会查：裸色值、小于 12px 的字、原生弹框、自己写的全屏遮罩、emoji 图标、比 600 更粗的字重、10 以上的 z-index 没用层级 token、写死的时长和曲线、`dark:` 颜色覆盖、「确定」「提交」这类按钮文案，以及每个主题的对比度。确实要例外的行写 `design-allow: <原因>`。
 7. 写 `docs/DESIGN.md`（模板见下文）。
 8. 应用会发版（桌面、移动端、按版本发的 web）：`npx shadcn add @jim/release-notes @jim/release-notes-script`，建 `CHANGELOG.md`，发布工作流从它取说明，根组件里接上「已更新」提示。每次 push 就部署的 web 至少接上 `useNewVersionPrompt`。做法见 `patterns/updates.md`。
 9. 在 jim-uiux 仓库的 `consumers.json` 里登记这个项目（字段见 `downstream.md`）。以后 jim-uiux 有改动，靠这份名单找到要同步的项目。

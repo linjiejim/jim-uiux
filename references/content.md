@@ -60,8 +60,9 @@
   - 相对时间（「3 分钟前」）只用在动态流里，悬停时显示完整时间。
 - 金额写「¥128,000」，千分位用逗号；数字用等宽数字，并且右对齐。
 - 数量：「3 个项目」「共 57 条」「已选 2 项」。
+- 代码里用 `lib/format.ts` 的 `formatDate` / `formatRelative` / `formatMoney` / `formatPercent`，不自己拼（`components.md`「格式化」）。
 
 ## 国际化
 
-- 所有可见文字都走 i18n。组件内置的文案在 `lib/strings.ts`，用 `configureStrings()` 替换。
+- 所有可见文字都走 i18n。组件内置的文案在 `lib/strings.ts`，自带中文和英文（`configureStrings(en)`），其他语言用 `configureStrings()` 替换。日期和数字跟着 `locale` 走。
 - 给其他语言留出 30% 的宽度余量：按钮不写死宽度，表格列允许截断。

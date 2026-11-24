@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   BookOpen,
   Images,
+  Languages,
   LayoutTemplate,
   Moon,
   PanelsTopLeft,
@@ -43,29 +44,54 @@ import { UpdatesPattern } from "./pages/updates"
 import { StudioPage } from "./pages/studio"
 import { LayoutsPage } from "./pages/layouts"
 import { kitReleases, RELEASES_URL } from "./changelog"
+import { lang, setLang, t } from "./i18n"
+import { IconButton } from "@/registry/jim/ui/button"
 import { Wordmark } from "./logo"
 
-type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean }
+/**
+ * `nav`: the sidebar item this page lights up when it isn't one itself (the media grid is a view
+ * of 列表; filters is an old link). Pages without `nav` are the sidebar.
+ */
+type RouteDef = { label: string; icon: React.ReactNode; page: React.ComponentType; group: string; fill?: boolean; nav?: string }
+
+const G = { root: "", base: t("基础", "Foundations"), parts: t("组件", "Components"), pages: t("页面", "Pages") }
 
 const routes: Record<string, RouteDef> = {
-  principles: { label: "原则", icon: <BookOpen />, page: PrinciplesPage, group: "" },
-  studio: { label: "主题工作室", icon: <SwatchBook />, page: StudioPage, group: "" },
-  color: { label: "颜色", icon: <Palette />, page: ColorPage, group: "基础" },
-  type: { label: "文字", icon: <Type />, page: TypePage, group: "基础" },
-  shape: { label: "间距、圆角与层级", icon: <Square />, page: ShapePage, group: "基础" },
-  motion: { label: "动效", icon: <Sparkles />, page: MotionPage, group: "基础" },
-  buttons: { label: "按钮", icon: <MousePointerClick />, page: ButtonsPage, group: "组件" },
-  forms: { label: "表单", icon: <TextCursorInput />, page: FormsPage, group: "组件" },
-  overlays: { label: "弹层", icon: <Layers />, page: OverlaysPage, group: "组件" },
-  feedback: { label: "反馈与状态", icon: <MessageSquare />, page: FeedbackPage, group: "组件" },
-  data: { label: "数据展示", icon: <Component />, page: DataDisplayPage, group: "组件" },
-  layouts: { label: "页面布局", icon: <LayoutTemplate />, page: LayoutsPage, group: "模式" },
-  crud: { label: "列表与 CRUD", icon: <Table2 />, page: CrudPattern, group: "模式", fill: true },
-  filters: { label: "列表筛选", icon: <ListFilter />, page: CrudPattern, group: "模式", fill: true },
-  settings: { label: "设置页", icon: <Settings />, page: SettingsPattern, group: "模式" },
-  workbench: { label: "工作台外壳", icon: <PanelsTopLeft />, page: WorkbenchPattern, group: "模式", fill: true },
-  media: { label: "分面筛选与媒体网格", icon: <Images />, page: MediaGridPattern, group: "模式" },
-  updates: { label: "版本更新", icon: <RefreshCw />, page: UpdatesPattern, group: "模式" },
+  principles: { label: t("原则", "Principles"), icon: <BookOpen />, page: PrinciplesPage, group: G.root },
+  studio: { label: t("主题工作室", "Theme studio"), icon: <SwatchBook />, page: StudioPage, group: G.root },
+  color: { label: t("颜色", "Color"), icon: <Palette />, page: ColorPage, group: G.base },
+  type: { label: t("文字", "Type"), icon: <Type />, page: TypePage, group: G.base },
+  shape: { label: t("间距与圆角", "Space & radius"), icon: <Square />, page: ShapePage, group: G.base },
+  motion: { label: t("动效", "Motion"), icon: <Sparkles />, page: MotionPage, group: G.base },
+  buttons: { label: t("按钮", "Buttons"), icon: <MousePointerClick />, page: ButtonsPage, group: G.parts },
+  forms: { label: t("表单", "Forms"), icon: <TextCursorInput />, page: FormsPage, group: G.parts },
+  overlays: { label: t("弹层", "Overlays"), icon: <Layers />, page: OverlaysPage, group: G.parts },
+  feedback: { label: t("反馈", "Feedback"), icon: <MessageSquare />, page: FeedbackPage, group: G.parts },
+  data: { label: t("数据", "Data"), icon: <Component />, page: DataDisplayPage, group: G.parts },
+  layouts: { label: t("页面布局", "Layouts"), icon: <LayoutTemplate />, page: LayoutsPage, group: G.pages },
+  crud: { label: t("列表", "Lists"), icon: <Table2 />, page: CrudPattern, group: G.pages, fill: true },
+  media: { label: t("列表 · 网格", "Lists · grid"), icon: <Images />, page: MediaGridPattern, group: G.pages, nav: "crud" },
+  filters: { label: t("列表", "Lists"), icon: <ListFilter />, page: CrudPattern, group: G.pages, fill: true, nav: "crud" },
+  settings: { label: t("设置", "Settings"), icon: <Settings />, page: SettingsPattern, group: G.pages },
+  workbench: { label: t("工作台", "Workbench"), icon: <PanelsTopLeft />, page: WorkbenchPattern, group: G.pages, fill: true },
+  updates: { label: t("版本更新", "Updates"), icon: <RefreshCw />, page: UpdatesPattern, group: G.pages },
+}
+
+/** 中 / EN next to the theme knobs: saves the choice and reloads in the other language. */
+function LanguageSwitch() {
+  return (
+    <IconButton
+      // the name is the visible text (WCAG 2.5.3); the tooltip says what it does
+      label={t("EN", "中文")}
+      tooltip={t("Switch to English", "切换到中文")}
+      size="icon-sm"
+      variant="ghost"
+      className="shrink-0 text-caption font-medium text-muted-foreground"
+      onClick={() => setLang(lang === "en" ? "zh" : "en")}
+    >
+      {t("EN", "中文")}
+    </IconButton>
+  )
 }
 
 function useRoute() {
@@ -105,20 +131,27 @@ export function App() {
               <button
                 type="button"
                 onClick={notes.openAll}
-                title="更新内容"
+                title={t("更新内容", "What's new")}
                 className="rounded-sm text-caption font-normal text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
               >
                 v{__JIM_UIUX_VERSION__}
               </button>
             </span>
           }
-          footer={<ThemeKnobs />}
+          footer={
+            <div className="flex items-center gap-1">
+              <div className="min-w-0 flex-1">
+                <ThemeKnobs />
+              </div>
+              <LanguageSwitch />
+            </div>
+          }
           sidebar={groups.map((g) => (
             <NavGroup key={g || "root"} label={g || undefined}>
               {Object.entries(routes)
-                .filter(([k, r]) => r.group === g && k !== "filters")
+                .filter(([, r]) => r.group === g && !r.nav)
                 .map(([k, r]) => (
-                  <NavItem key={k} href={`#/${k}`} icon={r.icon} label={r.label} active={k === key || (key === "filters" && k === "crud")} />
+                  <NavItem key={k} href={`#/${k}`} icon={r.icon} label={r.label} active={k === key || route.nav === k} />
                 ))}
             </NavGroup>
           ))}
@@ -127,9 +160,9 @@ export function App() {
             <Page />
           </div>
         </AppShell>
-        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} placeholder="搜索页面或命令">
+        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} placeholder={t("搜索页面或命令", "Search pages or commands")}>
           {groups.map((g) => (
-            <CommandGroup key={g || "root"} heading={g || "开始"}>
+            <CommandGroup key={g || "root"} heading={g || t("开始", "Start")}>
               {Object.entries(routes)
                 .filter(([k, r]) => r.group === g && k !== "filters")
                 .map(([k, r]) => (
@@ -139,13 +172,16 @@ export function App() {
                 ))}
             </CommandGroup>
           ))}
-          <CommandGroup heading="操作">
+          <CommandGroup heading={t("操作", "Actions")}>
             <CommandItem
               icon={<Moon />}
               keywords={["dark", "light", "深色", "浅色"]}
               onSelect={() => setAppearance(resolveAppearance(getAppearance()) === "dark" ? "light" : "dark")}
             >
-              切换深浅色
+              {t("切换深浅色", "Toggle dark mode")}
+            </CommandItem>
+            <CommandItem icon={<Languages />} keywords={["language", "English", "中文", "语言"]} onSelect={() => setLang(lang === "en" ? "zh" : "en")}>
+              {t("Switch to English", "切换到中文")}
             </CommandItem>
           </CommandGroup>
         </CommandPalette>

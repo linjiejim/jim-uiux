@@ -144,7 +144,7 @@ function statusText(item: UploadItem) {
     case "exists":
       return t.uploadExists
     case "failed":
-      return item.error ? `${t.uploadFailed}：${item.error}` : t.uploadFailed
+      return item.error ? t.uploadFailedWith(item.error) : t.uploadFailed
   }
 }
 

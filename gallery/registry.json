@@ -224,16 +224,20 @@
     {
       "name": "combobox",
       "type": "registry:ui",
-      "description": "Searchable single select. Use when there are more than ~8 options. */",
+      "description": "Controlled. `undefined` here means \"nothing picked\" and shows the placeholder. */",
       "dependencies": [
         "cmdk@^1.1.1",
         "lucide-react@^1.66.0",
         "radix-ui@^1.8.1"
       ],
       "registryDependencies": [
+        "@jim/button",
         "@jim/field",
         "@jim/input",
+        "@jim/spinner",
         "@jim/strings",
+        "@jim/use-debounced-value",
+        "@jim/use-delayed-flag",
         "@jim/utils"
       ],
       "files": [
@@ -489,6 +493,26 @@
       "files": [
         {
           "path": "src/registry/jim/ui/info.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "inline-rename",
+      "type": "registry:ui",
+      "description": "Rename in place: a name in a list, a title, a tab. Click, Enter or F2 turns the text into an",
+      "dependencies": [
+        "lucide-react@^1.66.0",
+        "radix-ui@^1.8.1"
+      ],
+      "registryDependencies": [
+        "@jim/spinner",
+        "@jim/strings",
+        "@jim/utils"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/ui/inline-rename.tsx",
           "type": "registry:ui"
         }
       ]
@@ -959,9 +983,23 @@
       ]
     },
     {
+      "name": "format",
+      "type": "registry:lib",
+      "description": "Dates, money and numbers the way references/content.md writes them, in the strings' locale.",
+      "registryDependencies": [
+        "@jim/strings"
+      ],
+      "files": [
+        {
+          "path": "src/registry/jim/lib/format.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "strings",
       "type": "registry:lib",
-      "description": "Default UI copy for the kit. Projects with i18n call configureStrings()",
+      "description": "UI copy for the kit, Chinese by default. English ships too: configureStrings(en). Projects with",
       "files": [
         {
           "path": "src/registry/jim/lib/strings.ts",
@@ -1016,7 +1054,7 @@
     {
       "name": "all",
       "type": "registry:item",
-      "description": "jim-uiux 1.9.0: theme, every component, hooks and libs",
+      "description": "jim-uiux 1.10.0: theme, every component, hooks and libs",
       "registryDependencies": [
         "@jim/utils",
         "@jim/theme",
@@ -1040,6 +1078,7 @@
         "@jim/field",
         "@jim/filter-bar",
         "@jim/info",
+        "@jim/inline-rename",
         "@jim/input",
         "@jim/kbd",
         "@jim/page",
@@ -1070,6 +1109,7 @@
         "@jim/appearance",
         "@jim/categorical",
         "@jim/changelog",
+        "@jim/format",
         "@jim/strings"
       ]
     }

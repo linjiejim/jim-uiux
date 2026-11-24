@@ -174,6 +174,13 @@ export function rulesFor(decls: Decls, more = false): Rule[] {
 }
 
 /** Every pair a rule names, measured. A token that is missing or doesn't resolve is reported as a failed check. */
+/** A colour rounded to what an 8-bit display shows. */
+function to8bit(c: Color): Color {
+  const { r, g, b } = toRgb(c)
+  const q = (v: number) => Math.round(Math.min(1, Math.max(0, v ?? 0)) * 255) / 255
+  return { mode: "rgb", r: q(r), g: q(g), b: q(b) }
+}
+
 export function checkContrast(decls: Decls, rules: Rule[] = rulesFor(decls)): Check[] {
   const out: Check[] = []
   let canvas: Color
@@ -185,8 +192,10 @@ export function checkContrast(decls: Decls, rules: Rule[] = rulesFor(decls)): Ch
   for (const [fg, bgs, min] of rules) {
     for (const bg of bgs) {
       try {
-        const b = over(resolveColor(`var(${bg})`, decls), canvas)
-        const f = over(resolveColor(`var(${fg})`, decls), b)
+        // measured as the screen draws them: 8-bit sRGB (an exact mix can pass by 0.01 and the
+        // rendered colour fail, as success on success-subtle did)
+        const b = to8bit(over(resolveColor(`var(${bg})`, decls), canvas))
+        const f = to8bit(over(resolveColor(`var(${fg})`, decls), b))
         const ratio = wcagContrast(f, b)
         out.push({ fg, bg, ratio, min, ok: ratio >= min, detail: `${formatRgb(f)} on ${formatRgb(b)}` })
       } catch (e) {

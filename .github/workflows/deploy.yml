@@ -52,6 +52,39 @@ jobs:
         with:
           path: gallery/dist
 
+  # Render-level checks on pull requests: axe on every page in four modes, interaction checks,
+  # screenshots. Runs in the Playwright image the baselines are made in (`pnpm e2e:baselines`);
+  # keep the image tag equal to @playwright/test in gallery/package.json. Doesn't gate deploys.
+  e2e:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: gallery
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: gallery/package.json
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: gallery/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm e2e
+        env:
+          CI: "1"
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: gallery/test-results
+          retention-days: 7
+
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
