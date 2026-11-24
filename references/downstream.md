@@ -84,11 +84,10 @@ pnpm consumers --discover --owner linjiejim    # 找提到 jim-uiux 但还没登
 
 ### 候选清单（2026-11-16 盘点）
 
-收了或否了就从这里删掉，结论写进 `decisions.md`（1.4.0 收了 `Info`、`Kbd`、`CopyButton`、`Callout` 和 IconButton 的提示文字；1.5.0 收了 `ResizeHandle`、`Progress`；1.8.0 收了 `Slider`、`SwatchPicker`（分类色选择）、`Stat`）。「kit 里已有」指 kit 组件内部已经私下实现了一份，收回来主要是导出、统一规格。
+收了或否了就从这里删掉，结论写进 `decisions.md`（1.4.0 收了 `Info`、`Kbd`、`CopyButton`、`Callout` 和 IconButton 的提示文字；1.5.0 收了 `ResizeHandle`、`Progress`；1.8.0 收了 `Slider`、`SwatchPicker`（分类色选择）、`Stat`；1.10.0 收了 `InlineRename`（retrace、turnery 和另一个项目，输入法组字的判断来自 turnery），`overlays.md` 的重命名一行同时改了）。「kit 里已有」指 kit 组件内部已经私下实现了一份，收回来主要是导出、统一规格。
 
 | 候选 | 来源 | 判断 |
 | --- | --- | --- |
-| 原位改名（`InlineRename`：回车或失焦保存，Esc 还原） | retrace、turnery 和另一个项目 | 三家行为一致，只有 turnery 判断了输入法组字（`isComposing`）。要收就同时改 `overlays.md`「重命名用 Dialog」那一行 |
 | 页头次要动作在手机上收进「⋯」（`MoreActions`） | ivan | 写进 `patterns/layout.md`，由 PageHeader 支持 |
 | `Tag`（描边、无底色的分类元数据） | ivan；greenhouse 的 Chip | 和 Badge 的 `outline` 变体基本重复，倾向只补用法说明 |
 | 拖放上传区（`DropZone`，文件夹逐层展开） | greenhouse 和另一个项目 | `feedback.md` 有规则没组件；等上传队列再有项目用时一起收 |

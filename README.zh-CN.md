@@ -8,7 +8,7 @@
 - **shadcn registry**（`@jim/*`）：按这些规范做的 Radix + Tailwind v4 组件，地址 `https://design.linjiejim.com/r/{name}.json`。
 - **活的 gallery**：**https://design.linjiejim.com** ，跑的是真组件，主题旋钮可以实时切换；[主题工作室](https://design.linjiejim.com/#/studio)里调中性色、强调色、对比度、圆角、密度和留白，逐条校验对比度，导出皮肤 CSS。
 
-另有一组 vitest 守卫：项目里出现裸色值、小于 12px 的字、原生弹框、emoji 图标，或任一主题（每个预设组合、浅色深色、增强对比度）的 WCAG 对比度不达标，测试就会失败。
+另有一组 vitest 守卫：项目里出现裸色值、小于 12px 的字、比 600 更粗的字重、原生弹框、emoji 图标、写死的 z-index / 时长 / 曲线、`dark:` 颜色覆盖、「确定」「提交」这类按钮文案，或任一主题（每个预设组合、浅色深色、增强对比度）的 WCAG 对比度不达标，测试就会失败。
 
 [English →](README.md)
 
@@ -55,6 +55,8 @@ cd gallery
 pnpm install
 pnpm dev              # http://localhost:5188 ，也提供 /r/{name}.json
 pnpm test             # 守卫，在 gallery 自己身上跑
+pnpm e2e              # 每个页面 × 浅色 / 深色 / 手机 / 增强对比度跑 axe，加交互检查和截图
+pnpm e2e:baselines    # 在 Docker 里重做截图基线（和 CI 同一个镜像）
 pnpm registry:build   # 重新生成 registry.json 和 public/r/*.json
 pnpm consumers        # 下游项目和这里差在哪（需要 gh）
 ```

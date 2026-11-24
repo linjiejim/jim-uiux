@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "all",
-  "description": "jim-uiux 1.9.0: theme, every component, hooks and libs",
+  "description": "jim-uiux 1.10.0: theme, every component, hooks and libs",
   "registryDependencies": [
     "@jim/utils",
     "@jim/theme",
@@ -25,6 +25,7 @@
     "@jim/field",
     "@jim/filter-bar",
     "@jim/info",
+    "@jim/inline-rename",
     "@jim/input",
     "@jim/kbd",
     "@jim/page",
@@ -55,6 +56,7 @@
     "@jim/appearance",
     "@jim/categorical",
     "@jim/changelog",
+    "@jim/format",
     "@jim/strings"
   ],
   "type": "registry:item"
