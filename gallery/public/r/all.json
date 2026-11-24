@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "all",
-  "description": "jim-uiux 1.8.0: theme, every component, hooks and libs",
+  "description": "jim-uiux 1.9.0: theme, every component, hooks and libs",
   "registryDependencies": [
     "@jim/utils",
     "@jim/theme",
@@ -50,6 +50,7 @@
     "@jim/use-debounced-value",
     "@jim/use-delayed-flag",
     "@jim/use-guarded-open",
+    "@jim/use-return-focus",
     "@jim/appearance",
     "@jim/categorical",
     "@jim/changelog",
