@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.10.2 · 2026-11-24
+
+长文目录的摆法、按需加载页面的切换，交付自检多两条（理由见 `references/decisions.md`「1.10.2」）。
+
+- `patterns/page-layouts.md` 新增「长文 + 目录」：正文 `narrow`，目录栏 224 宽、紧挨正文，两者作为一组在主区居中；内容区放不下时收起目录。
+- `patterns/feedback.md`：切到按需加载的页面时，页头立刻换，正文 300ms 后出骨架，不留空白；下一步多半会去的页面空闲时预取。
+- `checklist.md`：宽屏（≥ 1600）截图确认页面居中；在侧栏连续切换页面，确认正文不留空白。
+- `consumers.json` 登记 ohmwork。
+
 ## 1.10.1 · 2026-11-24
 
 英文版的更新记录；`InlineRename` 的文字和同列对齐（理由见 `references/decisions.md`「1.10.0」里标了 1.10.1 的几行）。

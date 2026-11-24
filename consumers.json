@@ -61,6 +61,21 @@
         "细注 11px（页脚、图例、表单提示）",
         "表格窄屏先收次要列再横滑，不变摘要列表"
       ]
+    },
+    {
+      "name": "ohmwork",
+      "repo": "linjiejim/ohmwork",
+      "site": "https://ohmwork.linjiejim.com",
+      "mode": "registry",
+      "root": ".",
+      "design": "docs/DESIGN.md",
+      "summary": "交互式电子电路学堂：Vite + MDX 课程站，每节课配可拖可调的电路仿真组件。",
+      "own": [
+        "默认皮肤",
+        "长文排版 .lesson（16 / 26，一行 ≤ 680px）、滑块 .lab-range",
+        "电路数据色：电压 orange、电流 blue、功率 red",
+        "课程交互工具包 src/lab（Plot、Timing、Schematic、Tex）"
+      ]
     }
   ]
 }

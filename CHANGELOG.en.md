@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.10.2 · 2026-11-24
+
+Where a long read's table of contents goes, switching to pages that load on demand, and two more hand-over checks (see `references/decisions.md`, 1.10.2).
+
+- `patterns/page-layouts.md` adds “Long read + contents”: the text is `narrow`, the contents column is 224 wide right beside it, and the two center together in the main area; the column folds away when they don't fit.
+- `patterns/feedback.md`: switching to a page that loads on demand swaps the page header at once and shows a skeleton for the body after 300ms, never a blank block; pages the reader will likely open next are prefetched while idle.
+- `checklist.md`: a wide (≥ 1600) screenshot to confirm pages are centered; switch pages quickly from the sidebar to confirm the body never goes blank.
+- `consumers.json` lists ohmwork.
+
 ## 1.10.1 · 2026-11-24
 
 English release notes, and `InlineRename` text that lines up with its column (see the rows marked 1.10.1 under 1.10.0 in `references/decisions.md`).
