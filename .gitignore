@@ -3,3 +3,5 @@ gallery/dist/
 *.tsbuildinfo
 .DS_Store
 consumers.local.json
+gallery/test-results/
+gallery/playwright-report/
