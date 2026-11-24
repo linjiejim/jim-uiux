@@ -8,6 +8,7 @@ import { s } from "@/registry/jim/lib/strings"
 import { useGuardedOpen } from "@/registry/jim/hooks/use-guarded-open"
 import { IconButton } from "@/registry/jim/ui/button"
 import { DiscardDialog } from "@/registry/jim/ui/confirm-dialog"
+import { useReturnFocus } from "@/registry/jim/hooks/use-return-focus"
 
 /*
  * Dialog = a short task that needs focus and isn't a list object: rename a
@@ -23,6 +24,8 @@ import { DiscardDialog } from "@/registry/jim/ui/confirm-dialog"
  * use it when a dialog switches tabs, filters a list or steps through a form.
  * sm stays content-height; xl is always fixed. On phones the sheet is 92dvh.
  */
+const ReturnFocusContext = React.createContext<ReturnType<typeof useReturnFocus> | null>(null)
+
 export function Dialog({
   dirty,
   open,
@@ -32,10 +35,11 @@ export function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root> & { dirty?: boolean }) {
   const g = useGuardedOpen({ open, defaultOpen, onOpenChange, dirty })
+  const focus = useReturnFocus(g.open)
   return (
     <>
       <DialogPrimitive.Root open={g.open} onOpenChange={g.onOpenChange} {...props}>
-        {children}
+        <ReturnFocusContext.Provider value={focus}>{children}</ReturnFocusContext.Provider>
       </DialogPrimitive.Root>
       <DiscardDialog open={g.discard.open} onKeep={g.discard.keep} onDiscard={g.discard.discard} />
     </>
@@ -57,12 +61,27 @@ const fixedHeights: Partial<Record<keyof typeof sizes, string>> = {
   lg: "sm:h-[min(640px,85dvh)] max-sm:h-[92dvh]",
 }
 
+const FIELD = 'input:not([type="hidden"]), textarea, select, [role="combobox"], [contenteditable="true"]'
+
+/** The first focusable, visible text field or picker in the dialog. */
+function firstField(content: HTMLElement) {
+  return [...content.querySelectorAll<HTMLElement>(FIELD)].find(
+    (el) =>
+      el.tabIndex >= 0 &&
+      !(el as HTMLInputElement).disabled &&
+      !el.closest('[aria-hidden="true"], [inert]') &&
+      el.getClientRects().length > 0,
+  )
+}
+
 export function DialogContent({
   size = "md",
   fixed = false,
   className,
   children,
   hideClose,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   size?: keyof typeof sizes
@@ -70,10 +89,24 @@ export function DialogContent({
   fixed?: boolean
   hideClose?: boolean
 }) {
+  const focus = React.useContext(ReturnFocusContext)
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
       <DialogPrimitive.Content
+        // A form starts at its first field, not at an ⓘ before it (Radix picks the first tabbable).
+        onOpenAutoFocus={(e) => {
+          onOpenAutoFocus?.(e)
+          if (e.defaultPrevented) return
+          const field = firstField(e.currentTarget as HTMLElement)
+          if (!field) return
+          e.preventDefault()
+          field.focus()
+        }}
+        onCloseAutoFocus={(e) => {
+          onCloseAutoFocus?.(e)
+          focus?.restore(e)
+        }}
         data-fixed={(fixed && size in fixedHeights) || undefined}
         className={cn(
           "fixed z-(--z-overlay) flex max-h-[85dvh] flex-col bg-popover shadow-overlay outline-none",

@@ -85,7 +85,7 @@ export function CrudPattern() {
   const reload = () => setVersion((v) => v + 1)
 
   const [selection, setSelection] = React.useState({})
-  // a new question: back to page 1, nothing selected
+  // a new question: back to page 1, nothing selected (header sorting: DataTable does this itself)
   React.useEffect(() => {
     setPage((p) => ({ ...p, pageIndex: 0 }))
     setSelection({})

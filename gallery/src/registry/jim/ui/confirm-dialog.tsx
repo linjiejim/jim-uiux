@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 import { s } from "@/registry/jim/lib/strings"
 import { Button } from "@/registry/jim/ui/button"
 import { Callout } from "@/registry/jim/ui/callout"
+import { Spinner } from "@/registry/jim/ui/spinner"
+import { useReturnFocus } from "@/registry/jim/hooks/use-return-focus"
 
 /*
  * Only for irreversible or costly actions. Reversible ones (archive, remove
@@ -37,6 +39,7 @@ export function ConfirmDialog({
 }) {
   const [pending, setPending] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+  const focus = useReturnFocus(open)
 
   React.useEffect(() => {
     if (open) setError(null)
@@ -60,6 +63,7 @@ export function ConfirmDialog({
       <AlertPrimitive.Portal>
         <AlertPrimitive.Overlay data-slot="scrim" className="fixed inset-0 z-(--z-overlay) bg-scrim data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out" />
         <AlertPrimitive.Content
+          onCloseAutoFocus={focus.restore}
           className={cn(
             "fixed left-1/2 top-1/2 z-(--z-overlay) w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 -translate-y-1/2",
             "rounded-xl bg-popover p-5 shadow-overlay",
@@ -83,15 +87,27 @@ export function ConfirmDialog({
                 {cancelLabel}
               </Button>
             </AlertPrimitive.Cancel>
+            {/* Busy, not disabled: disabling the focused button would drop focus to <body> mid-action. */}
             <Button
               variant={tone === "danger" ? "destructive" : "primary"}
-              loading={pending}
+              aria-disabled={pending || undefined}
+              aria-busy={pending || undefined}
+              className={cn(pending && "cursor-not-allowed bg-muted text-faint-foreground hover:bg-muted")}
               onClick={(e) => {
                 e.preventDefault()
-                void run()
+                if (!pending) void run()
               }}
             >
-              {confirmLabel}
+              {pending ? (
+                <>
+                  <span className="invisible">{confirmLabel}</span>
+                  <span className="absolute inset-0 grid place-items-center">
+                    <Spinner />
+                  </span>
+                </>
+              ) : (
+                confirmLabel
+              )}
             </Button>
           </div>
         </AlertPrimitive.Content>

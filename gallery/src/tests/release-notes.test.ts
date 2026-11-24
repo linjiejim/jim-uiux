@@ -121,6 +121,17 @@ describe("versions", () => {
     expect(unseenReleases(releases, "0.8.0", "0.7.6")).toEqual([])
     expect(unseenReleases(releases, "garbage", "0.8.0")).toEqual([])
   })
+
+  it("unseen: a current build that isn't a version (dev, a commit) says nothing instead of throwing", () => {
+    const releases = parseChangelog(app)
+    expect(() => unseenReleases(releases, "0.7.5", "dev")).not.toThrow()
+    expect(unseenReleases(releases, "0.7.5", "dev")).toEqual([])
+    expect(unseenReleases(releases, "0.7.5", "1a2b3c4")).toEqual([])
+    expect(unseenReleases(releases, "0.7.5", "")).toEqual([])
+    // a hand-made list with a bad version skips that entry
+    const odd = [...releases, { version: "next", groups: [{ kind: "new" as const, title: "", items: ["x"] }] }]
+    expect(unseenReleases(odd, "0.7.5", "0.8.0").map((r) => r.version)).toEqual(["0.8.0", "0.7.6"])
+  })
 })
 
 describe("release-notes.mjs", () => {

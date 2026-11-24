@@ -97,12 +97,16 @@ export function ReleaseNotesDialog({
   /** Desktop shells open links themselves (Tauri opener, Electron shell). */
   onMore?: () => void
 }) {
+  // Closing often clears `releases` at once; keep the last list through the exit animation
+  // instead of flashing the empty state.
+  const [kept, setKept] = React.useState(releases)
+  if (open && kept !== releases) setKept(releases)
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="md">
         <DialogHeader title={title} />
         <DialogBody className={onMore || moreHref ? undefined : "pb-5"}>
-          <ReleaseNotes releases={releases} />
+          <ReleaseNotes releases={open ? releases : kept} />
         </DialogBody>
         {(onMore || moreHref) && (
           <DialogFooter className="justify-start border-t pt-3 pb-4">
