@@ -13,6 +13,8 @@ export default defineConfig({
   testDir: "e2e",
   testMatch: "**/*.e2e.ts",
   snapshotPathTemplate: "{testDir}/__screenshots__/{testFileName}/{arg}{ext}",
+  // never write a baseline by accident; `pnpm e2e:baselines` passes --update-snapshots=all
+  updateSnapshots: "none",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

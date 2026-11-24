@@ -20,7 +20,8 @@ for (const [route, mode] of shots) {
   const file = `${route}-${mode.name.replace(/\s+/g, "-")}.png`
   test(`screenshot · ${route} · ${mode.name}`, async ({ page }) => {
     // a new shot waits for its baseline (pnpm e2e:baselines) instead of failing every PR
-    test.skip(!fs.existsSync(path.join(import.meta.dirname, "__screenshots__", "visual.e2e.ts", file)), `no baseline yet for ${file}: run pnpm e2e:baselines`)
+    const missing = !fs.existsSync(path.join(import.meta.dirname, "__screenshots__", "visual.e2e.ts", file))
+    test.skip(missing && test.info().config.updateSnapshots === "none", `no baseline yet for ${file}: run pnpm e2e:baselines`)
     await open(page, route, mode)
     await page.waitForTimeout(300)
     await expect(page).toHaveScreenshot(file, {
